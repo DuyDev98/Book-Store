@@ -1,0 +1,274 @@
+/* ===== TOPBAR (màu xanh lá như mẫu) ===== */
+.topbar {
+  background-color: #4B7900;
+  color: #fff;
+  font-size: 15px;
+  padding: 8px 16px;
+}
+.topbar .top-left span,
+.topbar .top-right span {
+  color: #fff;
+}
+.topbar .top-right span {
+  margin-left: 12px;
+}
+
+/* ===== HEADER / LOGO ===== */
+header {
+  background: #fff;
+  padding: 14px 0;
+  box-shadow: none;
+}
+header .container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* ===== Ô TÌM KIẾM ===== */
+.search-box {
+  display: flex;
+  align-items: center;
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+  border-radius: 30px;
+  overflow: hidden;
+  border: 1px solid #d9cfa2;
+  background: #fff;
+  height: 46px;
+}
+
+.search-box .form-control {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 18px;
+  font-size: 14px;
+  color: #333;
+  height: 46px;
+  box-shadow: none;
+}
+
+.search-box .form-control::placeholder {
+  color: #9a9a9a;
+  opacity: 1;
+}
+
+.search-box .btn {
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 0 22px;
+  height: 46px;
+  border-radius: 0 30px 30px 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  box-shadow: none;
+  transition: background-color 0.18s ease;
+}
+
+.search-box .btn:hover {
+  background: #222;
+}
+
+.header-cart img {
+  width: 38px;
+  height: 38px;
+}
+
+/* ===== BANNER CHÍNH ===== */
+.carousel .carousel-item img,
+.carousel-inner img {
+  width: 100%;
+  height: 65vh; /* chiếm 65% chiều cao màn hình */
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+/* ===== 2 BANNER NHỎ (banner 2 & 3) ===== */
+.banner-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px; /* giảm khoảng cách giữa banner lớn và nhỏ */
+}
+
+.promo-wrap {
+  flex: 1;
+  height: 18vh; /* tự co theo chiều cao màn hình */
+  overflow: hidden;
+  border-radius: 8px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.promo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.promo-img:hover {
+  transform: scale(1.03);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 991px) {
+  .carousel .carousel-item img {
+    height: 45vh !important;
+  }
+  .promo-wrap {
+    height: 15vh !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .banner-row {
+    flex-direction: column;
+  }
+  .carousel .carousel-item img {
+    height: 35vh !important;
+  }
+  .promo-wrap {
+    height: 14vh !important;
+  }
+}
+
+/* ===================================================== */
+/* === PHẦN BỔ SUNG THEO 5 YÊU CẦU CỦA BẠN ============ */
+/* ===================================================== */
+
+/* === 1. NỀN CHÍNH HỒNG NHẠT HƠI NGẢ TRẮNG === */
+body {
+  background-color: #fff6f8 !important;
+}
+
+/* === 2. SIDEBAR DANH MỤC SÁCH === */
+.sidebar {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar h6 {
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.sidebar ul.categories li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  white-space: nowrap;           /* mỗi danh mục 1 dòng */
+  line-height: 1.7;              /* giãn nhẹ giữa các dòng */
+  padding: 6px 0;                /* khoảng cách đều */
+  border-bottom: 1px solid #f2f2f2;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar ul.categories li:hover {
+  background-color: #fceef1;     /* màu hồng nhạt khi hover */
+  color: #e53935;
+}
+
+/* === 3. KHUNG CHỨA 4 CUỐN SÁCH === */
+.section-box {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.08);
+}
+
+/* === 4. CARD SÁCH === */
+.book-card {
+  border: 1px solid #f0f0f0;
+  border-radius: 10px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.book-card img {
+  border-radius: 10px 10px 0 0;
+  object-fit: cover;
+}
+
+/* === 5. GIÁ TIỀN === */
+.price {
+  margin-top: 6px;
+  font-size: 15px;
+}
+
+.price .sale {
+  color: #e53935;               /* đỏ cho giá sale */
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.price .original {
+  color: #666;                  /* đen nhạt */
+  text-decoration: line-through;
+  font-size: 14px;
+}
+
+/* === TIÊU ĐỀ MỤC SÁCH === */
+.section-title {
+  font-weight: 700;
+  color: #333;
+  border-left: 4px solid #e53935;
+  padding-left: 8px;
+  margin-bottom: 16px;
+}
+
+/* === HUY HIỆU GIẢM GIÁ GÓC === */
+.badge-corner {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+}
+.badge-corner .badge {
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+/* ===================================================== */
+/* === CÂN ĐỐI LẠI SIDEBAR VÀ BANNER =================== */
+/* ===================================================== */
+
+/* Mở rộng sidebar thêm để chữ không tràn */
+#sidebar {
+  flex: 0 0 21% !important;
+  max-width: 21% !important;
+}
+
+/* Giảm chiều ngang phần banner */
+main.col-md-10 {
+  flex: 0 0 79% !important;
+  max-width: 79% !important;
+}
+
+/* Responsive fix */
+@media (max-width: 991px) {
+  #sidebar {
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+  main.col-md-10 {
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+}
