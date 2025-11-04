@@ -1,15 +1,14 @@
 {
   "name": "bookstore",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "index.js",
-"scripts": {
-  "test": "echo \"Error: no test specified\" && exit 1",
-  "start": "node ./src/index.js",
-  "dev": "nodemon ./src/index.js"
-},
-
-  
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/index.js",
+    "dev": "nodemon ./src/index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DuyDev98/Bookstore.git"

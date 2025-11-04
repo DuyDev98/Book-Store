@@ -3,15 +3,15 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const config = {
-  user: process.env.DB_USER || 'sa',
-  password: process.env.DB_PASS || 'haduybg81',
-  server: process.env.DB_SERVER || 'localhost',
-  database: process.env.DB_NAME || 'BOOKSTORE',
+  user: process.env.DB_USER || "sa",
+  password: process.env.DB_PASS || "12345",
+  server: process.env.DB_SERVER || "DUY",
+  database: process.env.DB_NAME || "BOOKSTORE",
   port: 1433,
   options: {
     encrypt: false,
-    trustServerCertificate: true
-  }
+    trustServerCertificate: true,
+  },
 };
 
 let pool;
