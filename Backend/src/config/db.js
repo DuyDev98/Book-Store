@@ -1,17 +1,13 @@
-import sql from "mssql";
+import mysql from "mysql2";
 import dotenv from "dotenv";
 dotenv.config();
 
 const config = {
-  user: process.env.DB_USER || 'sa',
-  password: process.env.DB_PASS || 'haduybg81',
-  server: process.env.DB_SERVER || 'localhost',
-  database: process.env.DB_NAME || 'BOOKSTORE',
-  port: 1433,
-  options: {
-    encrypt: false,
-    trustServerCertificate: true
-  }
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',  // Default user for MySQL
+  password: process.env.DB_PASS || 'haduybg81',  // Your password here
+  database: process.env.DB_NAME || 'bookstore',  // Your DB name
+  port: process.env.DB_PORT || 3306,  // Default MySQL port is 3306
 };
 
 let pool;
@@ -19,8 +15,8 @@ let pool;
 export const getPool = async () => {
   try {
     if (!pool) {
-      pool = await new sql.ConnectionPool(config).connect();
-      console.log("✅ SQL Server connected");
+      pool = mysql.createPool(config); // Use mysql2 createPool method
+      console.log("✅ MySQL connected");
     }
     return pool;
   } catch (err) {
@@ -29,4 +25,4 @@ export const getPool = async () => {
   }
 };
 
-export { sql };
+export { mysql };

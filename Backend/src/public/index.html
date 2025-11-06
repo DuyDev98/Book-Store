@@ -16,13 +16,20 @@
       <aside id="sidebar" class="col-md-2"></aside>
       <main class="col-md-10">
         <div id="banner"></div>
-        <div id="book-list"></div>
+
+        <!-- vùng này sẽ tự render danh sách sách từ API -->
+        <section class="mb-5 section-box">
+          <h5 class="section-title mb-3">📚 Danh sách sách</h5>
+          <div id="book-list" class="row row-cols-2 row-cols-md-4 g-4"></div>
+        </section>
+
       </main>
     </div>
   </div>
 
-  <div id="footer"></div>
+  <div id="footer"></div> 
 
+  <script src="script.js"></script>
   <script>
     async function loadComponent(id, file) {
       const res = await fetch(`components/${file}`);
@@ -32,7 +39,6 @@
     loadComponent("header", "header.html");
     loadComponent("sidebar", "sidebar.html");
     loadComponent("banner", "banner.html");
-    loadComponent("book-list", "book-list.html");
     loadComponent("footer", "footer.html");
   </script>
 </body>

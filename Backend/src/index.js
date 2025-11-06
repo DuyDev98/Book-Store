@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import sachRouter from "./router/sach.router.js"; // route sách
-import { getPool } from "./config/db.js"; // kết nối SQL
+import { getPool } from "./config/db.js"; // kết nối MySQL
 
 dotenv.config();
 const app = express();
@@ -20,22 +20,19 @@ const __dirname = path.dirname(__filename);
 // Serve static files (Frontend)
 app.use(express.static(path.join(__dirname, "./public")));
 
-
 // API backend
 app.use("/api/sach", sachRouter);
 
 // Catch-all cho frontend (nếu người dùng reload trang)
 app.get(/.*/, (req, res) => {
- res.sendFile(path.join(__dirname, "./public/index.html"));
-4
+  res.sendFile(path.join(__dirname, "./public/index.html"));
 });
-
 
 // Start server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, async () => {
   try {
-    await getPool();
+    await getPool(); // Kiểm tra kết nối MySQL
     console.log(`✅ Server chạy tại http://localhost:${PORT}`);
   } catch (error) {
     console.error("❌ Kết nối DB thất bại:", error);

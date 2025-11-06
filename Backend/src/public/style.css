@@ -272,3 +272,8 @@ main.col-md-10 {
     flex: 0 0 100% !important;
   }
 }
+.book-card img {
+  height: 260px;
+  object-fit: cover;
+}
+
