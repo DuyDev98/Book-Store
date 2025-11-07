@@ -18,14 +18,15 @@ export const getSachById = async (id) => {
 export const createSach = async (payload) => {
   const pool = await getPool();
   const req = pool.request();
-  req.input('TenSach', sql.NVarChar(255), payload.TenSach);
-  req.input('MaLoaiSach', sql.Int, payload.MaLoaiSach);
-  req.input('MaNXB', sql.Int, payload.MaNXB);
+  req.input('TenSach', sql.NVarChar(200), payload.TenSach);
+  req.input('AnhBia', sql.NVarChar(255), payload.AnhBia || null);
+  req.input('LanTaiBan', sql.Int, payload.LanTaiBan || 1);
+  req.input('GiaBan', sql.Decimal(10,2), payload.GiaBan || 0);
+  req.input('NamXuatBan', sql.Int, payload.NamXuatBan || 2025);
   req.input('MaTG', sql.Int, payload.MaTG);
-  req.input('GiaBia', sql.Decimal(12,2), payload.GiaBia || 0);
-  req.input('SoLuong', sql.Int, payload.SoLuong || 0);
-  req.input('MoTa', sql.NVarChar(sql.MAX), payload.MoTa || null);
-  req.input('HinhAnh', sql.NVarChar(500), payload.HinhAnh || null);
+  req.input('MaNXB', sql.Int, payload.MaNXB);
+  req.input('MaLinhVuc', sql.Int, payload.MaLinhVuc);
+  req.input('MaLoaiSach', sql.Int, payload.MaLoaiSach);
 
   const result = await req.query(model.SQL_INSERT_SACH);
   return result.recordset[0];
@@ -35,18 +36,19 @@ export const updateSach = async (payload) => {
   const pool = await getPool();
   const req = pool.request();
   req.input('MaSach', sql.Int, payload.MaSach);
-  req.input('TenSach', sql.NVarChar(255), payload.TenSach);
-  req.input('MaLoaiSach', sql.Int, payload.MaLoaiSach);
+  req.input('TenSach', sql.NVarChar(200), payload.TenSach);
+  req.input('AnhBia', sql.NVarChar(255), payload.AnhBia || null);
+  req.input('LanTaiBan', sql.Int, payload.LanTaiBan || 1);
+  req.input('GiaBan', sql.Decimal(10,2), payload.GiaBan || 0);
+  req.input('NamXuatBan', sql.Int, payload.NamXuatBan || 2025);
+  req.input('MaTG', sql.Int, payload.MaTG); 
   req.input('MaNXB', sql.Int, payload.MaNXB);
-  req.input('MaTG', sql.Int, payload.MaTG);
-  req.input('GiaBia', sql.Decimal(12,2), payload.GiaBia || 0);
-  req.input('SoLuong', sql.Int, payload.SoLuong || 0);
-  req.input('MoTa', sql.NVarChar(sql.MAX), payload.MoTa || null);
-  req.input('HinhAnh', sql.NVarChar(500), payload.HinhAnh || null);
-
+  req.input('MaLinhVuc', sql.Int, payload.MaLinhVuc);
+  req.input('MaLoaiSach', sql.Int, payload.MaLoaiSach);
   await req.query(model.SQL_UPDATE_SACH);
   return { success: true };
 };
+
 
 export const deleteSach = async (id) => {
   const pool = await getPool();
