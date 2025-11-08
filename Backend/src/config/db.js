@@ -1,32 +1,28 @@
-import sql from "mssql";
+import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 dotenv.config();
 
-const config = {
-  user: process.env.DB_USER || "sa",
+const pool = mysql.createPool({
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
   password: process.env.DB_PASS || "12345",
-  server: process.env.DB_SERVER || "DUY",
   database: process.env.DB_NAME || "BOOKSTORE",
-  port: 1433,
-  options: {
-    encrypt: false,
-    trustServerCertificate: true,
-  },
-};
-
-let pool;
+  port: 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+});
 
 export const getPool = async () => {
   try {
-    if (!pool) {
-      pool = await new sql.ConnectionPool(config).connect();
-      console.log("✅ SQL Server connected");
-    }
+    const conn = await pool.getConnection();
+    console.log("✅ MySQL connected");
+    conn.release();
     return pool;
   } catch (err) {
-    console.error("❌ Database connection failed:", err);
+    console.error("❌ Database connection failed:", err.message);
     throw err;
   }
 };
 
-export { sql };
+export default pool;
