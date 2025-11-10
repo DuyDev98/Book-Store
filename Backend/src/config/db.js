@@ -25,4 +25,4 @@ export const getPool = async () => {
   }
 };
 
-export default pool;
+export { mysql };

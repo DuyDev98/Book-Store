@@ -1,26 +1,29 @@
-let index = 0;
-const slides = document.querySelectorAll('.banner-slide img');
-const total = slides.length;
-const next = document.querySelector('.next');
-const prev = document.querySelector('.prev');
+async function loadBooks() {
+  try {
+    const response = await fetch('/api/sach'); // Gọi tới backend
+    const books = await response.json();
 
-function showSlide(i) {
-  slides.forEach((slide, idx) => {
-    slide.classList.remove('active');
-    if (idx === i) slide.classList.add('active');
-  });
+    const list = document.getElementById('book-list');
+    list.innerHTML = books.map(b => `
+      <div class="col">
+        <div class="card h-100 book-card position-relative">
+          <div class="badge-corner"><span class="badge bg-danger">Mới</span></div>
+        <img src="/images/${b.AnhBia || 'default.png'}" class="card-img-top" alt="${b.TenSach}">
+          <div class="card-body">
+            <h6 class="card-title">${b.TenSach}</h6>
+            <p class="price mb-0">
+              <span class="sale">${Number(b.GiaBan).toLocaleString()}đ</span><br>
+              <small class="text-muted">${b.NamXuatBan}</small>
+            </p>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch (err) {
+    console.error('❌ Lỗi khi tải sách:', err);
+    document.getElementById('book-list').innerHTML =
+      `<p class="text-danger">Không thể tải danh sách sách.</p>`;
+  }
 }
 
-function nextSlide() {
-  index = (index + 1) % total;
-  showSlide(index);
-}
-
-function prevSlide() {
-  index = (index - 1 + total) % total;
-  showSlide(index);
-}
-
-next.addEventListener('click', nextSlide);
-prev.addEventListener('click', prevSlide);
-setInterval(nextSlide, 4000); // Tự động chuyển mỗi 4 giây
+window.addEventListener('DOMContentLoaded', loadBooks);

@@ -21,4 +21,34 @@ const createUser = (newUser) => {
     }
   });
 };
-export default { createUser };
+const loginUser = (userLogin) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { Username, Password } = userLogin;
+      const user = await User.findOne({ Username });
+      if (!user) {
+        return resolve({
+          status: "ERR",
+          message: "Tài khoản không tồn tại",
+        });
+      }
+      if (user.Password !== Password) {
+        return resolve({
+          status: "ERR",
+          message: "Mật khẩu không chính xác",
+        });
+      }
+      resolve({
+        status: "OK",
+        message: "Đăng nhập thành công",
+        data: {
+          Username: user.Username,
+          VaiTro: user.VaiTro,
+        },
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+export default { createUser, loginUser };

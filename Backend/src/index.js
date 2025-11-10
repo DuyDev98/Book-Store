@@ -36,7 +36,7 @@ app.get(/.*/, (req, res) => {
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, async () => {
   try {
-    await getPool();
+    await getPool(); // Kiểm tra kết nối MySQL
     console.log(`✅ Server chạy tại http://localhost:${PORT}`);
   } catch (error) {
     console.error("❌ Kết nối DB thất bại:", error);
