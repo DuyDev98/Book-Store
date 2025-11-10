@@ -1,13 +1,17 @@
-import mysql from "mysql2";
+// ✅ Kết nối MySQL dùng Promise (hỗ trợ async/await)
+import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 dotenv.config();
 
 const config = {
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',  // Default user for MySQL
-  password: process.env.DB_PASS || 'haduybg81',  // Your password here
-  database: process.env.DB_NAME || 'bookstore',  // Your DB name
-  port: process.env.DB_PORT || 3306,  // Default MySQL port is 3306
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASS || "haduybg81",
+  database: process.env.DB_NAME || "bookstore",
+  port: process.env.DB_PORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 };
 
 let pool;
@@ -15,8 +19,8 @@ let pool;
 export const getPool = async () => {
   try {
     if (!pool) {
-      pool = mysql.createPool(config); // Use mysql2 createPool method
-      console.log("✅ MySQL connected");
+      pool = mysql.createPool(config);
+      console.log("✅ MySQL connected successfully!");
     }
     return pool;
   } catch (err) {
@@ -24,5 +28,3 @@ export const getPool = async () => {
     throw err;
   }
 };
-
-export { mysql };

@@ -3,38 +3,43 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-import sachRouter from "./router/sach.router.js"; // route sách
-import { getPool } from "./config/db.js"; // kết nối MySQL
+
+import danhmucRouter from "./router/danhmuc.router.js";
+import sachRouter from "./router/sach.router.js";
+import { getPool } from "./config/db.js";
+import cartRouter from "./router/cart.router.js";
 
 dotenv.config();
-const app = express();
 
-// Middleware
+const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Lấy đường dẫn tuyệt đối để dùng cho static
+// --- API Routes ---
+app.use("/api/danhmuc", danhmucRouter);
+app.use("/api/sach", sachRouter);
+
+// --- Serve frontend static (public folder) ---
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static files (Frontend)
-app.use(express.static(path.join(__dirname, "./public")));
+// ✅ Trỏ đến thư mục public trong src
+app.use(express.static(path.join(__dirname, "public")));
 
-// API backend
-app.use("/api/sach", sachRouter);
-
-// Catch-all cho frontend (nếu người dùng reload trang)
-app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "./public/index.html"));
+// --- Route mặc định: gửi index.html ---
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Start server
+app.use("/api/cart", cartRouter);
+
+// --- Khởi động server ---
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, async () => {
   try {
-    await getPool(); // Kiểm tra kết nối MySQL
-    console.log(`✅ Server chạy tại http://localhost:${PORT}`);
+    await getPool();
+    console.log(`✅ Server đang chạy tại: http://localhost:${PORT}`);
   } catch (error) {
-    console.error("❌ Kết nối DB thất bại:", error);
+    console.error("❌ Lỗi kết nối Database:", error);
   }
 });
