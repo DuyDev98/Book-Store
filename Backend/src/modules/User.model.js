@@ -6,7 +6,7 @@ const User = {
     const pool = await getPool();
 
     const query = `
-      INSERT INTO User (Username, Password, VaiTro)
+      INSERT INTO taikhoan (Username, Password, VaiTro)
       VALUES (?, ?, ?)
     `;
 
@@ -18,7 +18,7 @@ const User = {
   // ✅ Tìm user theo Username (thay cho findOne của Mongo)
   async findOne({ Username }) {
     const pool = await getPool();
-    const [rows] = await pool.query("SELECT * FROM User WHERE Username = ?", [
+    const [rows] = await pool.query("SELECT * FROM taikhoan WHERE Username = ?", [
       Username,
     ]);
 
