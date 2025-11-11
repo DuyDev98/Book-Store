@@ -3,35 +3,50 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+import bodyParser from "body-parser";
 
+// Routers
 import danhmucRouter from "./router/danhmuc.router.js";
 import sachRouter from "./router/sach.router.js";
-import { getPool } from "./config/db.js";
 import cartRouter from "./router/cart.router.js";
+import UserRouter from "./router/UserRouter.js";
 
+// Database
+import { getPool } from "./config/db.js";
+
+// --- Cấu hình môi trường ---
 dotenv.config();
 
+// --- Khởi tạo app ---
 const app = express();
+
+// --- Middleware ---
 app.use(cors());
+app.use(bodyParser.json());
 app.use(express.json());
 
-// --- API Routes ---
-app.use("/api/danhmuc", danhmucRouter);
-app.use("/api/sach", sachRouter);
-
-// --- Serve frontend static (public folder) ---
+// --- Thiết lập đường dẫn tuyệt đối ---
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ✅ Trỏ đến thư mục public trong src
+// --- Public folder (chứa file tĩnh frontend) ---
 app.use(express.static(path.join(__dirname, "public")));
 
-// --- Route mặc định: gửi index.html ---
+// --- API routes ---
+app.use("/api/danhmuc", danhmucRouter);
+app.use("/api/sach", sachRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/user", UserRouter);
+
+// --- Route mặc định (trang chủ) ---
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.use("/api/cart", cartRouter);
+// --- Catch-all route (cho các route frontend như /about, /product/1, ...) ---
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 // --- Khởi động server ---
 const PORT = process.env.PORT || 5001;
