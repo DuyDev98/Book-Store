@@ -7,6 +7,7 @@ import sachRouter from "./router/sach.router.js"; // route sách
 import { getPool } from "./config/db.js"; // kết nối SQL
 import bodyParser from "body-parser";
 import UserRouter from "./router/UserRouter.js";
+import khRouter from "./router/khachhang.router.js";
 
 dotenv.config();
 const app = express();
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, "./public")));
 // API backend
 app.use("/api/user", UserRouter);
 app.use("/api/sach", sachRouter);
+app.use("/api/khachhang", khRouter);
 
 // Catch-all cho frontend (nếu người dùng reload trang)
 app.get(/.*/, (req, res) => {

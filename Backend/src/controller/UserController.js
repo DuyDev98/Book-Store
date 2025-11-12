@@ -2,23 +2,26 @@ import UserServices from "../services/UserServices.js";
 
 const createUser = async (req, res) => {
   try {
-    console.log(req.body);
-    const { Username, Password, VaiTro } = req.body;
-    if (!Username || !Password || !VaiTro) {
-      return res.status(200).json({
-        status: "ERR",
-        message: "the input is required",
-      });
-    } else {
-      const response = await UserServices.createUser(req.body);
-      return res.status(200).json(response);
+    console.log("User data:", req.body);
+    const { Username, PassWord, VaiTro } = req.body;
+
+    if (!Username || !PassWord || !VaiTro) {
+      return res
+        .status(200)
+        .json({ status: "ERR", message: "Nhập đầy đủ thông tin tài khoản" });
     }
-  } catch (e) {
-    return res.status(500).json({
-      message: e.message,
+
+    const response = await UserServices.createUser({
+      Username,
+      PassWord,
+      VaiTro,
     });
+    return res.status(200).json(response);
+  } catch (e) {
+    return res.status(500).json({ message: e.message });
   }
 };
+
 const loginUser = async (req, res) => {
   try {
     console.log(req.body);
