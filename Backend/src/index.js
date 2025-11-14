@@ -3,14 +3,18 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+import khRouter from "./router/khachhang.router.js";
 import bodyParser from "body-parser";
 
+
 // Routers
+
 import danhmucRouter from "./router/danhmuc.router.js";
 import sachRouter from "./router/sach.router.js";
 import UserRouter from "./router/UserRouter.js";
 import cartRouter from "./router/cart.router.js";
 import cartDetailRouter from "./router/cartDetail.router.js";
+
 // Database
 import { getPool } from "./config/db.js";
 
@@ -38,6 +42,7 @@ app.use("/api/sach", sachRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/user", UserRouter);
 app.use("/api/cart-detail", cartDetailRouter);
+app.use("/api/khachhang", khRouter);
 
 // --- Route mặc định (trang chủ) ---
 app.get("/", (req, res) => {

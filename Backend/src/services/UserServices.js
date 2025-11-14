@@ -1,21 +1,19 @@
 import User from "../modules/User.model.js";
 
-const createUser = (newUser) => {
+const createUser = (userData) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const createdUser = await User.create(newUser);
-      if (createdUser) {
-        resolve({
-          status: "OK",
-          message: "SUCCESS",
-          data: createdUser,
-        });
-      } else {
-        resolve({
-          status: "ERR",
-          message: "Không thể tạo người dùng (Lỗi validation hoặc DB)",
-        });
+      const existingUser = await User.findOne(userData.Username);
+      if (existingUser) {
+        return resolve({ status: "ERR", message: "Tài khoản đã tồn tại" });
       }
+
+      const createdUser = await User.create(userData);
+      resolve({
+        status: "OK",
+        message: "Tạo người dùng thành công",
+        data: createdUser,
+      });
     } catch (e) {
       reject(e);
     }
@@ -24,15 +22,15 @@ const createUser = (newUser) => {
 const loginUser = (userLogin) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { Username, Password } = userLogin;
-      const user = await User.findOne({ Username });
+      const { Username, PassWord } = userLogin; // Đúng tên trường
+      const user = await User.findOne(Username); // Truyền đúng kiểu chuỗi
       if (!user) {
         return resolve({
           status: "ERR",
           message: "Tài khoản không tồn tại",
         });
       }
-      if (user.Password !== Password) {
+      if (user.PassWord !== PassWord) {
         return resolve({
           status: "ERR",
           message: "Mật khẩu không chính xác",
@@ -51,4 +49,5 @@ const loginUser = (userLogin) => {
     }
   });
 };
+
 export default { createUser, loginUser };
