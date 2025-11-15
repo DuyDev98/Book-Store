@@ -33,3 +33,13 @@ export const SQL_UPDATE_SACH = `
 export const SQL_DELETE_SACH = `
   DELETE FROM sach WHERE MaSach=?;
 `;
+export const SQL_GET_SACH_BY_DANHMUC = `
+  SELECT 
+    s.MaSach, s.TenSach, s.AnhBia, s.LanTaiBan, s.GiaBan, s.NamXuatBan,
+    s.MaTG, s.MaNXB, s.MaLoaiSach, s.MaDanhMuc,
+    d.TenDanhMuc
+  FROM sach s
+  LEFT JOIN danhmuc d ON s.MaDanhMuc = d.MaDanhMuc
+  WHERE s.MaLoaiSach = ?;  -- Lọc theo MaLoaiSach thay vì MaDanhMuc
+`;
+

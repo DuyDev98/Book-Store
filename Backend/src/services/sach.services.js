@@ -56,3 +56,9 @@ export const deleteSach = async (id) => {
   await pool.query(model.SQL_DELETE_SACH, [id]);
   return { success: true };
 };
+export const getSachByDanhMuc = async (maLoaiSach) => {
+  const pool = await getPool();
+  const [rows] = await pool.query(model.SQL_GET_SACH_BY_DANHMUC, [maLoaiSach]);
+  return rows;
+};
+

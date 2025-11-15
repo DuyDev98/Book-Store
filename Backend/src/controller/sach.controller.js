@@ -47,4 +47,19 @@ export const remove = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+export const getBooksByCategory = async (req, res) => {
+  const maLoaiSach = req.params.id;
+
+  try {
+    const data = await sachService.getSachByDanhMuc(maLoaiSach);
+
+    res.json({
+      success: true,
+      data: data
+    });
+
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
 

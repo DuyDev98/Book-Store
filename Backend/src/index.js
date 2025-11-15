@@ -35,6 +35,7 @@ const __dirname = path.dirname(__filename);
 
 // --- Public folder (chứa file tĩnh frontend) ---
 app.use(express.static(path.join(__dirname, "public")));
+ 
 
 // --- API routes ---
 app.use("/api/danhmuc", danhmucRouter);

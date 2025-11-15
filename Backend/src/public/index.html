@@ -2,78 +2,68 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />   
-  <title>bookstore.com</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BookStore.com</title>
 
-  <!-- Bootstrap & Icon -->
+  <!-- FAVICON -->
+  <link rel="icon" href="/images/logo.png"/>
+
+  <!-- BOOTSTRAP -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
 
-  <!--  Favicon & CSS -->
-  <link rel="icon" type="image/png" href="./public/logo.png" />
-  <link rel="stylesheet" href="style.css" />
+  <!-- CSS CHÍNH -->
+  <link rel="stylesheet" href="/style.css" />
 </head>
 
-<body style="background-color:#fdf8f8;">
-  <!-- Header -->
+<body>
+
+  <!-- HEADER -->
   <div id="header"></div>
 
-  <!-- Layout chính -->
-  <div class="container-fluid main-layout mt-3">
+  <div class="container-fluid main-layout">
     <div class="row">
-      <!-- Sidebar -->
-      <aside id="sidebar" class="col-md-2 mb-3"></aside>
 
-      <!-- Nội dung chính -->
+      <!-- SIDEBAR -->
+      <aside id="sidebar" class="col-md-2"></aside>
+
+      <!-- MAIN CONTENT -->
       <main class="col-md-10">
-        <div id="banner" class="mb-4"></div>
-        <div id="book-list"></div>
+
+        <!-- BANNER -->
+        <div id="banner"></div>
+
+        <!-- DANH SÁCH SÁCH -->
+        <section class="mb-5 section-box">
+          <h5 class="section-title mb-3">📚 Danh sách sách</h5>
+          <div id="book-list" class="row row-cols-2 row-cols-md-4 g-4"></div>
+        </section>
+
       </main>
     </div>
   </div>
 
-  <!-- Footer -->
-  <div id="footer" class="mt-4"></div>
+  <!-- FOOTER -->
+  <div id="footer"></div> 
 
-  <!-- Bootstrap Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- SCRIPT API -->
+  <script src="/script.js"></script>
 
-  <!-- ✅ JavaScript tự động load component -->
+  <!-- LOAD COMPONENTS -->
   <script>
     async function loadComponent(id, file) {
-      const pathDepth = window.location.pathname.split("/").length;
-      let path = `components/${file}`;
-      if (pathDepth > 3) path = `../../components/${file}`;
-
-      try {
-        const res = await fetch(path);
-        if (res.ok) {
-          document.getElementById(id).innerHTML = await res.text();
-        } else {
-          console.error(`Không thể tải ${file}`);
-        }
-      } catch (err) {
-        console.error(`Lỗi tải ${file}:`, err);
+      const res = await fetch(`/components/${file}`);
+      if (res.ok) {
+        document.getElementById(id).innerHTML = await res.text();
+      } else {
+        console.error("Không thể tải component:", file);
       }
     }
 
-    // Load các phần cố định
     loadComponent("header", "header.html");
     loadComponent("sidebar", "sidebar.html");
     loadComponent("banner", "banner.html");
-    loadComponent("book-list", "book-list.html");
     loadComponent("footer", "footer.html");
-
-    // ✅ Favicon tự động hoạt động với mọi trang (kể cả trang con)
-    (function () {
-      const link = document.createElement("link");
-      link.rel = "icon";
-      link.type = "image/png";
-      const depth = window.location.pathname.split("/").length;
-      link.href = depth > 3 ? "../../public/logo.png" : "./public/logo.png";
-      document.head.appendChild(link);
-    })();
   </script>
+
 </body>
 </html>
-<script src="./script.js"></script>
