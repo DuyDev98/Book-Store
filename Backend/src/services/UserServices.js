@@ -1,41 +1,94 @@
 import User from "../modules/User.model.js";
+import bcrypt from "bcrypt";
 
-const createUser = (userData) => {
+const createUser = ({ Username, PassWord }) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const existingUser = await User.findOne(userData.Username);
+      // Kiểm tra user tồn tại
+      const existingUser = await User.findOne(Username);
       if (existingUser) {
-        return resolve({ status: "ERR", message: "Tài khoản đã tồn tại" });
+        return resolve({
+          status: "ERR",
+          message: "Tài khoản đã tồn tại",
+        });
       }
 
-      const createdUser = await User.create(userData);
+      // Hash mật khẩu
+      const hashedPassword = await bcrypt.hash(PassWord, 10);
+
+      // Tạo user
+      const newUser = await User.create({
+        Username,
+        PassWord: hashedPassword,
+      });
+
       resolve({
         status: "OK",
-        message: "Tạo người dùng thành công",
-        data: createdUser,
+        message: "Tạo tài khoản thành công",
+        data: newUser,
       });
-    } catch (e) {
-      reject(e);
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+const createAdmin = ({ Username, PassWord }) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // Check tồn tại
+      const existingAdmin = await User.findOne(Username);
+      if (existingAdmin) {
+        return resolve({
+          status: "ERR",
+          message: "Tài khoản đã tồn tại",
+        });
+      }
+
+      // Hash pass
+      const hashedPassword = await bcrypt.hash(PassWord, 10);
+
+      // Tạo admin (VaiTro ép = Admin)
+      const newAdmin = await User.create({
+        Username,
+        PassWord: hashedPassword,
+        VaiTro: "Admin",
+      });
+
+      resolve({
+        status: "OK",
+        message: "Tạo Admin thành công",
+        data: newAdmin,
+      });
+    } catch (err) {
+      reject(err);
     }
   });
 };
 const loginUser = (userLogin) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { Username, PassWord } = userLogin; // Đúng tên trường
-      const user = await User.findOne(Username); // Truyền đúng kiểu chuỗi
+      const { Username, PassWord } = userLogin;
+
+      // Tìm user theo Username
+      const user = await User.findOne(Username);
       if (!user) {
         return resolve({
           status: "ERR",
           message: "Tài khoản không tồn tại",
         });
       }
-      if (user.PassWord !== PassWord) {
+
+      // So sánh mật khẩu nhập vào với mật khẩu hash trong DB
+      const isMatch = await bcrypt.compare(PassWord, user.PassWord);
+      if (!isMatch) {
         return resolve({
           status: "ERR",
           message: "Mật khẩu không chính xác",
         });
       }
+
+      // Thành công
       resolve({
         status: "OK",
         message: "Đăng nhập thành công",
@@ -50,4 +103,4 @@ const loginUser = (userLogin) => {
   });
 };
 
-export default { createUser, loginUser };
+export default { createUser, loginUser, createAdmin };
