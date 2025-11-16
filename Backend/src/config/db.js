@@ -4,7 +4,7 @@ dotenv.config();
 
 const config = {
   user: process.env.DB_USER || 'sa',
-  password: process.env.DB_PASS || 'haduybg81',
+  password: process.env.DB_PASS || '123456',
   server: process.env.DB_SERVER || 'localhost',
   database: process.env.DB_NAME || 'BOOKSTORE',
   port: 1433,
