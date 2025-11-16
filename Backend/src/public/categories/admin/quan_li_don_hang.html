@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Bán Sách</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            /* Thêm padding ở trên cùng để nội dung không bị Navbar che khuất */
+            padding-top: 56px; 
+        }
+
+        /* Tùy chỉnh cho Sidebar */
+        .sidebar {
+            position: fixed; /* Cố định sidebar */
+            top: 56px;       /* Ngay dưới Navbar */
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            padding: 20px 0;
+            overflow-x: hidden;
+            overflow-y: auto; /* Cho phép cuộn nếu menu quá dài */
+            background-color: #f8f9fa; /* Màu nền xám nhạt */
+            border-right: 1px solid #dee2e6;
+        }
+
+        /* Căn lề cho Nội dung chính */
+        .main-content {
+            /* Đẩy nội dung sang phải một khoảng bằng chiều rộng Sidebar */
+            margin-left: 240px; /* Cần khớp với chiều rộng .sidebar */
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Admin Bán Sách</a>
+
+            <div class="d-flex ms-auto">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> Chào, Admin!
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Thông tin cá nhân</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar" style="width: 240px;">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_sach.html">
+                            <i class="bi bi-book"></i> Quản lý Sách
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_loai_sach.html">
+                            <i class="bi bi-tags"></i> Quản lý Loại sách
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_nxb.html">
+                            <i class="bi bi-building"></i> Quản lý NXB
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_don_hang.html">
+                            <i class="bi bi-cart"></i> Quản lý Đơn hàng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_hoi_vien.html">
+                            <i class="bi bi-people"></i> Quản lý Hội viên
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_binh_luan.html">
+                            <i class="bi bi-chat-dots"></i> Quản lý Bình luận
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_phan_hoi.html">
+                            <i class="bi bi-envelope"></i> Quản lý Phản hồi
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Quản lý Đơn hàng</h1>
+    </div>
+
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="pill" type="button">
+                Tất cả <span class="badge bg-secondary">15</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="pill" type="button">
+                Chờ xác nhận <span class="badge bg-warning text-dark">3</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="pill" type="button">
+                Đang xử lý <span class="badge bg-info">2</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="pill" type="button">
+                Đang giao <span class="badge bg-primary">5</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="pill" type="button">
+                Đã giao <span class="badge bg-success">4</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="pill" type="button">
+                Đã hủy <span class="badge bg-danger">1</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" style="width: 10%;">Mã ĐH</th>
+                            <th scope="col" style="width: 20%;">Khách hàng</th>
+                            <th scope="col" style="width: 15%;">Ngày đặt</th>
+                            <th scope="col" style="width: 15%;">Tổng tiền</th>
+                            <th scope="col" class="text-center" style="width: 20%;">Trạng thái</th>
+                            <th scope="col" class="text-center" style="width: 20%;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>#12034</strong></td>
+                            <td>Nguyễn Văn An</td>
+                            <td>04/11/2025</td>
+                            <td>229,000đ</td>
+                            <td class="text-center">
+                                <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#orderModal" title="Xem chi tiết">
+                                    <i class="bi bi-eye-fill"></i> Xem
+                                </button>
+                                <div class="btn-group btn-group-sm ms-1">
+                                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Đổi trạng thái
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">Xác nhận đơn</a></li>
+                                        <li><a class="dropdown-item" href="#">Hủy đơn hàng</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>#12033</strong></td>
+                            <td>Trần Thị Bích</td>
+                            <td>03/11/2025</td>
+                            <td>79,000đ</td>
+                            <td class="text-center">
+                                <span class="badge bg-info">Đang xử lý</span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#orderModal" title="Xem chi tiết">
+                                    <i class="bi bi-eye-fill"></i> Xem
+                                </button>
+                                <div class="btn-group btn-group-sm ms-1">
+                                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Đổi trạng thái
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">Chuyển sang "Đang giao"</a></li>
+                                        <li><a class="dropdown-item" href="#">Hủy đơn hàng</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>#12032</strong></td>
+                            <td>Lê Minh Hoàng</td>
+                            <td>03/11/2025</td>
+                            <td>510,000đ</td>
+                            <td class="text-center">
+                                <span class="badge bg-primary">Đang giao</span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#orderModal" title="Xem chi tiết">
+                                    <i class="bi bi-eye-fill"></i> Xem
+                                </button>
+                                <div class="btn-group btn-group-sm ms-1">
+                                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Đổi trạng thái
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">Xác nhận "Đã giao"</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>#12031</strong></td>
+                            <td>Phạm Thị Dung</td>
+                            <td>01/11/2025</td>
+                            <td>120,000đ</td>
+                            <td class="text-center">
+                                <span class="badge bg-success">Đã giao</span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#orderModal" title="Xem chi tiết">
+                                    <i class="bi bi-eye-fill"></i> Xem
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>#12030</strong></td>
+                            <td>Vũ Tuấn Kiệt</td>
+                            <td>01/11/2025</td>
+                            <td>99,000đ</td>
+                            <td class="text-center">
+                                <span class="badge bg-danger">Đã hủy</span>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#orderModal" title="Xem chi tiết">
+                                    <i class="bi bi-eye-fill"></i> Xem
+                                </button>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            
+            <nav aria-label="Phân trang danh sách" class="d-flex justify-content-center mt-3">
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Trang trước</a>
+                    </li>
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Trang sau</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderModalLabel">Chi tiết Đơn hàng: #12034</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Thông tin Khách hàng</h5>
+                        <p class="mb-1"><strong>Tên:</strong> Nguyễn Văn An</p>
+                        <p class="mb-1"><strong>Email:</strong> nguyenvana@email.com</p>
+                        <p class="mb-1"><strong>SĐT:</strong> 0901 234 567</p>
+                        <hr>
+                        <h5>Thông tin Giao hàng</h5>
+                        <p class="mb-1"><strong>Địa chỉ:</strong> 123 Đường ABC, Phường 1, Quận 2, TP. Hồ Chí Minh</p>
+                        <p class="mb-1"><strong>Ghi chú:</strong> Giao hàng giờ hành chính.</p>
+                        <p class="mb-1"><strong>Trạng thái:</strong> <span class="badge bg-warning text-dark">Chờ xác nhận</span></p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h5>Sản phẩm trong đơn hàng</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="my-0">Nhà Giả Kim</h6>
+                                    <small class="text-muted">Đơn giá: 79,000đ</small>
+                                </div>
+                                <span class="text-muted">SL: 1</span>
+                                <span class_S"text-muted">79,000đ</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="my-0">Đắc Nhân Tâm</h6>
+                                    <small class="text-muted">Đơn giá: 99,000đ</small>
+                                </div>
+                                <span class="text-muted">SL: 1</span>
+                                <span class="text-muted">99,000đ</span>
+                            </li>
+                        </ul>
+                        <hr>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Tạm tính</span>
+                                <strong>178,000đ</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Phí vận chuyển</span>
+                                <strong>51,000đ</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between list-group-item-secondary">
+                                <h5 class="my-0">Tổng cộng</h5>
+                                <h5 class="my-0">229,000đ</h5>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-danger">Hủy Đơn hàng</button>
+                <button type="button" class="btn btn-success">Xác nhận Đơn hàng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="bookModal" tabindex="-1" aria-labelledby="bookModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered"> <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookModalLabel">Thông tin Sách</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="bookForm">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="bookTitle" class="form-label">Tên sách</label>
+                                <input type="text" class="form-control" id="bookTitle" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="bookAuthor" class="form-label">Tác giả</label>
+                                <input type="text" class="form-control" id="bookAuthor" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="bookCategory" class="form-label">Loại sách</label>
+                                        <select class="form-select" id="bookCategory" required>
+                                            <option value="">Chọn loại sách...</option>
+                                            <option value="1">Văn học</option>
+                                            <option value="2">Kinh tế</option>
+                                            <option value="3">Thiếu nhi</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="bookPublisher" class="form-label">Nhà xuất bản</label>
+                                        <select class="form-select" id="bookPublisher">
+                                            <option value="">Chọn NXB...</option>
+                                            <option value="1">NXB Kim Đồng</option>
+                                            <option value="2">NXB Trẻ</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="bookPrice" class="form-label">Giá bán</label>
+                                        <input type="number" class="form-control" id="bookPrice" required>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="bookStock" class="form-label">Số lượng tồn kho</label>
+                                        <input type="number" class="form-control" id="bookStock" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="bookCover" class="form-label">Ảnh bìa</label>
+                                <img src="https://via.placeholder.com/150x200" id="coverPreview" class="img-thumbnail mb-2" alt="Xem trước ảnh bìa" style="width: 100%; object-fit: contain;">
+                                <input class="form-control" type="file" id="bookCover">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="bookDescription" class="form-label">Mô tả</label>
+                        <textarea class="form-control" id="bookDescription" rows="5"></textarea>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="saveBookButton">Lưu lại</button>
+            </div>
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

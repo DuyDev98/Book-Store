@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Bán Sách</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            /* Thêm padding ở trên cùng để nội dung không bị Navbar che khuất */
+            padding-top: 56px; 
+        }
+
+        /* Tùy chỉnh cho Sidebar */
+        .sidebar {
+            position: fixed; /* Cố định sidebar */
+            top: 56px;       /* Ngay dưới Navbar */
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            padding: 20px 0;
+            overflow-x: hidden;
+            overflow-y: auto; /* Cho phép cuộn nếu menu quá dài */
+            background-color: #f8f9fa; /* Màu nền xám nhạt */
+            border-right: 1px solid #dee2e6;
+        }
+
+        /* Căn lề cho Nội dung chính */
+        .main-content {
+            /* Đẩy nội dung sang phải một khoảng bằng chiều rộng Sidebar */
+            margin-left: 240px; /* Cần khớp với chiều rộng .sidebar */
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Admin Bán Sách</a>
+
+            <div class="d-flex ms-auto">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> Chào, Admin!
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Thông tin cá nhân</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar" style="width: 240px;">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_sach.html">
+                            <i class="bi bi-book"></i> Quản lý Sách
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_hoi_vien.html">
+                            <i class="bi bi-tags"></i> Quản lý Loại sách
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_nxb.html">
+                            <i class="bi bi-building"></i> Quản lý NXB
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_don_hang.html">
+                            <i class="bi bi-cart"></i> Quản lý Đơn hàng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_hoi_vien.html">
+                            <i class="bi bi-people"></i> Quản lý Hội viên
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_binh_luan.html">
+                            <i class="bi bi-chat-dots"></i> Quản lý Bình luận
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_phan_hoi.html">
+                            <i class="bi bi-envelope"></i> Quản lý Phản hồi
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Quản lý Hội viên</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal">
+                <i class="bi bi-person-plus-fill"></i> Thêm Hội viên
+            </button>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Tìm kiếm theo tên, email, SĐT...">
+                        <button class="btn btn-outline-secondary" type="button">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select">
+                        <option selected>Lọc theo vai trò...</option>
+                        <option value="admin">Admin</option>
+                        <option value="member">Hội viên</option>
+                        <option value="staff">Nhân viên</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select">
+                        <option selected>Lọc theo trạng thái...</option>
+                        <option value="active">Đang hoạt động</option>
+                        <option value="blocked">Đã khóa</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="text-center" style="width: 5%;">
+                                <input class="form-check-input" type="checkbox" value="">
+                            </th>
+                            <th scope="col" style="width: 30%;">Hội viên</th>
+                            <th scope="col" style="width: 15%;">Số điện thoại</th>
+                            <th scope="col" class="text-center" style="width: 10%;">Vai trò</th>
+                            <th scope="col" class="text-center" style="width: 15%;">Trạng thái</th>
+                            <th scope="col" style="width: 15%;">Ngày tham gia</th>
+                            <th scope="col" class="text-center" style="width: 10%;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-center">
+                                <input class="form-check-input" type="checkbox" value="">
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://via.placeholder.com/40" class="rounded-circle" alt="Avatar" width="40" height="40">
+                                    <div class="ms-2">
+                                        <div class="fw-bold">Admin Quản trị</div>
+                                        <div class="text-muted small">admin@shop.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>0901 111 222</td>
+                            <td class="text-center">
+                                <span class="badge bg-primary">Admin</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-success">Hoạt động</span>
+                            </td>
+                            <td>01/01/2025</td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#userModal" title="Sửa">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" disabled title="Khóa">
+                                        <i class="bi bi-lock-fill"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="text-center">
+                                <input class="form-check-input" type="checkbox" value="">
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://via.placeholder.com/40" class="rounded-circle" alt="Avatar" width="40" height="40">
+                                    <div class="ms-2">
+                                        <div class="fw-bold">Nguyễn Văn An</div>
+                                        <div class="text-muted small">an.nguyen@gmail.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>0901 234 567</td>
+                            <td class="text-center">
+                                <span class="badge bg-secondary">Hội viên</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-success">Hoạt động</span>
+                            </td>
+                            <td>15/03/2025</td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#userModal" title="Sửa">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger" title="Khóa">
+                                        <i class="bi bi-lock-fill"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="text-center">
+                                <input class="form-check-input" type="checkbox" value="">
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://via.placeholder.com/40" class="rounded-circle" alt="Avatar" width="40" height="40">
+                                    <div class="ms-2">
+                                        <div class="fw-bold">Trần Thị Bích</div>
+                                        <div class="text-muted small">bich.tran@gmail.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>0988 888 999</td>
+                            <td class="text-center">
+                                <span class="badge bg-secondary">Hội viên</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-danger">Đã khóa</span>
+                            </td>
+                            <td>20/05/2025</td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#userModal" title="Sửa">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-success" title="Mở khóa">
+                                        <i class="bi bi-unlock-fill"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+            
+            <nav aria-label="Phân trang danh sách" class="d-flex justify-content-center mt-3">
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Trang trước</a>
+                    </li>
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Trang sau</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userModalLabel">Thông tin Hội viên</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="userForm">
+                    <div class="mb-3">
+                        <label for="userName" class="form-label">Tên hội viên</label>
+                        <input type="text" class="form-control" id="userName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="userEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userPhone" class="form-label">Số điện thoại</label>
+                        <input type="tel" class="form-control" id="userPhone">
+                    </div>
+                    <div class="mb-3">
+                        <label for="userPassword" class="form-label">Mật khẩu</label>
+                        <input type="password" class="form-control" id="userPassword" aria-describedby="passwordHelp">
+                        <div id="passwordHelp" class="form-text">Bỏ trống nếu bạn không muốn thay đổi mật khẩu.</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label for="userRole" class="form-label">Vai trò</label>
+                                <select class="form-select" id="userRole" required>
+                                    <option value="member">Hội viên</option>
+                                    <option value="staff">Nhân viên</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                             <div class="mb-3">
+                                <label for="userStatus" class="form-label">Trạng thái</label>
+                                <select class="form-select" id="userStatus" required>
+                                    <option value="active">Hoạt động</option>
+                                    <option value="blocked">Khóa</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="mb-3">
+                        <label for="userAvatar" class="form-label">Ảnh đại diện</label>
+                        <input class="form-control" type="file" id="userAvatar">
+                        <img src="https://via.placeholder.com/100" id="avatarPreview" class="img-thumbnail mt-2" alt="Xem trước" style="width: 100px; height: 100px; object-fit: cover;">
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="saveUserButton">Lưu lại</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderModalLabel">Chi tiết Đơn hàng: #12034</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Thông tin Khách hàng</h5>
+                        <p class="mb-1"><strong>Tên:</strong> Nguyễn Văn An</p>
+                        <p class="mb-1"><strong>Email:</strong> nguyenvana@email.com</p>
+                        <p class="mb-1"><strong>SĐT:</strong> 0901 234 567</p>
+                        <hr>
+                        <h5>Thông tin Giao hàng</h5>
+                        <p class="mb-1"><strong>Địa chỉ:</strong> 123 Đường ABC, Phường 1, Quận 2, TP. Hồ Chí Minh</p>
+                        <p class="mb-1"><strong>Ghi chú:</strong> Giao hàng giờ hành chính.</p>
+                        <p class="mb-1"><strong>Trạng thái:</strong> <span class="badge bg-warning text-dark">Chờ xác nhận</span></p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h5>Sản phẩm trong đơn hàng</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="my-0">Nhà Giả Kim</h6>
+                                    <small class="text-muted">Đơn giá: 79,000đ</small>
+                                </div>
+                                <span class="text-muted">SL: 1</span>
+                                <span class_S"text-muted">79,000đ</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="my-0">Đắc Nhân Tâm</h6>
+                                    <small class="text-muted">Đơn giá: 99,000đ</small>
+                                </div>
+                                <span class="text-muted">SL: 1</span>
+                                <span class="text-muted">99,000đ</span>
+                            </li>
+                        </ul>
+                        <hr>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Tạm tính</span>
+                                <strong>178,000đ</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Phí vận chuyển</span>
+                                <strong>51,000đ</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between list-group-item-secondary">
+                                <h5 class="my-0">Tổng cộng</h5>
+                                <h5 class="my-0">229,000đ</h5>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-danger">Hủy Đơn hàng</button>
+                <button type="button" class="btn btn-success">Xác nhận Đơn hàng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="bookModal" tabindex="-1" aria-labelledby="bookModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered"> <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookModalLabel">Thông tin Sách</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="bookForm">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="bookTitle" class="form-label">Tên sách</label>
+                                <input type="text" class="form-control" id="bookTitle" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="bookAuthor" class="form-label">Tác giả</label>
+                                <input type="text" class="form-control" id="bookAuthor" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="bookCategory" class="form-label">Loại sách</label>
+                                        <select class="form-select" id="bookCategory" required>
+                                            <option value="">Chọn loại sách...</option>
+                                            <option value="1">Văn học</option>
+                                            <option value="2">Kinh tế</option>
+                                            <option value="3">Thiếu nhi</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="bookPublisher" class="form-label">Nhà xuất bản</label>
+                                        <select class="form-select" id="bookPublisher">
+                                            <option value="">Chọn NXB...</option>
+                                            <option value="1">NXB Kim Đồng</option>
+                                            <option value="2">NXB Trẻ</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="bookPrice" class="form-label">Giá bán</label>
+                                        <input type="number" class="form-control" id="bookPrice" required>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="bookStock" class="form-label">Số lượng tồn kho</label>
+                                        <input type="number" class="form-control" id="bookStock" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="bookCover" class="form-label">Ảnh bìa</label>
+                                <img src="https://via.placeholder.com/150x200" id="coverPreview" class="img-thumbnail mb-2" alt="Xem trước ảnh bìa" style="width: 100%; object-fit: contain;">
+                                <input class="form-control" type="file" id="bookCover">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="bookDescription" class="form-label">Mô tả</label>
+                        <textarea class="form-control" id="bookDescription" rows="5"></textarea>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="saveBookButton">Lưu lại</button>
+            </div>
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
