@@ -54,3 +54,11 @@ VALUES
 ('Đánh Thức Con Người Phi Thường Trong Bạn', 'phithuong.jpg', 1, 158000, 2023, 1, 1, 1, 6);
 
 
+INSERT INTO khachhang (Username, HoTen, DiaChi, SDienThoai, Email)
+
+
+INSERT INTO loaisach (TenLoaiSach) VALUES('Marketing – Bán Hàng');
+
+INSERT INTO sach 
+(TenSach, AnhBia, LanTaiBan, GiaBan, NamXuatBan, MaTG, MaNXB, MaLoaiSach, MaDanhMuc) 
+VALUES('Tư Duy Nhanh Và Chậm ', 'tuduy.jpg', 1, 159000, 2022, 1, 1, 6,1);
