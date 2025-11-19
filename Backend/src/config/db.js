@@ -35,4 +35,4 @@ export const getPool = async () => {
     console.error("❌ Database connection failed:", err.message);
     throw err;
   }
-}; 
+};
