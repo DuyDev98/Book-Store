@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Sách Marketing - Bán Hàng | bookstore.com</title>
+
+  <!-- BOOTSTRAP -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+  
+  <!-- CSS CHÍNH -->
+  <link rel="stylesheet" href="../../style.css" />
+</head>
+
+<body style="background:#fdf8f8;">
+
+  <!-- HEADER TỰ ĐỘNG -->
+  <div id="header"></div>
+
+  <div class="container-fluid py-4">
+    <div class="row">
+
+      <!-- SIDEBAR TỰ ĐỘNG -->
+      <aside class="col-md-3" id="sidebar"></aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="col-md-9">
+
+        <h4 class="fw-bold text-danger mb-4">📘 SÁCH MARKETING – BÁN HÀNG</h4>
+
+        <!-- DANH SÁCH SÁCH -->
+        <div class="row g-4" id="book-list">
+          <!-- Sách load từ API -->
+        </div>
+
+        <!-- NÚT XEM THÊM -->
+        <div class="text-center mt-4">
+          <a href="marketing-ban-hang2.html" class="btn btn-view-more fw-bold">Xem thêm »</a>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- FOOTER TỰ ĐỘNG -->
+  <div id="footer"></div>
+
+  <!-- SCRIPT LOAD COMPONENTS -->
+  <script>
+    // Load header
+    fetch("../../components/header.html")
+      .then(res => res.text())
+      .then(html => document.getElementById("header").innerHTML = html);
+
+    // Load sidebar
+    fetch("../../components/sidebar.html")
+      .then(res => res.text())
+      .then(html => document.getElementById("sidebar").innerHTML = html);
+
+    // Load footer
+    fetch("../../components/footer.html")
+      .then(res => res.text())
+      .then(html => document.getElementById("footer").innerHTML = html);
+  </script>
+
+  <!-- LOAD SÁCH TỪ API -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const listEl = document.getElementById("book-list");
+
+      try {
+        // API đúng của backend
+        const res = await fetch("http://localhost:5001/api/sach/category/6");
+
+        if (!res.ok) {
+          throw new Error("API lỗi hoặc không trả về JSON");
+        }
+
+        const data = await res.json();
+        const books = data.data || [];
+
+        if (books.length === 0) {
+          listEl.innerHTML = "<p class='text-danger'>Không tìm thấy sách nào.</p>";
+          return;
+        }
+
+        // Render sách
+        listEl.innerHTML = books
+          .map(book => {
+            const imgSrc = "../../images-kinh-te/" + (book.AnhBia || "no-image.png");
+            const price = Number(book.GiaBan || 0).toLocaleString("vi-VN") + "đ";
+
+            return `
+              <div class="col-6 col-sm-4 col-md-3">
+                <div class="book-card bg-white shadow-sm rounded h-100 position-relative">
+                  <img src="${imgSrc}" class="img-fluid rounded-top" alt="${book.TenSach}" />
+
+                  <div class="p-3">
+                    <p class="small fw-semibold text-truncate mb-1">${book.TenSach}</p>
+                    <b>${price}</b>
+                  </div>
+
+                  <button class="btn-add-cart" data-id="${book.MaSach}">
+                    <i class="bi bi-cart-plus"></i>
+                  </button>
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+
+      } catch (err) {
+        console.error("Lỗi tải sách:", err);
+        listEl.innerHTML = "<p class='text-danger'>Không thể tải dữ liệu sách.</p>";
+      }
+    });
+  </script>
+
+</body>
+</html>

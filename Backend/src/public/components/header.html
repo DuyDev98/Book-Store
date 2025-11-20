@@ -1,37 +1,43 @@
 <!-- TOPBAR -->
 <div class="topbar d-flex align-items-center">
   <div class="container d-flex justify-content-between py-2">
-    <div class="top-left text-white small">
-      <span>☎ 028.73008182</span> &nbsp;|&nbsp;
-      <span>✉ hotro@vinabook.com</span> &nbsp;|&nbsp;
-      <span>📍 332 Lũy Bán Bích, TP.HCM</span>
+    <div class="top-left text-white small d-flex align-items-center flex-wrap">
+      <span><i class="bi bi-telephone-fill me-1"></i> 0989. 988 988</span>
+      <span class="mx-2">|</span>
+      <span><i class="bi bi-envelope-fill me-1"></i> hotro@bookstore.com</span>
+      <span class="mx-2">|</span>
+      <span><i class="bi bi-geo-alt-fill me-1"></i> 55 Giải Phóng , Lớp 68PM2 , Đại học Xây Dựng Hà Nội</span>
     </div>
+
     <div class="top-right small">
-      <span class="me-3 text-white">Đăng ký</span>
-      <span class="text-white">Đăng nhập</span>
+      <button class="btn-topbar me-3"><h6>ĐĂNG KÝ</h6></button>
+      <button class="btn-topbar"><h6>ĐĂNG NHẬP</h6></button>
     </div>
   </div>
 </div>
 
-<!-- HEADER: logo + search + cart -->
-<header class="bg-white py-3 shadow-sm">
-  <div class="container d-flex align-items-center">
-    <div class="d-flex align-items-center">
-      <!-- site logo (left) -->
-      <img src="images/tenweb.png" alt="bookstore" height="54" />
+
+<!-- === HEADER CHÍNH === -->
+<header>
+  <div class="container d-flex justify-content-between align-items-center">
+    <!-- Logo Website -->
+    <button class="btn-logo" onclick="window.location.href='index.html'">
+      <img src="images/tenweb.png" alt="BookStore Logo" height="50">
+    </button>
+
+    <!-- Ô tìm kiếm -->
+    <div class="search-box">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Tìm kiếm sách, tác giả, thể loại..."
+      />
+      <button class="btn">Tìm kiếm</button>
     </div>
 
-    <!-- search centered -->
-    <div class="flex-grow-1 d-flex justify-content-center">
-      <form class="d-flex search-box" role="search" style="max-width:760px; width:100%;">
-        <input class="form-control me-2" type="search" placeholder="Tìm kiếm sách, tác giả, thể loại..." aria-label="Search">
-        <button class="btn btn-success">Tìm kiếm</button>
-      </form>
-    </div>
-
-    <!-- cart on right -->
-    <div class="d-flex align-items-center ms-3">
-      <img src="images/giohang.png" alt="Giỏ hàng" width="36" height="36">
-    </div>
+    <!-- Giỏ hàng -->
+    <button class="btn-cart">
+      <img src="images/giohang.png" alt="Giỏ hàng">
+    </button>
   </div>
 </header>
