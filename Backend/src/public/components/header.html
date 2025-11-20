@@ -1,4 +1,3 @@
-<!-- TOPBAR -->
 <div class="topbar d-flex align-items-center">
   <div class="container d-flex justify-content-between py-2">
     <div class="top-left text-white small d-flex align-items-center flex-wrap">
@@ -16,28 +15,23 @@
   </div>
 </div>
 
-
-<!-- === HEADER CHÍNH === -->
 <header>
   <div class="container d-flex justify-content-between align-items-center">
-    <!-- Logo Website -->
     <button class="btn-logo" onclick="window.location.href='index.html'">
       <img src="images/tenweb.png" alt="BookStore Logo" height="50">
     </button>
-
-    <!-- Ô tìm kiếm -->
     <div class="search-box">
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Tìm kiếm sách, tác giả, thể loại..."
-      />
+      <input type="text" class="form-control" placeholder="Tìm kiếm sách, tác giả, thể loại..."/>
       <button class="btn">Tìm kiếm</button>
     </div>
-
-    <!-- Giỏ hàng -->
-    <button class="btn-cart">
-      <img src="images/giohang.png" alt="Giỏ hàng">
-    </button>
+    
+    <a href="pages/gio-hang.html" class="btn-cart position-relative" style="text-decoration: none;">
+      <img src="images/cart.png" alt="Giỏ hàng">
+      <span id="cart-count" 
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+            style="display: none; font-size: 0.7em;">
+        0
+      </span>
+    </a>
   </div>
 </header>

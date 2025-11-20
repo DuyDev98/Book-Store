@@ -1,69 +1,57 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BookStore.com</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bookstore.com</title>
 
-  <!-- FAVICON -->
-  <link rel="icon" href="/images/logo.png"/>
+    <link rel="icon" type="image/png" href="logo/logo.png" />
 
-  <!-- BOOTSTRAP -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
 
-  <!-- CSS CHÍNH -->
-  <link rel="stylesheet" href="/style.css" />
-</head>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<body>
+  <body style="background-color: #fdf8f8">
+    <div id="header" data-component-file="header.html"></div>
 
-  <!-- HEADER -->
-  <div id="header"></div>
+    <div class="container-fluid main-layout mt-3">
+      <div class="row">
+        <aside
+          id="sidebar"
+          class="col-md-2 mb-3"
+          data-component-file="sidebar.html"
+        ></aside>
 
-  <div class="container-fluid main-layout">
-    <div class="row">
+        <main class="col-md-10">
+          <div id="banner" class="mb-4" data-component-file="banner.html"></div>
 
-      <!-- SIDEBAR -->
-      <aside id="sidebar" class="col-md-2"></aside>
+          <div id="book-list">
+            <h4 class="section-title mb-3">GIAN HÀNG SÁCH HOT/SALE</h4>
 
-      <!-- MAIN CONTENT -->
-      <main class="col-md-10">
-
-        <!-- BANNER -->
-        <div id="banner"></div>
-
-        <!-- DANH SÁCH SÁCH -->
-        <section class="mb-5 section-box">
-          <h5 class="section-title mb-3">📚 Danh sách sách</h5>
-          <div id="book-list" class="row row-cols-2 row-cols-md-4 g-4"></div>
-        </section>
-
-      </main>
+            <div
+              class="row g-4"
+              id="product-list-container"
+              data-api-category="hot-sale"
+            >
+              <p>Đang tải sách...</p>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
-  </div>
 
-  <!-- FOOTER -->
-  <div id="footer"></div> 
+    <div id="footer" class="mt-4" data-component-file="footer.html"></div>
 
-  <!-- SCRIPT API -->
-  <script src="/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- LOAD COMPONENTS -->
-  <script>
-    async function loadComponent(id, file) {
-      const res = await fetch(`/components/${file}`);
-      if (res.ok) {
-        document.getElementById(id).innerHTML = await res.text();
-      } else {
-        console.error("Không thể tải component:", file);
-      }
-    }
-
-    loadComponent("header", "header.html");
-    loadComponent("sidebar", "sidebar.html");
-    loadComponent("banner", "banner.html");
-    loadComponent("footer", "footer.html");
-  </script>
-
-</body>
+    <script src="./script.js"></script>
+  </body>
 </html>
