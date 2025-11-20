@@ -1,47 +1,115 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  const listEl = document.getElementById("book-list");
-  if (!listEl) return;
+/* =============================================
+   1. HÀM TỰ ĐỘNG LOAD COMPONENT (Header / Sidebar / Footer)
+============================================= */
+async function loadComponent(id, file) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const depth = window.location.pathname.split("/").length;
+  let prefix = "";
+  if (depth > 3) prefix = "../../"; // ví dụ: pages/kinh-te/ngoai-thuong.html
+
+  const path = `${prefix}components/${file}`;
 
   try {
-    // 🔥 API đúng theo backend: /api/sach/category/:id
-    const res = await fetch("http://localhost:5001/api/sach/category/6");
-
-    if (!res.ok) throw new Error("API trả về lỗi!");
-
-    const data = await res.json();
-
-    // Dữ liệu trả về dạng { status, data }
-    const books = data.data || [];
-
-    if (books.length === 0) {
-      listEl.innerHTML = "<p class='text-danger'>Không có sách trong danh mục này.</p>";
+    const res = await fetch(path);
+    if (!res.ok) {
+      console.error(`❌ Không thể tải ${file} từ ${path}`);
       return;
     }
 
-    listEl.innerHTML = books
-      .map((book) => {
-        const imgSrc = "../../images-kinh-te/" + (book.AnhBia || "no-image.png");
-        const price = Number(book.GiaBan || 0).toLocaleString("vi-VN") + "đ";
+    const html = await res.text();
+    el.innerHTML = html;
 
-        return `
-          <div class="col-6 col-sm-4 col-md-3">
-            <div class="book-card bg-white shadow-sm rounded h-100">
-              <img src="${imgSrc}" class="img-fluid rounded-top" />
-              <div class="p-3">
-                <p class="small fw-semibold text-truncate mb-1">${book.TenSach}</p>
-                <b>${price}</b>
-              </div>
-              <button class="btn-add-cart" data-id="${book.MaSach}">
-                <i class="bi bi-cart-plus"></i>
-              </button>
-            </div>
-          </div>
-        `;
-      })
-      .join("");
+    /* ✅ Sửa đường dẫn ẢNH TĨNH của Frontend */
+    el.querySelectorAll("img").forEach((img) => {
+      const src = img.getAttribute("src");
+      if (!src || src.startsWith("http")) return;
+      if (src.startsWith(prefix)) return;
+
+      if (src.startsWith("images/") || src.startsWith("public/")) {
+        img.src = prefix + src;
+      } else if (src.startsWith("logo/")) {
+        img.src = prefix + "logo/logo.png";
+      }
+    });
+
+    /* ✅ Sửa đường dẫn LINK TĨNH của Frontend */
+    el.querySelectorAll("a").forEach((a) => {
+      const href = a.getAttribute("href");
+      if (!href || href.startsWith("#") || href.startsWith("http")) return;
+      if (href.startsWith(prefix)) return;
+
+      if (href.startsWith("pages/") || href.startsWith("categories/")) {
+        const correctedHref = href.replace("categories/", "pages/");
+        a.href = prefix + correctedHref;
+      } else if (href.startsWith("index.html")) {
+        a.href = prefix + href;
+      }
+    });
+
+    /* ✅ Sửa nút logo về trang chủ (onclick) */
+    el.querySelectorAll("button[onclick*='index.html']").forEach((btn) => {
+      btn.setAttribute("onclick", `window.location.href='${prefix}index.html'`);
+    });
   } catch (err) {
-    console.error("Lỗi load sách:", err);
-    listEl.innerHTML = "<p class='text-danger'>Không tải được sách.</p>";
+    console.error(`⚠️ Lỗi load component:`, err);
+  }
+}
+
+/* =============================================
+   2. HÀM TÔ ĐỎ LINK SIDEBAR
+============================================= */
+function highlightActiveCategory() {
+  const sidebar = document.getElementById("sidebar-kinh-te");
+  if (!sidebar) return;
+
+  const currentPageFile = window.location.pathname.split("/").pop();
+  const categoryLinks = sidebar.querySelectorAll("a");
+
+  categoryLinks.forEach((link) => {
+    const linkFile = link.getAttribute("href").split("/").pop();
+    if (linkFile === currentPageFile) {
+      link.classList.remove("text-dark");
+      link.classList.add("text-danger", "fw-semibold", "active");
+    }
+  });
+}
+
+/* =============================================
+   5. HÀM CHẠY KHI TRANG TẢI XONG (CHẠY TẤT CẢ)
+   *** HÀM QUAN TRỌNG NHẤT ***
+============================================= */
+window.addEventListener("DOMContentLoaded", () => {
+  // 1. Tải Favicon
+  const link = document.createElement("link");
+  link.rel = "icon";
+  link.type = "image/png";
+  const depth = window.location.pathname.split("/").length;
+  let prefix = "";
+  if (depth > 3) prefix = "../../";
+  link.href = prefix + "public/logo.png?v=" + Date.now();
+  document.head.appendChild(link);
+
+  // 2. Tải tất cả component (Header, Footer, Sidebar)
+  const components = document.querySelectorAll("[data-component-file]");
+  components.forEach((el) => {
+    const file = el.getAttribute("data-component-file");
+    const id = el.id;
+    if (file && id) {
+      loadComponent(id, file);
+    }
+  });
+
+  // 3. Tô đỏ link sidebar (chạy sau 200ms để component tải xong)
+  setTimeout(highlightActiveCategory, 200);
+
+  // 4. Tìm và gọi API cho trang này
+  const productList = document.querySelector("[data-api-category]");
+  if (productList) {
+    const category = productList.getAttribute("data-api-category");
+    if (category) {
+      fetchBooks(category); // Tự động gọi hàm fetchBooks
+    }
   }
 });
- 
