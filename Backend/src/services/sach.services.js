@@ -16,6 +16,7 @@ export const getSachById = async (id) => {
 };
 
 // --- Thêm sách ---
+// services/sach.services.js
 export const createSach = async (payload) => {
   const pool = await getPool();
   const [result] = await pool.query(model.SQL_INSERT_SACH, [
@@ -29,7 +30,7 @@ export const createSach = async (payload) => {
     payload.MaLoaiSach,
     payload.MaDanhMuc,
   ]);
-  return { insertedId: result.insertId };
+  return { insertedId: result.insertId };  // Trả về ID của sách vừa được thêm
 };
 
 // --- Cập nhật sách ---

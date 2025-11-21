@@ -5,3 +5,4 @@ const router = express.Router();
 router.get("/", danhmucController.getAll);
 
 export default router;
+ 
