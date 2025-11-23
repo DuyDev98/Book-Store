@@ -57,25 +57,43 @@ async function loadComponent(id, file) {
   }
 }
 
-/* =============================================
-   2. HÀM TÔ ĐỎ LINK SIDEBAR
-============================================= */
+// =============================================
+// 2. HÀM TÔ ĐỎ LINK SIDEBAR (Đã sửa để chạy mọi trang)
+// =============================================
 function highlightActiveCategory() {
-  const sidebar = document.getElementById("sidebar-kinh-te");
-  if (!sidebar) return;
-
+  // Lấy tên file trang hiện tại (vd: truyen-tranh.html)
   const currentPageFile = window.location.pathname.split("/").pop();
-  const categoryLinks = sidebar.querySelectorAll("a");
 
-  categoryLinks.forEach((link) => {
-    const linkFile = link.getAttribute("href").split("/").pop();
+  // Tìm tất cả các link bên trong khối có class 'sidebar'
+  // (Lưu ý: HTML sidebar phải có class="sidebar")
+  const links = document.querySelectorAll(".sidebar a");
+
+  links.forEach((link) => {
+    const href = link.getAttribute("href");
+    if (!href) return;
+
+    // Lấy tên file cuối cùng của link để so sánh
+    const linkFile = href.split("/").pop();
+
+    // Nếu trùng tên file
     if (linkFile === currentPageFile) {
+      // Xóa màu đen mặc định
       link.classList.remove("text-dark");
-      link.classList.add("text-danger", "fw-semibold", "active");
+      
+      // Thêm class active (để xử lý logic mở rộng menu nếu cần)
+      link.classList.add("active");
+      
+      // Thêm màu đỏ và in đậm (Bootstrap classes)
+      link.classList.add("text-danger", "fw-bold");
+      
+      // Nếu link nằm trong submenu, mở submenu cha ra (tùy chọn)
+      const parentSubmenu = link.closest(".submenu");
+      if(parentSubmenu) {
+          parentSubmenu.style.display = "block";
+      }
     }
   });
 }
-
 /* =============================================
    5. HÀM CHẠY KHI TRANG TẢI XONG (CHẠY TẤT CẢ)
    *** HÀM QUAN TRỌNG NHẤT ***
