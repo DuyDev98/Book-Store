@@ -1,27 +1,45 @@
 export const SQL_GET_ALL_SACH = `
-  SELECT MaSach, TenSach, AnhBia, LanTaiBan, GiaBan, NamXuatBan,
-         MaTG, MaNXB, MaLinhVuc, MaLoaiSach
-  FROM SACH
+  SELECT 
+    s.MaSach, s.TenSach, s.AnhBia, s.LanTaiBan, s.GiaBan, s.NamXuatBan,
+    s.MaTG, s.MaNXB, s.MaLoaiSach, s.MaDanhMuc,
+    d.TenDanhMuc
+  FROM sach s
+  LEFT JOIN danhmuc d ON s.MaDanhMuc = d.MaDanhMuc;
 `;
 
 export const SQL_GET_SACH_BY_ID = `
-  SELECT MaSach, TenSach, AnhBia, LanTaiBan, GiaBan, NamXuatBan,
-         MaTG, MaNXB, MaLinhVuc, MaLoaiSach
-  FROM SACH WHERE MaSach = @id
+  SELECT 
+    s.MaSach, s.TenSach, s.AnhBia, s.LanTaiBan, s.GiaBan, s.NamXuatBan,
+    s.MaTG, s.MaNXB, s.MaLoaiSach, s.MaDanhMuc,
+    d.TenDanhMuc
+  FROM sach s
+  LEFT JOIN danhmuc d ON s.MaDanhMuc = d.MaDanhMuc
+  WHERE s.MaSach = ?;
 `;
 
 export const SQL_INSERT_SACH = `
-  INSERT INTO SACH (TenSach, AnhBia, LanTaiBan, GiaBan, NamXuatBan, MaTG, MaNXB, MaLinhVuc, MaLoaiSach)
-  VALUES (@TenSach, @AnhBia, @LanTaiBan, @GiaBan, @NamXuatBan, @MaTG, @MaNXB, @MaLinhVuc, @MaLoaiSach);
-  SELECT SCOPE_IDENTITY() AS MaSach;
+  INSERT INTO sach 
+  (TenSach, AnhBia, LanTaiBan, GiaBan, NamXuatBan, MaTG, MaNXB, MaLoaiSach, MaDanhMuc)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
 `;
 
 export const SQL_UPDATE_SACH = `
-  UPDATE SACH
-  SET TenSach=@TenSach, AnhBia=@AnhBia, LanTaiBan=@LanTaiBan,
-      GiaBan=@GiaBan, NamXuatBan=@NamXuatBan,
-      MaTG=@MaTG, MaNXB=@MaNXB, MaLinhVuc=@MaLinhVuc, MaLoaiSach=@MaLoaiSach
-  WHERE MaSach=@MaSach;
+  UPDATE sach
+  SET TenSach=?, AnhBia=?, LanTaiBan=?, GiaBan=?, NamXuatBan=?, 
+      MaTG=?, MaNXB=?, MaLoaiSach=?, MaDanhMuc=?
+  WHERE MaSach=?;
 `;
 
-export const SQL_DELETE_SACH = `DELETE FROM SACH WHERE MaSach=@id`;
+export const SQL_DELETE_SACH = `
+  DELETE FROM sach WHERE MaSach=?;
+`;
+export const SQL_GET_SACH_BY_DANHMUC = `
+  SELECT 
+    s.MaSach, s.TenSach, s.AnhBia, s.LanTaiBan, s.GiaBan, s.NamXuatBan,
+    s.MaTG, s.MaNXB, s.MaLoaiSach, s.MaDanhMuc,
+    d.TenDanhMuc
+  FROM sach s
+  LEFT JOIN danhmuc d ON s.MaDanhMuc = d.MaDanhMuc
+  WHERE s.MaLoaiSach = ?;  -- Lọc theo MaLoaiSach thay vì MaDanhMuc
+`;
+

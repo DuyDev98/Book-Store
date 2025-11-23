@@ -1,6 +1,6 @@
 /* ===== TOPBAR (màu xanh lá như mẫu) ===== */
 .topbar {
-  background-color: #4B7900;
+  background-color: #4b7900;
   color: #fff;
   font-size: 15px;
   padding: 8px 16px;
@@ -61,7 +61,7 @@ header .container {
   transform: none;
 }
 
-/* === Giỏ hàng (chỉ phần này phóng nhẹ) === */
+/* === Giỏ hàng === */
 .btn-cart {
   background: transparent;
   border: none;
@@ -132,20 +132,19 @@ header .container {
   box-shadow: none !important;
 }
 
-
 /* === Banner chính === */
 .banner-main-img {
   width: 100%;
-  height: 60vh;              /* chiều cao ổn định */
-  object-fit: cover;          /* ảnh cắt đều, không méo */
-  object-position: center;    /* canh giữa nội dung */
+  height: 60vh;
+  object-fit: cover;
+  object-position: center;
   border-radius: 10px;
   display: block;
 }
 
 /* === 2 banner nhỏ === */
 .promo-wrap {
-  height: 26vh;               /* chiều cao khớp */
+  height: 26vh;
   border-radius: 10px;
   overflow: hidden;
   background: #fff;
@@ -157,8 +156,8 @@ header .container {
 .promo-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;          /* quan trọng: ép hình khớp khung */
-  object-position: center;    /* canh giữa ảnh */
+  object-fit: cover;
+  object-position: center;
   border-radius: 10px;
   transition: transform 0.25s ease;
 }
@@ -176,7 +175,6 @@ header .container {
     height: 20vh;
   }
 }
-
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 991px) {
@@ -200,7 +198,7 @@ header .container {
 }
 
 /* ===================================================== */
-/* === PHẦN BỔ SUNG THEO 5 YÊU CẦU CỦA BẠN ============ */
+/* === PHẦN BỔ SUNG THEO YÊU CẦU ====================== */
 /* ===================================================== */
 
 /* === 1. NỀN CHÍNH HỒNG NHẠT HƠI NGẢ TRẮNG === */
@@ -235,7 +233,7 @@ body {
   color: #e53935;
 }
 
-/* === 3. KHUNG CHỨA 4 CUỐN SÁCH === */
+/* === 3. KHUNG CHỨA SÁCH === */
 .section-box {
   background-color: #fff;
   border-radius: 12px;
@@ -252,6 +250,8 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background: #fff; /* Đảm bảo nền trắng cho card */
+  overflow: hidden; /* Bo tròn ảnh khớp card */
 }
 .book-card:hover {
   transform: translateY(-4px);
@@ -270,10 +270,13 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding: 12px;
 }
 .book-card .card-title {
   min-height: 38px;
   margin-bottom: 6px;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 /* === 5. GIÁ TIỀN === */
@@ -302,23 +305,38 @@ body {
   margin-bottom: 16px;
 }
 
-/* === HUY HIỆU GIẢM GIÁ  === */
-.badge-corner {
+/* === HUY HIỆU GIẢM GIÁ === */
+/* Badge giảm giá */
+.discount-badge {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 0;
+  left: 0;
+  background: #e60000;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+  z-index: 10;
 }
-.badge-corner .badge {
-  font-size: 13px;
-  padding: 4px 8px;
-  border-radius: 6px;
+
+.bestseller-item {
+  position: relative;
 }
+
+.price .original {
+  text-decoration: line-through;
+  color: #888;
+  margin-left: 4px;
+}
+
+
 /* ===== NÚT GIỎ HÀNG TRONG CARD SÁCH ===== */
 .btn-add-cart {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background-color: #4B7900;
+  background-color: #4b7900;
   border: none;
   color: #fff;
   border-radius: 50%;
@@ -331,18 +349,16 @@ body {
   opacity: 0;
   transform: scale(0.8);
   transition: all 0.25s ease;
+  z-index: 5;
 }
-
-/* Khi hover vào card thì hiện nút */
 .book-card:hover .btn-add-cart {
   opacity: 1;
   transform: scale(1);
 }
-
-/* Hiệu ứng khi hover vào nút */
 .btn-add-cart:hover {
   background-color: #5da60a;
   transform: scale(1.1);
+  color: #fff;
 }
 
 /* ===================================================== */
@@ -357,11 +373,7 @@ main.col-md-10 {
   max-width: 79% !important;
 }
 @media (max-width: 991px) {
-  #sidebar {
-    max-width: 100% !important;
-    flex: 0 0 100% !important;
-  }
-  main.col-md-10 {
+  #sidebar, main.col-md-10, main.col-md-9, aside.col-md-3 {
     max-width: 100% !important;
     flex: 0 0 100% !important;
   }
@@ -404,16 +416,6 @@ main.col-md-10 {
 .bestseller-item .price {
   margin-top: 2px;
 }
-.bestseller-item .price .sale {
-  color: #e53935;
-  font-weight: 600;
-  margin-right: 4px;
-}
-.bestseller-item .price .original {
-  color: #666;
-  text-decoration: line-through;
-  font-size: 13px;
-}
 
 /* ====== DANH MỤC CÓ MENU CON ====== */
 .sidebar ul.categories li {
@@ -425,14 +427,10 @@ main.col-md-10 {
   color: #222;
   font-size: 15px;
 }
-
-/* Chỉ đổi nền xám nhẹ khi hover, KHÔNG đổi màu chữ */
 .sidebar ul.categories li:hover {
   background-color: #f7f7f7;
   color: #222;
 }
-
-/* Submenu ẩn mặc định */
 .sidebar ul.categories li .submenu {
   display: none;
   position: absolute;
@@ -441,80 +439,107 @@ main.col-md-10 {
   min-width: 210px;
   background: #fff;
   border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: 6px 0;
   z-index: 999;
 }
-
-/* Hiện submenu khi hover */
 .sidebar ul.categories li:hover > .submenu {
   display: block;
 }
-
-/* Các mục trong submenu */
 .sidebar ul.categories li .submenu li {
   padding: 8px 14px;
   border: none;
   white-space: nowrap;
   transition: background 0.25s ease;
 }
-
-/* Hover submenu chỉ đổi nền xám nhẹ */
 .sidebar ul.categories li .submenu li:hover {
   background-color: #f2f2f2;
 }
-
-/* ====== MŨI TÊN “›” ====== */
 .chev {
   font-weight: bold;
   color: #999;
   transition: transform 0.2s ease;
 }
-
-/* Mũi tên quay sang phải khi hover danh mục cha */
 .has-submenu:hover .chev {
   transform: translateX(4px);
 }
 
-
-/* ===== HỘP LỌC THEO GIÁ ===== */
+/* HỘP LỌC THEO GIÁ */
 .filter-box {
-  border: 1px solid #eee; /* Viền trắng nhạt */
-  background-color: #fff; /* Nền trắng */
-  border-radius: 12px; /* Bo góc nhẹ */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ */
+  border: 1px solid #eee;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   padding: 12px;
 }
-
-/* Ô radio & checkbox màu xám */
 .price-radio,
 .promo-checkbox {
-  accent-color: #999; /* Màu xám nhẹ */
+  accent-color: #999;
 }
 
-/* ===== NÚT TÌM KIẾM ===== */
-.btn-search {
-  background-color: #4B7900 !important; /* Nền xanh lá như topbar */
-  color: #fff !important;               /* Chữ trắng */
-  border: none !important;              /* Không viền */
-  border-radius: 8px;                   /* Bo góc */
-  width: 100%;                          /* Chiếm hết chiều ngang */
-  padding: 8px 0;                       /* Chiều cao */
-  font-weight: 600;                     /* Chữ đậm */
-  cursor: pointer;                      /* Dạng bàn tay khi trỏ chuột */
+/* NÚT TÌM KIẾM SIDEBAR (Màu xanh rêu - Chữ trắng - Tĩnh) */
+.btn-filter-green {
+    background-color: #4b7c0f !important; /* Bắt buộc màu xanh */
+    color: #ffffff !important;             /* Bắt buộc chữ trắng */
+    border: 1px solid #4b7c0f !important;
+    
+    /* Định dạng kích thước */
+    width: 100%;
+    padding: 8px 0;
+    font-weight: bold;
+    border-radius: 6px;
+    
+    /* Tắt hiệu ứng nảy của nút */
+    transform: none !important;
+    transition: background-color 0.3s ease;
+}
+
+/* Hiệu ứng khi di chuột vào (Đậm hơn) */
+.btn-filter-green:hover {
+    background-color: #365e0b !important; 
+    border-color: #365e0b !important;
+    cursor: pointer;
 }
 
 
-
-/* Nút "Xem thêm" */
+/* FIX LỖI NÚT XEM THÊM BỊ MẤT MÀU CHỮ */
 .btn-view-more {
-  background-color: #4B7900; /* Xanh lá như topbar */
-  color: #fff;               /* Chữ trắng */
+  /* Màu nền Xanh lá (giống Topbar) */
+  background-color: #4b7900; 
+  
+  /* Bắt buộc chữ trắng (kể cả link cũng phải trắng) */
+  color: #fff !important; 
+  
+  /* Định dạng khung */
   border: none;
   border-radius: 8px;
   padding: 10px 24px;
   font-size: 15px;
-  transition: none;          /* Không hiệu ứng hover */
-  text-decoration: none;     /* Bỏ gạch chân link */
+  font-weight: 600;
+  
+  /* Bỏ gạch chân mặc định của thẻ a */
+  text-decoration: none !important; 
+  
+  /* Căn giữa icon và chữ */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  
+  /* Hiệu ứng chuyển mượt (chỉ màu sắc, không phải vị trí) */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Khi di chuột vào (Hover) */
+.btn-view-more:hover {
+  background-color: #3b6000; /* Xanh đậm hơn chút */
+  color: #fff !important; /* QUAN TRỌNG: Giữ nguyên chữ trắng */
+  box-shadow: 0 4px 10px rgba(75, 121, 0, 0.3); /* Bóng đổ nhẹ màu xanh */
+  cursor: pointer;
+  /* Đã xóa transform: translateY(-2px); để nút đứng yên */
+}
+
+/* Khi click chuột (Active) */
+.btn-view-more:active {
+  box-shadow: none;
+}

@@ -1,0 +1,138 @@
+
+
+USE bookstore;
+-- =============================================
+-- BẢNG TÁC GIẢ
+-- =============================================
+CREATE TABLE tacgia (
+  MaTG INT AUTO_INCREMENT PRIMARY KEY,
+  TenTG VARCHAR(100) NOT NULL,
+  NamSinh INT,
+  QueQuan VARCHAR(100),
+  NamMat INT
+);
+
+-- =============================================
+-- BẢNG NHÀ XUẤT BẢN
+-- =============================================
+CREATE TABLE nhaxuatban (
+  MaNXB INT AUTO_INCREMENT PRIMARY KEY,
+  TenNXB VARCHAR(100) NOT NULL,
+  NamThanhLap INT
+);
+
+-- =============================================
+-- BẢNG LOẠI SÁCH
+-- =============================================
+CREATE TABLE loaisach (
+  MaLoaiSach INT AUTO_INCREMENT PRIMARY KEY,
+  TenLoaiSach VARCHAR(100)
+);
+
+-- =============================================
+-- BẢNG SÁCH (đã loại bỏ MaLinhVuc)
+-- =============================================
+CREATE TABLE sach (
+  MaSach INT AUTO_INCREMENT PRIMARY KEY,
+  TenSach VARCHAR(200) NOT NULL,
+  AnhBia VARCHAR(255),
+  LanTaiBan INT,
+  GiaBan DECIMAL(10,2),
+  NamXuatBan INT,
+  MaTG INT NOT NULL,
+  MaNXB INT NOT NULL,
+  MaLoaiSach INT,
+  FOREIGN KEY (MaTG) REFERENCES tacgia(MaTG),
+  FOREIGN KEY (MaNXB) REFERENCES nhaxuatban(MaNXB),
+  FOREIGN KEY (MaLoaiSach) REFERENCES loaisach(MaLoaiSach)
+);
+
+-- =============================================
+-- BẢNG KHO
+-- =============================================
+CREATE TABLE kho (
+  MaSach INT PRIMARY KEY,
+  SoLuong INT,
+  FOREIGN KEY (MaSach) REFERENCES sach(MaSach)
+);
+
+-- =============================================
+-- BẢNG KHÁCH HÀNG
+-- =============================================
+CREATE TABLE khachhang (
+  MaKH INT AUTO_INCREMENT PRIMARY KEY,
+  Username VARCHAR(50) UNIQUE,
+  HoTen VARCHAR(100),
+  DiaChi VARCHAR(255),
+  SDienThoai VARCHAR(15),
+  Email VARCHAR(100)
+);
+
+-- =============================================
+-- BẢNG TÀI KHOẢN
+-- =============================================
+CREATE TABLE taikhoan (
+  Username VARCHAR(50) PRIMARY KEY,
+  PassWord VARCHAR(100) NOT NULL,
+  VaiTro VARCHAR(20),
+  FOREIGN KEY (Username) REFERENCES khachhang(Username)
+);
+
+-- =============================================
+-- BẢNG GIỎ HÀNG
+-- =============================================
+CREATE TABLE giohang (
+  MaGioHang INT AUTO_INCREMENT PRIMARY KEY,
+  MaKH INT,
+  NgayTao DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (MaKH) REFERENCES khachhang(MaKH)
+);
+
+-- =============================================
+-- BẢNG CHI TIẾT GIỎ HÀNG
+-- =============================================
+CREATE TABLE chitietgiohang (
+  MaGioHang INT,
+  MaSach INT,
+  SoLuong INT,
+  PRIMARY KEY (MaGioHang, MaSach),
+  FOREIGN KEY (MaGioHang) REFERENCES giohang(MaGioHang),
+  FOREIGN KEY (MaSach) REFERENCES sach(MaSach)
+);
+
+-- =============================================
+-- BẢNG HÓA ĐƠN
+-- =============================================
+CREATE TABLE hoadon (
+  MaHoaDon INT AUTO_INCREMENT PRIMARY KEY,
+  MaKH INT,
+  NgayLap DATETIME DEFAULT CURRENT_TIMESTAMP,
+  TongTien DECIMAL(12,2),
+  TrangThai VARCHAR(50),
+  FOREIGN KEY (MaKH) REFERENCES khachhang(MaKH)
+);
+
+-- =============================================
+-- BẢNG CHI TIẾT HÓA ĐƠN
+-- =============================================
+CREATE TABLE chitiethoadon (
+  MaHoaDon INT,
+  MaSach INT,
+  SoLuong INT,
+  DonGia DECIMAL(10,2),
+  PRIMARY KEY (MaHoaDon, MaSach),
+  FOREIGN KEY (MaHoaDon) REFERENCES hoadon(MaHoaDon),
+  FOREIGN KEY (MaSach) REFERENCES sach(MaSach)
+);
+CREATE TABLE danhmuc (
+  MaDanhMuc INT AUTO_INCREMENT PRIMARY KEY,
+  TenDanhMuc VARCHAR(100) NOT NULL,
+  ParentID INT DEFAULT NULL,
+  FOREIGN KEY (ParentID) REFERENCES danhmuc(MaDanhMuc)
+);
+ALTER TABLE sach ADD COLUMN MaDanhMuc INT,
+ADD FOREIGN KEY (MaDanhMuc) REFERENCES danhmuc(MaDanhMuc);
+
+
+
+
