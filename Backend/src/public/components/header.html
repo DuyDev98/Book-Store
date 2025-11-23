@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="../style.css">
 <!-- TOPBAR -->
 <div class="topbar d-flex align-items-center">
   <div class="container d-flex justify-content-between py-2">
@@ -10,8 +11,8 @@
     </div>
 
     <div class="top-right small">
-      <button class="btn-topbar me-3"><h6>ĐĂNG KÝ</h6></button>
-      <button class="btn-topbar"><h6>ĐĂNG NHẬP</h6></button>
+      <button class="btn-topbar me-3" onclick="window.location.href='../components/register.html'"><h6>ĐĂNG KÝ</h6></button>
+      <button class="btn-topbar" onclick="window.location.href='../components/login.html'"><h6>ĐĂNG NHẬP</h6></button>
     </div>
   </div>
 </div>
@@ -22,7 +23,7 @@
   <div class="container d-flex justify-content-between align-items-center">
     <!-- Logo Website -->
     <button class="btn-logo" onclick="window.location.href='index.html'">
-      <img src="images/tenweb.png" alt="BookStore Logo" height="50">
+      <img src="../images/tenweb.png" alt="BookStore Logo" height="50">
     </button>
 
     <!-- Ô tìm kiếm -->
@@ -37,7 +38,7 @@
 
     <!-- Giỏ hàng -->
     <button class="btn-cart">
-      <img src="logo/cart.png" alt="Giỏ hàng">
+      <img src="../logo/cart.png" alt="Giỏ hàng">
     </button>
   </div>
 </header>
