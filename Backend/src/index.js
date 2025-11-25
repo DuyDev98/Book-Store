@@ -1,72 +1,53 @@
 import express from "express";
 import path from "path";
-import { fileURLToPath } from "url";
-import cors from "cors";
+import { fileURLToPath } from "url";  // Import fileURLToPath from url module
 import dotenv from "dotenv";
 
-// Load env
+// Load environment variables from .env file
 dotenv.config();
 
-// Convert __dirname for ESModule
+// Define __filename and __dirname for ESModule
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Import Routers
-import danhmucRouter from "./router/danhmuc.router.js";
-import sachRouter from "./router/sach.router.js";
-import cartRouter from "./router/cart.router.js";
-import UserRouter from "./router/UserRouter.js";
-import cartDetailRouter from "./router/cartDetail.router.js";
-import khRouter from "./router/khachhang.router.js";
-import loaisachRouter from "./router/loaisach.router.js";
-import adminRouter from "./router/admin.router.js";
-
+// Initialize express app
 const app = express();
 
-// Middlewares
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Serve static files
+// Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, "public")));
 
-// ==============================
-//           API ROUTES
-// ==============================
-app.use("/api/danhmuc", danhmucRouter);
-app.use("/api/sach", sachRouter);
-app.use("/api/cart", cartRouter);
-app.use("/api/user", UserRouter);
-app.use("/api/cart-detail", cartDetailRouter);
-app.use("/api/khachhang", khRouter);
-app.use("/api/loaisach", loaisachRouter);
-
-// ==============================
-//          ADMIN ROUTES
-// ==============================
-app.use("/admin", adminRouter);
-
-// ==============================
-//      FRONTEND DEFAULT PAGE
-// ==============================
+// Default route to serve the home page (index.html)
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// ==============================
-//       CATCH-ALL FALLBACK
-//  (đặt cuối để KHÔNG nuốt admin)
-// ==============================
-// Fallback cho frontend (KHÔNG dùng "*" nữa)
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
+// Admin routes
+import adminRouter from "./router/admin.router.js";
+app.use('/admin', express.static(path.join(__dirname, 'admin')));
 
 
-// ==============================
-//          START SERVER
-// ==============================
+// Other API routes
+import danhmucRouter from "./router/danhmuc.router.js";
+import sachRouter from "./router/sach.router.js";
+import cartRouter from "./router/cart.router.js";
+import cartDetailRouter from "./router/cartDetail.router.js";
+import khRouter from "./router/khachhang.router.js";
+import loaisachRouter from "./router/loaisach.router.js";
+
+// Use API routes
+app.use("/api/danhmuc", danhmucRouter);
+app.use("/api/sach", sachRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/cart-detail", cartDetailRouter);
+app.use("/api/khachhang", khRouter);
+app.use("/api/loaisach", loaisachRouter);
+
+// Fallback route for unknown URLs
+// app.use((req, res) => {
+//   res.sendFile(path.join(__dirname, "public", "index.html"));
+// });
+
+// Start the server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);

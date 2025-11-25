@@ -1,6 +1,6 @@
 /* ===== TOPBAR (màu xanh lá như mẫu) ===== */
 .topbar {
-  background-color: #4B7900;
+  background-color: #4b7900;
   color: #fff;
   font-size: 15px;
   padding: 8px 16px;
@@ -132,20 +132,19 @@ header .container {
   box-shadow: none !important;
 }
 
-
 /* === Banner chính === */
 .banner-main-img {
   width: 100%;
-  height: 60vh;              /* chiều cao ổn định */
-  object-fit: cover;          /* ảnh cắt đều, không méo */
-  object-position: center;    /* canh giữa nội dung */
+  height: 60vh; /* chiều cao ổn định */
+  object-fit: cover; /* ảnh cắt đều, không méo */
+  object-position: center; /* canh giữa nội dung */
   border-radius: 10px;
   display: block;
 }
 
 /* === 2 banner nhỏ === */
 .promo-wrap {
-  height: 26vh;               /* chiều cao khớp */
+  height: 26vh; /* chiều cao khớp */
   border-radius: 10px;
   overflow: hidden;
   background: #fff;
@@ -157,8 +156,8 @@ header .container {
 .promo-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;          /* quan trọng: ép hình khớp khung */
-  object-position: center;    /* canh giữa ảnh */
+  object-fit: cover; /* quan trọng: ép hình khớp khung */
+  object-position: center; /* canh giữa ảnh */
   border-radius: 10px;
   transition: transform 0.25s ease;
 }
@@ -176,7 +175,6 @@ header .container {
     height: 20vh;
   }
 }
-
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 991px) {
@@ -318,7 +316,7 @@ body {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background-color: #4B7900;
+  background-color: #4b7900;
   border: none;
   color: #fff;
   border-radius: 50%;
@@ -441,7 +439,7 @@ main.col-md-10 {
   min-width: 210px;
   background: #fff;
   border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: 6px 0;
   z-index: 999;
 }
@@ -476,7 +474,6 @@ main.col-md-10 {
   transform: translateX(4px);
 }
 
-
 /* ===== HỘP LỌC THEO GIÁ ===== */
 .filter-box {
   border: 1px solid #eee; /* Viền trắng nhạt */
@@ -494,32 +491,24 @@ main.col-md-10 {
 
 /* ===== NÚT TÌM KIẾM ===== */
 .btn-search {
-  background-color: #4B7900 !important; /* Nền xanh lá như topbar */
-  color: #fff !important;               /* Chữ trắng */
-  border: none !important;              /* Không viền */
-  border-radius: 8px;                   /* Bo góc */
-  width: 100%;                          /* Chiếm hết chiều ngang */
-  padding: 8px 0;                       /* Chiều cao */
-  font-weight: 600;                     /* Chữ đậm */
-  cursor: pointer;                      /* Dạng bàn tay khi trỏ chuột */
+  background-color: #4b7900 !important; /* Nền xanh lá như topbar */
+  color: #fff !important; /* Chữ trắng */
+  border: none !important; /* Không viền */
+  border-radius: 8px; /* Bo góc */
+  width: 100%; /* Chiếm hết chiều ngang */
+  padding: 8px 0; /* Chiều cao */
+  font-weight: 600; /* Chữ đậm */
+  cursor: pointer; /* Dạng bàn tay khi trỏ chuột */
 }
-
-
 
 /* Nút "Xem thêm" */
 .btn-view-more {
-  background-color: #4B7900; /* Xanh lá như topbar */
-  color: #fff;               /* Chữ trắng */
+  background-color: #4b7900; /* Xanh lá như topbar */
+  color: #fff; /* Chữ trắng */
   border: none;
   border-radius: 8px;
   padding: 10px 24px;
   font-size: 15px;
-  transition: none;          /* Không hiệu ứng hover */
-  text-decoration: none;     /* Bỏ gạch chân link */
-}
-
-.btn-view-more:hover,
-.btn-view-more:focus {
-  background-color: #4B7900; /* Giữ nguyên màu khi hover hoặc focus */
-  color: #fff;               /* Chữ vẫn trắng */
+  transition: none; /* Không hiệu ứng hover */
+  text-decoration: none; /* Bỏ gạch chân link */
 }
