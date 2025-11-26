@@ -23,7 +23,11 @@ app.get("/", (req, res) => {
 
 // Admin routes
 import adminRouter from "./router/admin.router.js";
-app.use('/admin', express.static(path.join(__dirname, 'admin')));
+// Serve admin static files (allow direct requests to .html files)
+app.use('/admin', express.static(path.join(__dirname, 'public', 'categories', 'admin')));
+
+// Mount admin router for friendly routes (e.g. /admin/dashboard)
+app.use('/admin', adminRouter);
 
 
 // Other API routes

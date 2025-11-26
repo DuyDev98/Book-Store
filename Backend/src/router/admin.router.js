@@ -7,7 +7,7 @@ const router = express.Router();
 // Lấy __dirname cho ESModule
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
- 
+
 // Đảm bảo đường dẫn chính xác tới thư mục admin
 const adminPath = path.join(__dirname, "../public/categories/admin");
 
