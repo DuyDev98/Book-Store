@@ -543,3 +543,193 @@ main.col-md-10 {
 .btn-view-more:active {
   box-shadow: none;
 }
+
+
+// trang giỏ hàng
+/* =============================================
+   FIX: ẨN NÚT LÊN/XUỐNG (SPINNER) TRONG INPUT SỐ LƯỢNG
+   ============================================= */
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* =============================================
+   FIX MỚI: CĂN CHỈNH CONTAINER CHÍNH GIỎ HÀNG (VIỀN VÀ NỀN TRẮNG)
+   ============================================= */
+
+.main-content-wrapper {
+    /* Căn giữa toàn bộ khối */
+    width: 100%; 
+    display: flex; 
+    justify-content: center;
+    padding: 30px 0;
+    background-color: #f7f7f7; /* Màu nền nhạt cho khu vực ngoài khối giỏ hàng */
+}
+
+.cart-container {
+    /* Viền, nền trắng và giới hạn kích thước */
+    max-width: 1100px;
+    width: 95%; 
+    background-color: white !important;
+    border-radius: 8px;
+    /* Thêm viền như yêu cầu */
+    border: 1px solid #dee2e6; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
+    padding: 30px 50px !important; 
+    /* Đã có padding ở trên, chỉ giữ lại padding-bottom */
+    padding-bottom: 50px !important;
+}
+
+.cart-container h2 {
+    color: #343a40; /* Đổi màu chữ về màu đậm hơn trên nền trắng */
+    padding-bottom: 10px;
+}
+
+/* =============================================
+   CÁC QUY TẮC CSS KHÁC CỦA TRANG GIỎ HÀNG
+   ============================================= */
+
+.cart-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#total-items-display {
+    color: #6c757d; 
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+    font-size: 1rem;
+}
+
+/* Định dạng Bảng Giỏ hàng */
+.cart-header {
+    background-color: transparent; 
+    color: #6c757d; 
+    padding: 10px 0;
+    font-size: 0.95rem; 
+}
+
+.cart-item img {
+    border: 1px solid #eee;
+    object-fit: cover;
+    width: 70px; 
+    height: 100px;
+}
+
+/* Định dạng Thông tin Đơn hàng */
+.order-summary {
+    /* Đổi lại màu nền nhạt hơn cho khối tóm tắt */
+    background-color: #fff9f5; 
+    border: 1px solid #f9d7c4; 
+    border-radius: 8px !important;
+}
+
+#checkout-btn {
+    letter-spacing: 1px;
+}
+
+
+/* =============================================
+   FIX LỖI FORM SỐ LƯỢNG VÀ CĂN CHỈNH
+   ============================================= */
+
+/* 1. Đảm bảo input-group nhỏ gọn và căn giữa trong cột */
+.cart-item .input-group {
+    width: 100px; 
+    margin-left: auto !important; 
+    margin-right: auto !important; 
+}
+
+/* 2. Tinh chỉnh Input số lượng bên trong input-group */
+.cart-item .input-group .form-control {
+    height: 31px !important; 
+    padding: 0; 
+    text-align: center;
+    border-radius: 0; 
+}
+
+/* 3. Tinh chỉnh Nút +/- để căn chỉnh chính xác */
+.cart-item .input-group .btn {
+    padding: 0.25rem 0.5rem; 
+    line-height: 1; 
+    height: 31px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 4. Fix bo góc Bootstrap */
+.cart-item .input-group .btn:first-child {
+    border-top-left-radius: 0.25rem !important;
+    border-bottom-left-radius: 0.25rem !important;
+}
+.cart-item .input-group .btn:last-child {
+    border-top-right-radius: 0.25rem !important;
+    border-bottom-right-radius: 0.25rem !important;
+}
+
+/* 5. FIX CĂN CHỈNH TIÊU ĐỀ BẢNG */
+.cart-header .col-2,
+.cart-item .col-2 {
+    text-align: center;
+}
+.cart-header .col-5,
+.cart-item .col-5 {
+    text-align: left;
+}
+
+
+/* =============================================
+   FIX: CĂN CHỈNH NÚT XÓA DẠNG TAG
+   ============================================= */
+
+/* 1. Định dạng chung cho cột Thành tiền */
+.cart-item .total-price-cell {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 10px; 
+    min-height: 100px;
+}
+
+/* 2. Định dạng cho Wrapper chứa nút xóa */
+.cart-item .total-price-cell .delete-tag-wrapper {
+    position: absolute;
+    top: 5px; 
+    right: 5px; 
+}
+
+/* 3. Định dạng nút xóa Tag */
+.cart-item .delete-item-btn {
+    background-color: #dc3545 !important; 
+    color: white !important; 
+    border: none !important;
+    padding: 0px 5px !important; 
+    font-size: 0.7rem; 
+    line-height: 1.5;
+    border-radius: 4px;
+    height: auto; 
+    font-weight: normal;
+}
+
+.cart-item .delete-item-btn:hover {
+    background-color: #c82333 !important; 
+}
+
+/* 4. Đảm bảo số tiền nằm ngay giữa */
+.cart-item .total-price-cell .fw-bold {
+    margin-top: 5px;
+}
