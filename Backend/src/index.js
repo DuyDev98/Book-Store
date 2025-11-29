@@ -12,6 +12,7 @@ const __dirname = path.dirname(__filename);
 
 // Initialize express app
 const app = express();
+app.use(express.json());  // Middleware to parse JSON bodies
 
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, "public")));
@@ -56,3 +57,4 @@ const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
+ 
