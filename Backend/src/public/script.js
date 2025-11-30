@@ -57,9 +57,9 @@ async function loadComponent(id, file) {
   }
 }
 
-// =============================================
+
 // 2. HÀM TÔ ĐỎ LINK SIDEBAR (Đã sửa để chạy mọi trang)
-// =============================================
+
 function highlightActiveCategory() {
   // Lấy tên file trang hiện tại (vd: truyen-tranh.html)
   const currentPageFile = window.location.pathname.split("/").pop();
@@ -94,10 +94,10 @@ function highlightActiveCategory() {
     }
   });
 }
-/* =============================================
-   5. HÀM CHẠY KHI TRANG TẢI XONG (CHẠY TẤT CẢ)
-   *** HÀM QUAN TRỌNG NHẤT ***
-============================================= */
+
+  //  5. HÀM CHẠY KHI TRANG TẢI XONG (CHẠY TẤT CẢ)
+  //  *** HÀM QUAN TRỌNG NHẤT ***
+
 window.addEventListener("DOMContentLoaded", () => {
   // 1. Tải Favicon
   const link = document.createElement("link");
@@ -132,35 +132,33 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 
+
+// 3. QUẢN LÝ LOẠI SÁCH (THÊM / SỬA / XÓA/TK) TRONG MODAL
+
+
+
+
+// Hàm tải danh sách loại sách và hiển thị trong bảng
+// Biến lưu toàn bộ loại sách để search
+let allCategories = [];
+
 // Hàm tải danh sách loại sách và hiển thị trong bảng
 const loadCategories = async () => {
     try {
         const response = await fetch('http://localhost:5001/api/loaisach');
         const categories = await response.json();
-        const tableBody = document.getElementById('categoryTableBody');
-        tableBody.innerHTML = '';  // Xóa bảng trước khi thêm dữ liệu mới
 
-        if (categories.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="3" class="text-center">Không có loại sách nào</td></tr>`;
-        } else {
-            categories.forEach((category, index) => {
-                tableBody.innerHTML += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${category.TenLoaiSach}</td>
-                        <td>
-                            <button class="btn btn-warning" onclick="editCategory(${category.MaLoaiSach})">Sửa</button>
-                            <button class="btn btn-danger" onclick="deleteCategory(${category.MaLoaiSach})">Xóa</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
+        // ✅ LƯU LẠI để còn lọc tìm kiếm
+        allCategories = categories;
+
+        // ✅ Dùng hàm render riêng để dễ tái sử dụng
+        renderCategories(categories);
     } catch (err) {
         console.error('Lỗi khi tải danh sách loại sách:', err);
         alert('Không thể lấy danh sách loại sách');
     }
 };
+
 
 
 // Hàm edit (Sửa thông tin loại sách)
@@ -259,6 +257,47 @@ async function deleteCategory(id) {
         alert('Có lỗi xảy ra khi xóa loại sách');
     }
 }
+function renderCategories(list) {
+    const tableBody = document.getElementById('categoryTableBody');
+    tableBody.innerHTML = '';
+
+    if (list.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="3" class="text-center">Không có loại sách nào</td></tr>`;
+        return;
+    }
+
+    list.forEach((category, index) => {
+        tableBody.innerHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${category.TenLoaiSach}</td>
+                <td>
+                    <button class="btn btn-warning" onclick="editCategory(${category.MaLoaiSach})">Sửa</button>
+                    <button class="btn btn-danger" onclick="deleteCategory(${category.MaLoaiSach})">Xóa</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+document.getElementById("searchInput").addEventListener("input", function () {
+    const keyword = this.value.trim().toLowerCase();
+
+    const filtered = allCategories.filter(item =>
+        item.TenLoaiSach.toLowerCase().includes(keyword)
+    );
+
+    renderCategories(filtered);
+});
+// Hàm tìm kiếm loại sách khi nhấn nút Tìm kiếm
+document.getElementById("btnSearch").addEventListener("click", function () {
+    const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+
+    const filtered = allCategories.filter(item =>
+        item.TenLoaiSach.toLowerCase().includes(keyword)
+    );
+
+    renderCategories(filtered);
+});
 
 // Gọi hàm loadCategories khi trang tải xong
 document.addEventListener('DOMContentLoaded', loadCategories);
