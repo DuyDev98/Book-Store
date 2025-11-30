@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Quản lý Tác giả</title>
+
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            padding-top: 56px;
+            background-color: #f5f6fa;
+            font-size: 0.95rem;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            padding: 20px 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #ffffff;
+            border-right: 1px solid #dee2e6;
+        }
+
+        .sidebar .nav-link {
+            color: #333;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 8px;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #0d6efd;
+            color: #fff;
+        }
+
+        .sidebar .nav-link.active i {
+            color: #fff;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 20px;
+        }
+
+        .card {
+            border-radius: 0.5rem;
+            border: 1px solid #e3e6ea;
+            box-shadow: 0 2px 4px rgba(15, 34, 58, 0.05);
+        }
+
+        .table thead th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.04em;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Admin Bán Sách</a>
+
+            <div class="d-flex ms-auto">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> Chào, Admin!
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Thông tin cá nhân</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LAYOUT CHUNG -->
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- SIDEBAR -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar" style="width: 240px;">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_sach.html">
+                            <i class="bi bi-book"></i> Quản lý Sách
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_loai_sach.html">
+                            <i class="bi bi-tags"></i> Quản lý Loại sách
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_nxb.html">
+                            <i class="bi bi-building"></i> Quản lý NXB
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_don_hang.html">
+                            <i class="bi bi-cart"></i> Quản lý Đơn hàng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_binh_luan.html">
+                            <i class="bi bi-chat-dots"></i> Quản lý Bình luận
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_phan_hoi.html">
+                            <i class="bi bi-envelope"></i> Quản lý Phản hồi
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="quan_li_tac_gia.html">
+                            <i class="bi bi-people"></i> Quản lý Tác giả
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- MAIN CONTENT -->
+            <main class="main-content">
+
+                <!-- TIÊU ĐỀ + NÚT THÊM -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <div>
+                        <h1 class="h2 mb-0">Quản lý Tác giả</h1>
+                        <small class="text-muted">Quản lý danh sách tác giả, năm sinh, năm mất,…</small>
+                    </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#authorModal">
+                        <i class="bi bi-plus-circle"></i> Thêm tác giả
+                    </button>
+                </div>
+
+                <!-- THANH TÌM KIẾM / LỌC -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <form class="row g-2 align-items-center">
+                            <div class="col-md-4">
+                                <label class="form-label mb-1">Tìm theo tên tác giả</label>
+                                <input type="text" class="form-control" placeholder="Nhập tên tác giả...">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label mb-1">Năm sinh từ</label>
+                                <input type="number" min="0" class="form-control" placeholder="VD: 1950">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label mb-1">Năm sinh đến</label>
+                                <input type="number" min="0" class="form-control" placeholder="VD: 2000">
+                            </div>
+                            <div class="col-md-2 d-grid mt-3 mt-md-4">
+                                <button type="submit" class="btn btn-outline-secondary">
+                                    <i class="bi bi-search"></i> Tìm kiếm
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- BẢNG TÁC GIẢ -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" style="width: 10%;">Mã TG</th>
+                                        <th scope="col" style="width: 30%;">Tên tác giả</th>
+                                        <th scope="col" style="width: 20%;">Năm sinh</th>
+                                        <th scope="col" style="width: 20%;">Năm mất</th>
+                                        <th scope="col" class="text-center" style="width: 20%;">Hành động</th>
+                                    </tr>
+                                </thead>
+                               
+                            </table>
+                        </div>
+
+                        <!-- PHÂN TRANG -->
+                        <nav aria-label="Phân trang danh sách" class="d-flex justify-content-center mt-3">
+                            <ul class="pagination mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Trang trước</a>
+                                </li>
+                                <li class="page-item active" aria-current="page">
+                                    <a class="page-link" href="#">1</a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Trang sau</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+  <!-- MODAL THÊM / SỬA TÁC GIẢ -->
+<div class="modal fade" id="authorModal" tabindex="-1" aria-labelledby="authorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow-lg rounded-3">
+
+            <!-- HEADER -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="authorModalLabel">Thông tin Tác giả</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body p-4">
+                <form id="authorForm" class="row g-3">
+
+                    <div class="col-md-6">
+                        <label for="authorCode" class="form-label fw-semibold">Mã tác giả</label>
+                        <input type="text" class="form-control shadow-sm" id="authorCode" placeholder="TG001" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="authorName" class="form-label fw-semibold">Tên tác giả</label>
+                        <input type="text" class="form-control shadow-sm" id="authorName" placeholder="Nhập tên tác giả..." required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="authorBirth" class="form-label fw-semibold">Năm sinh</label>
+                        <input type="number" class="form-control shadow-sm" id="authorBirth" placeholder="VD: 1955">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="authorDeath" class="form-label fw-semibold">Năm mất</label>
+                        <input type="number" class="form-control shadow-sm" id="authorDeath" placeholder="Nếu còn sống thì để trống">
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary px-4" id="saveAuthorButton">Lưu lại</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+   <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const authorForm = document.getElementById("authorForm");
+    const saveBtn = document.getElementById("saveAuthorButton");
+    const tableBody = document.querySelector("table tbody");
+
+    let editMode = false;
+    let editRow = null;
+
+    // === mở modal thêm mới ===
+    const addAuthorBtn = document.querySelector('[data-bs-target="#authorModal"]');
+    addAuthorBtn.addEventListener("click", () => {
+        editMode = false;
+        editRow = null;
+
+        authorForm.reset();
+        document.getElementById("authorModalLabel").textContent = "Thêm tác giả";
+    });
+
+    // === lưu dữ liệu (cả thêm + sửa) ===
+    saveBtn.addEventListener("click", () => {
+        const code = document.getElementById("authorCode").value;
+        const name = document.getElementById("authorName").value;
+        const birth = document.getElementById("authorBirth").value;
+        const death = document.getElementById("authorDeath").value;
+
+        if (!code || !name) {
+            alert("Vui lòng nhập đủ mã và tên tác giả!");
+            return;
+        }
+
+        if (editMode === false) {
+            // === thêm mới ===
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = `
+                <td><strong>${code}</strong></td>
+                <td>${name}</td>
+                <td>${birth || "—"}</td>
+                <td>${death || "—"}</td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-info btn-view"><i class="bi bi-eye-fill"></i> Xem</button>
+                    <button class="btn btn-sm btn-outline-warning ms-1 btn-edit"><i class="bi bi-pencil-square"></i> Sửa</button>
+                    <button class="btn btn-sm btn-outline-danger ms-1 btn-delete"><i class="bi bi-trash3"></i> Xóa</button>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
+        } else {
+            // === sửa ===
+            editRow.children[0].innerHTML = `<strong>${code}</strong>`;
+            editRow.children[1].textContent = name;
+            editRow.children[2].textContent = birth || "—";
+            editRow.children[3].textContent = death || "—";
+        }
+
+        // đóng modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById("authorModal"));
+        modal.hide();
+    });
+
+    // === CLICK TRONG BẢNG: xem / sửa / xóa ===
+    tableBody.addEventListener("click", (e) => {
+        const btn = e.target.closest("button");
+        if (!btn) return;
+
+        const row = btn.closest("tr");
+
+        const code = row.children[0].innerText;
+        const name = row.children[1].innerText;
+        const birth = row.children[2].innerText;
+        const death = row.children[3].innerText;
+
+        // === XÓA ===
+        if (btn.classList.contains("btn-delete")) {
+            if (confirm("Bạn có chắc muốn xóa tác giả này?")) {
+                row.remove();
+            }
+        }
+
+        // === SỬA ===
+        if (btn.classList.contains("btn-edit")) {
+            editMode = true;
+            editRow = row;
+
+            document.getElementById("authorModalLabel").textContent = "Sửa tác giả";
+
+            document.getElementById("authorCode").value = code;
+            document.getElementById("authorName").value = name;
+            document.getElementById("authorBirth").value = birth === "—" ? "" : birth;
+            document.getElementById("authorDeath").value = death === "—" ? "" : death;
+
+            const editModal = new bootstrap.Modal(document.getElementById("authorModal"));
+            editModal.show();
+        }
+
+        // === XEM CHI TIẾT ===
+        if (btn.classList.contains("btn-view")) {
+            document.getElementById("authorDetailModalLabel").textContent = "Chi tiết Tác giả: " + name;
+
+            // update nội dung modal xem chi tiết
+            const detailModalContent = `
+                <p><strong>Mã tác giả:</strong> ${code}</p>
+                <p><strong>Năm sinh:</strong> ${birth}</p>
+                <p><strong>Năm mất:</strong> ${death}</p>
+                <hr>
+                <h5>Giới thiệu</h5>
+                <p>Chưa có mô tả — bạn có thể thêm vào database sau.</p>
+            `;
+            document.querySelector("#authorDetailModal .modal-body").innerHTML = detailModalContent;
+
+            const detailModal = new bootstrap.Modal(document.getElementById("authorDetailModal"));
+            detailModal.show();
+        }
+    });
+
+});
+</script>
+    <!-- BOOTSTRAP JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

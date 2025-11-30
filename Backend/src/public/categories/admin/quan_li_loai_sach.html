@@ -107,6 +107,11 @@
                             <i class="bi bi-book"></i> Quản lý phản hồi
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_tac_gia.html">
+                            <i class="bi bi-people"></i> Quản lý tác giả
+                        </a>
+                    </li>
                     <!-- Các mục menu khác -->
                 </ul>
             </nav>
@@ -203,13 +208,179 @@
         </div>
     </div>
 
+<script>
+// 3. QUẢN LÝ LOẠI SÁCH (THÊM / SỬA / XÓA/TK) TRONG MODAL
 
 
-    <!-- Liên kết thư viện jQuery
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+// Hàm tải danh sách loại sách và hiển thị trong bảng
+// Biến lưu toàn bộ loại sách để search
+let allCategories = [];
+
+// Hàm tải danh sách loại sách và hiển thị trong bảng
+const loadCategories = async () => {
+    try {
+        const response = await fetch('http://localhost:5001/api/loaisach');
+        const categories = await response.json();
+
+        // ✅ LƯU LẠI để còn lọc tìm kiếm
+        allCategories = categories;
+
+        // ✅ Dùng hàm render riêng để dễ tái sử dụng
+        renderCategories(categories);
+    } catch (err) {
+        console.error('Lỗi khi tải danh sách loại sách:', err);
+        alert('Không thể lấy danh sách loại sách');
+    }
+};
+
+
+
+// Hàm edit (Sửa thông tin loại sách)
+async function editCategory(id) {
+    try {
+        // Gửi yêu cầu lấy thông tin loại sách theo ID
+        const response = await fetch(`http://localhost:5001/api/loaisach/${id}`);
+        if (!response.ok) {
+            alert('Không lấy được dữ liệu loại sách để sửa');
+            return;
+        }
+
+        const category = await response.json();
+
+        // Điền thông tin loại sách vào form trong modal
+        document.getElementById('categoryId').value = category.MaLoaiSach;  // ID loại sách ẩn
+        document.getElementById('categoryName').value = category.TenLoaiSach;  // Tên loại sách
+
+        // Đổi tiêu đề modal và nút "Lưu lại" thành "Cập nhật"
+        document.getElementById('categoryModalLabel').textContent = 'Sửa Loại sách';
+        document.getElementById('saveCategoryButton').textContent = 'Cập nhật';
+
+        // Mở modal
+        const modalElement = document.getElementById('categoryModal');
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();  // Hiển thị modal
+    } catch (err) {
+        console.error('Lỗi khi lấy dữ liệu loại sách:', err);
+        alert('Không thể lấy thông tin loại sách để sửa');
+    }
+}
+
+
+
+// Hàm cập nhật thông tin loại sách trong bảng (khi sửa thành công)
+function updateCategoryInTable(id, categoryName) {
+    const rows = document.querySelectorAll('#categoryTableBody tr');
+
+    rows.forEach(row => {
+        const categoryId = row.getAttribute('data-id'); // Lấy id loại sách từ thuộc tính data-id trong bảng
+        
+        if (categoryId === id.toString()) {
+            // Cập nhật tên loại sách trong bảng
+            const categoryCell = row.querySelector('.category-name');
+            categoryCell.textContent = categoryName;
+        }
+    });
+}
+
+
+// Hàm lưu loại sách (Thêm/Sửa)
+document.getElementById('saveCategoryButton').addEventListener('click', async function () {
+    const name = document.getElementById('categoryName').value.trim();
+    const id = document.getElementById('categoryId').value.trim();
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `http://localhost:5001/api/loaisach/${id}` : 'http://localhost:5001/api/loaisach';
+
+    if (!name) {
+        alert('Tên loại sách không được để trống');
+        return;
+    }
+
+    try {
+        const response = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ TenLoaiSach: name }),
+        });
+        const result = await response.json();
+
+        await loadCategories();
+        document.getElementById('categoryForm').reset();
+        new bootstrap.Modal(document.getElementById('categoryModal')).hide();
+        alert(id ? 'Cập nhật loại sách thành công!' : 'Thêm loại sách thành công!');
+    } catch (error) {
+        console.error('Lỗi khi lưu loại sách:', error);
+        alert('Có lỗi xảy ra: ' + error.message);
+    }
+});
+
+// Hàm xóa loại sách
+async function deleteCategory(id) {
+    if (!confirm('Bạn có chắc muốn xóa loại sách này không?')) return;
+
+    try {
+        const response = await fetch(`http://localhost:5001/api/loaisach/${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+            alert('Không thể xóa loại sách');
+            return;
+        }
+        const result = await response.json();
+        alert(result.message || 'Xóa loại sách thành công');
+        await loadCategories();
+    } catch (err) {
+        console.error('Lỗi khi xóa loại sách:', err);
+        alert('Có lỗi xảy ra khi xóa loại sách');
+    }
+}
+function renderCategories(list) {
+    const tableBody = document.getElementById('categoryTableBody');
+    tableBody.innerHTML = '';
+
+    if (list.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="3" class="text-center">Không có loại sách nào</td></tr>`;
+        return;
+    }
+
+    list.forEach((category, index) => {
+        tableBody.innerHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${category.TenLoaiSach}</td>
+                <td>
+                    <button class="btn btn-warning" onclick="editCategory(${category.MaLoaiSach})">Sửa</button>
+                    <button class="btn btn-danger" onclick="deleteCategory(${category.MaLoaiSach})">Xóa</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+document.getElementById("searchInput").addEventListener("input", function () {
+    const keyword = this.value.trim().toLowerCase();
+
+    const filtered = allCategories.filter(item =>
+        item.TenLoaiSach.toLowerCase().includes(keyword)
+    );
+
+    renderCategories(filtered);
+});
+// Hàm tìm kiếm loại sách khi nhấn nút Tìm kiếm
+document.getElementById("btnSearch").addEventListener("click", function () {
+    const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+
+    const filtered = allCategories.filter(item =>
+        item.TenLoaiSach.toLowerCase().includes(keyword)
+    );
+
+    renderCategories(filtered);
+});
+
+// Gọi hàm loadCategories khi trang tải xong
+document.addEventListener('DOMContentLoaded', loadCategories);</script>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../script.js"></script>
+   
+    </script>
 </body>
 
 </html>
