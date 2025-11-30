@@ -1,19 +1,21 @@
-// routers/loaisach.router.js
-import express from 'express';
-import * as loaisachController from '../controller/loaisach.controller.js';
+import express from "express";
+import * as loaisachController from "../controller/loaisach.controller.js";  // Import controller của loại sách
 
 const router = express.Router();
 
-// API: Lấy tất cả loại sách
-router.get("/", loaisachController.getCategories);
+// Lấy tất cả loại sách
+router.get("/", loaisachController.getAllCategories);
 
-// API: Thêm loại sách
+// Lấy loại sách theo ID
+router.get("/:id", loaisachController.getCategoryById);
+
+// Thêm loại sách mới
 router.post("/", loaisachController.addCategory);
 
-// API: Sửa loại sách
-router.put("/", loaisachController.updateCategory);
+// Cập nhật loại sách theo ID
+router.put("/:id", loaisachController.updateCategory);
 
-// API: Xóa loại sách
-router.delete("/:MaLoaiSach", loaisachController.deleteCategory);
+// Xóa loại sách theo ID
+router.delete("/:id", loaisachController.deleteCategory);
 
 export default router;

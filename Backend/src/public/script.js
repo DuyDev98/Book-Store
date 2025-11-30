@@ -119,8 +119,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 3. Tô đỏ link sidebar (chạy sau 200ms để component tải xong)
-  setTimeout(highlightActiveCategory, 200);
+
 
   // 4. Tìm và gọi API cho trang này
   const productList = document.querySelector("[data-api-category]");
@@ -132,37 +131,134 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Frontend - script.js
 
-// Hàm để gọi API và hiển thị loại sách
+// Hàm tải danh sách loại sách và hiển thị trong bảng
 const loadCategories = async () => {
-  try {
-    const res = await fetch('/api/loaisach');  // Gọi API lấy danh sách loại sách
-    const categories = await res.json();  // Nhận dữ liệu JSON từ API
+    try {
+        const response = await fetch('http://localhost:5001/api/loaisach');
+        const categories = await response.json();
+        const tableBody = document.getElementById('categoryTableBody');
+        tableBody.innerHTML = '';  // Xóa bảng trước khi thêm dữ liệu mới
 
-    const tableBody = document.getElementById('categoryTableBody');
-    tableBody.innerHTML = '';  // Xóa các dòng cũ
-
-    categories.forEach((category, index) => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${index + 1}</td>
-        <td>${category.TenLoaiSach}</td>
-        <td>${category.soLuongSach || 0}</td>
-        <td>
-          <button onclick="editCategory(${category.MaLoaiSach})">Sửa</button>
-          <button onclick="deleteCategory(${category.MaLoaiSach})">Xóa</button>
-        </td>
-      `;
-      tableBody.appendChild(row);
-    });
-  } catch (err) {
-    console.error('Lỗi khi load loại sách:', err);
-    alert('Có lỗi xảy ra khi tải danh sách loại sách.');
-  }
+        if (categories.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="3" class="text-center">Không có loại sách nào</td></tr>`;
+        } else {
+            categories.forEach((category, index) => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${category.TenLoaiSach}</td>
+                        <td>
+                            <button class="btn btn-warning" onclick="editCategory(${category.MaLoaiSach})">Sửa</button>
+                            <button class="btn btn-danger" onclick="deleteCategory(${category.MaLoaiSach})">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+    } catch (err) {
+        console.error('Lỗi khi tải danh sách loại sách:', err);
+        alert('Không thể lấy danh sách loại sách');
+    }
 };
 
-// Gọi hàm loadCategories khi trang tải
+
+// Hàm edit (Sửa thông tin loại sách)
+async function editCategory(id) {
+    try {
+        // Gửi yêu cầu lấy thông tin loại sách theo ID
+        const response = await fetch(`http://localhost:5001/api/loaisach/${id}`);
+        if (!response.ok) {
+            alert('Không lấy được dữ liệu loại sách để sửa');
+            return;
+        }
+
+        const category = await response.json();
+
+        // Điền thông tin loại sách vào form trong modal
+        document.getElementById('categoryId').value = category.MaLoaiSach;  // ID loại sách ẩn
+        document.getElementById('categoryName').value = category.TenLoaiSach;  // Tên loại sách
+
+        // Đổi tiêu đề modal và nút "Lưu lại" thành "Cập nhật"
+        document.getElementById('categoryModalLabel').textContent = 'Sửa Loại sách';
+        document.getElementById('saveCategoryButton').textContent = 'Cập nhật';
+
+        // Mở modal
+        const modalElement = document.getElementById('categoryModal');
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();  // Hiển thị modal
+    } catch (err) {
+        console.error('Lỗi khi lấy dữ liệu loại sách:', err);
+        alert('Không thể lấy thông tin loại sách để sửa');
+    }
+}
+
+
+
+// Hàm cập nhật thông tin loại sách trong bảng (khi sửa thành công)
+function updateCategoryInTable(id, categoryName) {
+    const rows = document.querySelectorAll('#categoryTableBody tr');
+
+    rows.forEach(row => {
+        const categoryId = row.getAttribute('data-id'); // Lấy id loại sách từ thuộc tính data-id trong bảng
+        
+        if (categoryId === id.toString()) {
+            // Cập nhật tên loại sách trong bảng
+            const categoryCell = row.querySelector('.category-name');
+            categoryCell.textContent = categoryName;
+        }
+    });
+}
+
+
+// Hàm lưu loại sách (Thêm/Sửa)
+document.getElementById('saveCategoryButton').addEventListener('click', async function () {
+    const name = document.getElementById('categoryName').value.trim();
+    const id = document.getElementById('categoryId').value.trim();
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `http://localhost:5001/api/loaisach/${id}` : 'http://localhost:5001/api/loaisach';
+
+    if (!name) {
+        alert('Tên loại sách không được để trống');
+        return;
+    }
+
+    try {
+        const response = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ TenLoaiSach: name }),
+        });
+        const result = await response.json();
+
+        await loadCategories();
+        document.getElementById('categoryForm').reset();
+        new bootstrap.Modal(document.getElementById('categoryModal')).hide();
+        alert(id ? 'Cập nhật loại sách thành công!' : 'Thêm loại sách thành công!');
+    } catch (error) {
+        console.error('Lỗi khi lưu loại sách:', error);
+        alert('Có lỗi xảy ra: ' + error.message);
+    }
+});
+
+// Hàm xóa loại sách
+async function deleteCategory(id) {
+    if (!confirm('Bạn có chắc muốn xóa loại sách này không?')) return;
+
+    try {
+        const response = await fetch(`http://localhost:5001/api/loaisach/${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+            alert('Không thể xóa loại sách');
+            return;
+        }
+        const result = await response.json();
+        alert(result.message || 'Xóa loại sách thành công');
+        await loadCategories();
+    } catch (err) {
+        console.error('Lỗi khi xóa loại sách:', err);
+        alert('Có lỗi xảy ra khi xóa loại sách');
+    }
+}
+
+// Gọi hàm loadCategories khi trang tải xong
 document.addEventListener('DOMContentLoaded', loadCategories);
-
-
