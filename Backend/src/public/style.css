@@ -1,6 +1,6 @@
 /* ===== TOPBAR (màu xanh lá như mẫu) ===== */
 .topbar {
-  background-color: #4b7900;
+  background-color: #4B7900;
   color: #fff;
   font-size: 15px;
   padding: 8px 16px;
@@ -61,7 +61,7 @@ header .container {
   transform: none;
 }
 
-/* === Giỏ hàng === */
+/* === Giỏ hàng (chỉ phần này phóng nhẹ) === */
 .btn-cart {
   background: transparent;
   border: none;
@@ -132,19 +132,20 @@ header .container {
   box-shadow: none !important;
 }
 
+
 /* === Banner chính === */
 .banner-main-img {
   width: 100%;
-  height: 60vh;
-  object-fit: cover;
-  object-position: center;
+  height: 60vh;              /* chiều cao ổn định */
+  object-fit: cover;          /* ảnh cắt đều, không méo */
+  object-position: center;    /* canh giữa nội dung */
   border-radius: 10px;
   display: block;
 }
 
 /* === 2 banner nhỏ === */
 .promo-wrap {
-  height: 26vh;
+  height: 26vh;               /* chiều cao khớp */
   border-radius: 10px;
   overflow: hidden;
   background: #fff;
@@ -156,8 +157,8 @@ header .container {
 .promo-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center;
+  object-fit: cover;          /* quan trọng: ép hình khớp khung */
+  object-position: center;    /* canh giữa ảnh */
   border-radius: 10px;
   transition: transform 0.25s ease;
 }
@@ -175,6 +176,7 @@ header .container {
     height: 20vh;
   }
 }
+
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 991px) {
@@ -198,7 +200,7 @@ header .container {
 }
 
 /* ===================================================== */
-/* === PHẦN BỔ SUNG THEO YÊU CẦU ====================== */
+/* === PHẦN BỔ SUNG THEO 5 YÊU CẦU CỦA BẠN ============ */
 /* ===================================================== */
 
 /* === 1. NỀN CHÍNH HỒNG NHẠT HƠI NGẢ TRẮNG === */
@@ -233,7 +235,7 @@ body {
   color: #e53935;
 }
 
-/* === 3. KHUNG CHỨA SÁCH === */
+/* === 3. KHUNG CHỨA 4 CUỐN SÁCH === */
 .section-box {
   background-color: #fff;
   border-radius: 12px;
@@ -250,8 +252,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: #fff; /* Đảm bảo nền trắng cho card */
-  overflow: hidden; /* Bo tròn ảnh khớp card */
 }
 .book-card:hover {
   transform: translateY(-4px);
@@ -270,13 +270,10 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 12px;
 }
 .book-card .card-title {
   min-height: 38px;
   margin-bottom: 6px;
-  font-size: 15px;
-  font-weight: 600;
 }
 
 /* === 5. GIÁ TIỀN === */
@@ -305,38 +302,23 @@ body {
   margin-bottom: 16px;
 }
 
-/* === HUY HIỆU GIẢM GIÁ === */
-/* Badge giảm giá */
-.discount-badge {
+/* === HUY HIỆU GIẢM GIÁ  === */
+.badge-corner {
   position: absolute;
-  top: 0;
-  left: 0;
-  background: #e60000;
-  color: white;
-  font-size: 11px;
-  font-weight: bold;
-  padding: 2px 6px;
-  border-radius: 4px;
-  z-index: 10;
+  top: 8px;
+  left: 8px;
 }
-
-.bestseller-item {
-  position: relative;
+.badge-corner .badge {
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 6px;
 }
-
-.price .original {
-  text-decoration: line-through;
-  color: #888;
-  margin-left: 4px;
-}
-
-
 /* ===== NÚT GIỎ HÀNG TRONG CARD SÁCH ===== */
 .btn-add-cart {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background-color: #4b7900;
+  background-color: #4B7900;
   border: none;
   color: #fff;
   border-radius: 50%;
@@ -349,16 +331,18 @@ body {
   opacity: 0;
   transform: scale(0.8);
   transition: all 0.25s ease;
-  z-index: 5;
 }
+
+/* Khi hover vào card thì hiện nút */
 .book-card:hover .btn-add-cart {
   opacity: 1;
   transform: scale(1);
 }
+
+/* Hiệu ứng khi hover vào nút */
 .btn-add-cart:hover {
   background-color: #5da60a;
   transform: scale(1.1);
-  color: #fff;
 }
 
 /* ===================================================== */
@@ -373,7 +357,11 @@ main.col-md-10 {
   max-width: 79% !important;
 }
 @media (max-width: 991px) {
-  #sidebar, main.col-md-10, main.col-md-9, aside.col-md-3 {
+  #sidebar {
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+  main.col-md-10 {
     max-width: 100% !important;
     flex: 0 0 100% !important;
   }
@@ -381,40 +369,76 @@ main.col-md-10 {
 
 /* === SÁCH BÁN CHẠY TRONG SIDEBAR === */
 .bestseller-box {
-  background-color: #fff;
-  border-radius: 8px;
-  border: 1px solid #eee;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.04);
-  padding: 12px;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.04);
+    padding: 12px;
 }
 .bestseller-title::after {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40%;
-  height: 2px;
-  background-color: #dc3545;
-  border-radius: 2px;
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 2px;
+    background-color: #dc3545;
+    border-radius: 2px;
 }
 .bestseller-item {
-  transition: background 0.2s ease;
-  border-radius: 6px;
-  padding: 4px 6px;
+    transition: background 0.2s ease;
+    border-radius: 6px;
+    padding: 4px 6px;
 }
 .bestseller-item:hover {
-  background-color: #fceef1;
+    background-color: #fceef1;
 }
+
+/* KHUNG ẢNH VÀ BADGE (ĐÃ SỬA) */
+.bestseller-item .book-thumb {
+    position: relative; /* QUAN TRỌNG: để định vị badge con */
+    display: block;
+}
+
+/* ẢNH */
 .bestseller-item img {
-  width: 70px;
-  height: 90px;
-  object-fit: cover;
-  border: 1px solid #f1f1f1;
-  border-radius: 6px;
+    width: 70px;
+    height: 90px;
+    object-fit: cover;
+    border: 1px solid #f1f1f1;
+    border-radius: 6px;
+    display: block;
 }
+
+/* NHÃN GIẢM GIÁ (BADGE OVERLAY) */
+.discount-badge-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #dc3545; /* Màu đỏ */
+    color: white;
+    font-size: 0.7rem; /* Chữ nhỏ */
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 0 0 5px 0; /* Bo góc dưới bên phải */
+    z-index: 10;
+    line-height: 1.2;
+}
+/* KẾT THÚC KHUNG ẢNH VÀ BADGE (ĐÃ SỬA) */
+
 .bestseller-item .price {
-  margin-top: 2px;
+    margin-top: 2px;
+}
+.bestseller-item .price .sale {
+    color: #e53935;
+    font-weight: 600;
+    margin-right: 4px;
+}
+.bestseller-item .price .original {
+    color: #666;
+    text-decoration: line-through;
+    font-size: 13px;
 }
 
 /* ====== DANH MỤC CÓ MENU CON ====== */
@@ -427,10 +451,14 @@ main.col-md-10 {
   color: #222;
   font-size: 15px;
 }
+
+/* Chỉ đổi nền xám nhẹ khi hover, KHÔNG đổi màu chữ */
 .sidebar ul.categories li:hover {
   background-color: #f7f7f7;
   color: #222;
 }
+
+/* Submenu ẩn mặc định */
 .sidebar ul.categories li .submenu {
   display: none;
   position: absolute;
@@ -439,78 +467,75 @@ main.col-md-10 {
   min-width: 210px;
   background: #fff;
   border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   padding: 6px 0;
   z-index: 999;
 }
+
+/* Hiện submenu khi hover */
 .sidebar ul.categories li:hover > .submenu {
   display: block;
 }
+
+/* Các mục trong submenu */
 .sidebar ul.categories li .submenu li {
   padding: 8px 14px;
   border: none;
   white-space: nowrap;
   transition: background 0.25s ease;
 }
+
+/* Hover submenu chỉ đổi nền xám nhẹ */
 .sidebar ul.categories li .submenu li:hover {
   background-color: #f2f2f2;
 }
+
+/* ====== MŨI TÊN “›” ====== */
 .chev {
   font-weight: bold;
   color: #999;
   transition: transform 0.2s ease;
 }
+
+/* Mũi tên quay sang phải khi hover danh mục cha */
 .has-submenu:hover .chev {
   transform: translateX(4px);
 }
 
-/* HỘP LỌC THEO GIÁ */
+
+/* ===== HỘP LỌC THEO GIÁ ===== */
 .filter-box {
-  border: 1px solid #eee;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eee; /* Viền trắng nhạt */
+  background-color: #fff; /* Nền trắng */
+  border-radius: 12px; /* Bo góc nhẹ */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ */
   padding: 12px;
 }
+
+/* Ô radio & checkbox màu xám */
 .price-radio,
 .promo-checkbox {
-  accent-color: #999;
+  accent-color: #999; /* Màu xám nhẹ */
 }
 
-/* NÚT TÌM KIẾM SIDEBAR (Màu xanh rêu - Chữ trắng - Tĩnh) */
-.btn-filter-green {
-    background-color: #4b7c0f !important; /* Bắt buộc màu xanh */
-    color: #ffffff !important;             /* Bắt buộc chữ trắng */
-    border: 1px solid #4b7c0f !important;
-    
-    /* Định dạng kích thước */
-    width: 100%;
-    padding: 8px 0;
-    font-weight: bold;
-    border-radius: 6px;
-    
-    /* Tắt hiệu ứng nảy của nút */
-    transform: none !important;
-    transition: background-color 0.3s ease;
-}
-
-/* Hiệu ứng khi di chuột vào (Đậm hơn) */
-.btn-filter-green:hover {
-    background-color: #365e0b !important; 
-    border-color: #365e0b !important;
-    cursor: pointer;
+/* ===== NÚT TÌM KIẾM ===== */
+.btn-search {
+  background-color: #4B7900 !important; /* Nền xanh lá như topbar */
+  color: #fff !important;               /* Chữ trắng */
+  border: none !important;              /* Không viền */
+  border-radius: 8px;                   /* Bo góc */
+  width: 100%;                          /* Chiếm hết chiều ngang */
+  padding: 8px 0;                       /* Chiều cao */
+  font-weight: 600;                     /* Chữ đậm */
+  cursor: pointer;                      /* Dạng bàn tay khi trỏ chuột */
 }
 
 
-/* FIX LỖI NÚT XEM THÊM BỊ MẤT MÀU CHỮ */
+
+/* Nút "Xem thêm" */
 .btn-view-more {
-  /* Màu nền Xanh lá (giống Topbar) */
-  background-color: #4b7900; 
-  
-  /* Bắt buộc chữ trắng (kể cả link cũng phải trắng) */
-  color: #fff !important; 
-  
-  /* Định dạng khung */
+  background-color: #4B7900; /* Xanh lá như topbar */
+  color: #fff;               /* Chữ trắng */
   border: none;
   border-radius: 8px;
   padding: 10px 24px;
@@ -546,190 +571,118 @@ main.col-md-10 {
 
 
 // trang giỏ hàng
-/* =============================================
-   FIX: ẨN NÚT LÊN/XUỐNG (SPINNER) TRONG INPUT SỐ LƯỢNG
-   ============================================= */
+/* --- STYLE CHO GIỎ HÀNG --- */
 
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
-}
-
-/* =============================================
-   FIX MỚI: CĂN CHỈNH CONTAINER CHÍNH GIỎ HÀNG (VIỀN VÀ NỀN TRẮNG)
-   ============================================= */
-
-.main-content-wrapper {
-    /* Căn giữa toàn bộ khối */
-    width: 100%; 
-    display: flex; 
+/* Nút số lượng (+ -) */
+.btn-qty {
+    border: 1px solid #ddd;
+    background: #fff;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
-    padding: 30px 0;
-    background-color: #f7f7f7; /* Màu nền nhạt cho khu vực ngoài khối giỏ hàng */
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-qty:hover {
+    background: #f8f9fa;
+    border-color: #ccc;
+}
+.qty-input {
+    width: 40px;
+    height: 30px;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: none;
+    text-align: center;
+    outline: none;
+    font-size: 14px;
 }
 
-.cart-container {
-    /* Viền, nền trắng và giới hạn kích thước */
-    max-width: 1100px;
-    width: 95%; 
-    background-color: white !important;
+/* Nút xóa (X) */
+.btn-remove {
+    color: #333;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-remove:hover {
+    color: #d92127;
+}
+
+/* Link tiếp tục mua hàng */
+.text-warning {
+    color: #d35400 !important; /* Màu cam đất giống ảnh */
+}
+
+
+
+
+//sách chi tiết 
+//sách chi tiết 
+//sách chi tiết 
+/* Sidebar tiện ích */
+.service-box {
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
-    /* Thêm viền như yêu cầu */
-    border: 1px solid #dee2e6; 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
-    padding: 30px 50px !important; 
-    /* Đã có padding ở trên, chỉ giữ lại padding-bottom */
-    padding-bottom: 50px !important;
+    background-color: #f9f9f9;
 }
 
-.cart-container h2 {
-    color: #343a40; /* Đổi màu chữ về màu đậm hơn trên nền trắng */
-    padding-bottom: 10px;
+/* Button Custom */
+.btn-warning-custom {
+    background-color: #f7941e;
+    color: #fff;
+    border: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+.btn-warning-custom:hover {
+    background-color: #d87c0f;
+    color: #fff;
 }
 
-/* =============================================
-   CÁC QUY TẮC CSS KHÁC CỦA TRANG GIỎ HÀNG
-   ============================================= */
-
-.cart-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 5px;
+.btn-dark-custom {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+.btn-dark-custom:hover {
+    background-color: #000;
 }
 
-#total-items-display {
-    color: #6c757d; 
-    margin-bottom: 20px;
-    border-bottom: 1px solid #dee2e6;
-    padding-bottom: 10px;
-    font-size: 1rem;
+/* Giá tiền */
+.price-text {
+    color: #d92127; 
+    font-size: 24px;
+    font-weight: 700;
+}
+.old-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 16px;
 }
 
-/* Định dạng Bảng Giỏ hàng */
-.cart-header {
-    background-color: transparent; 
-    color: #6c757d; 
-    padding: 10px 0;
-    font-size: 0.95rem; 
-}
-
-.cart-item img {
-    border: 1px solid #eee;
+/* Ảnh Thumbnails - ĐÃ SỬA */
+.thumb-img {
+    width: 60px;
+    height: 80px;
     object-fit: cover;
-    width: 70px; 
-    height: 100px;
+    cursor: pointer;
+    border: 1px solid #eee;
+    
+    /* 👇 ĐÃ SỬA: Đổi 0.6 thành 1 (hoặc xóa dòng này đi cũng được) */
+    opacity: 1; 
+    
+    transition: 0.2s;
 }
 
-/* Định dạng Thông tin Đơn hàng */
-.order-summary {
-    /* Đổi lại màu nền nhạt hơn cho khối tóm tắt */
-    background-color: #fff9f5; 
-    border: 1px solid #f9d7c4; 
-    border-radius: 8px !important;
-}
-
-#checkout-btn {
-    letter-spacing: 1px;
-}
-
-
-/* =============================================
-   FIX LỖI FORM SỐ LƯỢNG VÀ CĂN CHỈNH
-   ============================================= */
-
-/* 1. Đảm bảo input-group nhỏ gọn và căn giữa trong cột */
-.cart-item .input-group {
-    width: 100px; 
-    margin-left: auto !important; 
-    margin-right: auto !important; 
-}
-
-/* 2. Tinh chỉnh Input số lượng bên trong input-group */
-.cart-item .input-group .form-control {
-    height: 31px !important; 
-    padding: 0; 
-    text-align: center;
-    border-radius: 0; 
-}
-
-/* 3. Tinh chỉnh Nút +/- để căn chỉnh chính xác */
-.cart-item .input-group .btn {
-    padding: 0.25rem 0.5rem; 
-    line-height: 1; 
-    height: 31px; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* 4. Fix bo góc Bootstrap */
-.cart-item .input-group .btn:first-child {
-    border-top-left-radius: 0.25rem !important;
-    border-bottom-left-radius: 0.25rem !important;
-}
-.cart-item .input-group .btn:last-child {
-    border-top-right-radius: 0.25rem !important;
-    border-bottom-right-radius: 0.25rem !important;
-}
-
-/* 5. FIX CĂN CHỈNH TIÊU ĐỀ BẢNG */
-.cart-header .col-2,
-.cart-item .col-2 {
-    text-align: center;
-}
-.cart-header .col-5,
-.cart-item .col-5 {
-    text-align: left;
-}
-
-
-/* =============================================
-   FIX: CĂN CHỈNH NÚT XÓA DẠNG TAG
-   ============================================= */
-
-/* 1. Định dạng chung cho cột Thành tiền */
-.cart-item .total-price-cell {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding-top: 10px; 
-    min-height: 100px;
-}
-
-/* 2. Định dạng cho Wrapper chứa nút xóa */
-.cart-item .total-price-cell .delete-tag-wrapper {
-    position: absolute;
-    top: 5px; 
-    right: 5px; 
-}
-
-/* 3. Định dạng nút xóa Tag */
-.cart-item .delete-item-btn {
-    background-color: #dc3545 !important; 
-    color: white !important; 
-    border: none !important;
-    padding: 0px 5px !important; 
-    font-size: 0.7rem; 
-    line-height: 1.5;
-    border-radius: 4px;
-    height: auto; 
-    font-weight: normal;
-}
-
-.cart-item .delete-item-btn:hover {
-    background-color: #c82333 !important; 
-}
-
-/* 4. Đảm bảo số tiền nằm ngay giữa */
-.cart-item .total-price-cell .fw-bold {
-    margin-top: 5px;
+.thumb-img:hover, 
+.thumb-img.active {
+    border-color: #f7941e;
+    transform: scale(1.05);
 }

@@ -55,7 +55,14 @@ CREATE TABLE kho (
   SoLuong INT,
   FOREIGN KEY (MaSach) REFERENCES sach(MaSach)
 );
-
+-- =============================================
+-- BẢNG TÀI KHOẢN
+-- =============================================
+CREATE TABLE user(
+  Username VARCHAR(50) PRIMARY KEY,
+  PassWord VARCHAR(100) NOT NULL,
+  VaiTro VARCHAR(20)
+);
 -- =============================================
 -- BẢNG KHÁCH HÀNG
 -- =============================================
@@ -65,17 +72,17 @@ CREATE TABLE khachhang (
   HoTen VARCHAR(100),
   DiaChi VARCHAR(255),
   SDienThoai VARCHAR(15),
-  Email VARCHAR(100)
+  Email VARCHAR(100),
+  FOREIGN KEY (Username) REFERENCES user(Username)
 );
 
 -- =============================================
 -- BẢNG TÀI KHOẢN
 -- =============================================
-CREATE TABLE taikhoan (
+CREATE TABLE user(
   Username VARCHAR(50) PRIMARY KEY,
   PassWord VARCHAR(100) NOT NULL,
-  VaiTro VARCHAR(20),
-  FOREIGN KEY (Username) REFERENCES khachhang(Username)
+  VaiTro VARCHAR(20)
 );
 
 -- =============================================

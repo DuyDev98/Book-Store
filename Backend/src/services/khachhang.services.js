@@ -1,23 +1,33 @@
-import { getPool } from "../config/db.js";
-import * as model from "../modules/khachhang.model.js";
+import KhachHang from "../modules/khachhang.model.js";
+const createKH = (khData) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const exists = await KhachHang.exists(khData);
+      if (exists) {
+        return resolve({ status: "ERR", message: "Khách hàng đã tồn tại" });
+      }
 
-export const getAllKH = async () => {
-  const pool = await getPool();
-  const [rows] = await pool.query("SELECT * FROM khachhang"); // hoặc model.SQL_GET_ALL_KHACHHANG
-  return rows;
+      const created = await KhachHang.create(khData);
+      resolve({
+        status: "OK",
+        message: "Thêm khách hàng thành công",
+        data: created,
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
 };
 
-export const createKH = async (payload) => {
-  const pool = await getPool();
-  const [result] = await pool.query(
-    "INSERT INTO khachhang (Username, HoTen, DiaChi, SDienThoai, Email) VALUES (?, ?, ?, ?, ?)",
-    [
-      payload.Username,
-      payload.HoTen,
-      payload.DiaChi,
-      payload.SDienThoai,
-      payload.Email,
-    ]
-  );
-  return { id: result.insertId, ...payload };
+const getAllKH = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const data = await KhachHang.getAllKH();
+      resolve({ status: "OK", data });
+    } catch (e) {
+      reject(e);
+    }
+  });
 };
+
+export default { createKH, getAllKH };

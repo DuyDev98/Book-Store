@@ -1,3 +1,5 @@
+<!-- TOPBAR -->
+<link rel="stylesheet" href="../style.css">
 <div class="topbar d-flex align-items-center">
   <div class="container d-flex justify-content-between py-2">
     <div class="top-left text-white small d-flex align-items-center flex-wrap">
@@ -9,16 +11,21 @@
     </div>
 
     <div class="top-right small">
-      <button class="btn-topbar me-3"><h6>ĐĂNG KÝ</h6></button>
-      <button class="btn-topbar"><h6>ĐĂNG NHẬP</h6></button>
+      <button class="btn-topbar me-3"  onclick="window.location.href='../components/register.html'"><h6>ĐĂNG KÝ</h6></button>
+      <button class="btn-topbar" onclick="window.location.href='../components/login.html' "><h6>ĐĂNG NHẬP</h6></button>
     </div>
   </div>
 </div>
 
+
+<!-- === HEADER CHÍNH === -->
 <header>
   <div class="container d-flex justify-content-between align-items-center">
     <a href="index.html" class="btn-logo">
       <img src="images/tenweb.png" alt="BookStore Logo" height="50">
+    </button>
+
+    <!-- Ô tìm kiếm -->
     </a>
     
     <div class="search-box">
@@ -27,14 +34,14 @@
         <i class="bi bi-search"></i> Tìm kiếm 
       </button>
     </div>
-    
-    <a href="pages/gio-hang.html" class="btn-cart position-relative" style="text-decoration: none;">
-      <img src="images/cart.png" alt="Giỏ hàng">
-      <span id="cart-count" 
-            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
-            style="display: none; font-size: 0.7em;">
-        0
+
+    <!-- Giỏ hàng -->
+    <a href="pages/cart.html" class="btn-cart position-relative text-dark">
+      <img src="logo/cart.png" alt="Giỏ hàng" height="30">
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px;">
+        1
       </span>
     </a>
+    
   </div>
 </header>

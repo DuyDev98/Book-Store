@@ -1,4 +1,4 @@
-import UserServices from "../services/UserServices.js";
+import UserServices from "../services/User.Services.js";
 
 const createUser = async (req, res) => {
   try {
