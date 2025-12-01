@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url"; // Import fileURLToPath from url module
 import dotenv from "dotenv";
-
+import cors from "cors";
 // Load environment variables from .env file
 dotenv.config();
 
@@ -12,8 +12,9 @@ const __dirname = path.dirname(__filename);
 
 // Initialize express app
 const app = express();
-app.use(express.json());  // Middleware to parse JSON bodies
+app.use(express.json()); // Middleware to parse JSON bodies
 
+app.use(cors());
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -53,7 +54,7 @@ app.use("/api/cart", cartRouter);
 app.use("/api/cart-detail", cartDetailRouter);
 app.use("/api/khachhang", khRouter);
 app.use("/api/loaisach", loaisachRouter);
-
+app.use("/api/user", userRouter);
 // Fallback route for unknown URLs
 // app.use((req, res) => {
 //   res.sendFile(path.join(__dirname, "public", "index.html"));
@@ -64,4 +65,3 @@ const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
- 

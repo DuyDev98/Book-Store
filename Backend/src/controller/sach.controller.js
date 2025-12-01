@@ -21,24 +21,41 @@ export const getById = async (req, res) => {
 };
 
 // controller/sach.controller.js
+// controller/sach.controller.js
 export const create = async (req, res) => {
   try {
-    const { TenSach, AnhBia, GiaBan, MaTG, MaNXB, MaLoaiSach, MaDanhMuc, MoTa } = req.body;
-    const result = await sachService.createSach({
+    const { 
       TenSach, 
       AnhBia, 
+      LanTaiBan,      // ✅ thêm
       GiaBan, 
+      NamXuatBan,     // ✅ thêm
       MaTG, 
       MaNXB, 
       MaLoaiSach, 
       MaDanhMuc, 
+      MoTa 
+    } = req.body;
+
+    const result = await sachService.createSach({
+      TenSach,
+      AnhBia,
+      LanTaiBan,
+      GiaBan,
+      NamXuatBan,
+      MaTG,
+      MaNXB,
+      MaLoaiSach,
+      MaDanhMuc,
       MoTa
     });
+
     res.status(201).json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 export const update = async (req, res) => {
   try {

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,31 +11,37 @@
     <style>
         body {
             /* Thêm padding ở trên cùng để nội dung không bị Navbar che khuất */
-            padding-top: 56px; 
+            padding-top: 56px;
         }
 
         /* Tùy chỉnh cho Sidebar */
         .sidebar {
-            position: fixed; /* Cố định sidebar */
-            top: 56px;       /* Ngay dưới Navbar */
+            position: fixed;
+            /* Cố định sidebar */
+            top: 56px;
+            /* Ngay dưới Navbar */
             bottom: 0;
             left: 0;
             z-index: 1000;
             padding: 20px 0;
             overflow-x: hidden;
-            overflow-y: auto; /* Cho phép cuộn nếu menu quá dài */
-            background-color: #f8f9fa; /* Màu nền xám nhạt */
+            overflow-y: auto;
+            /* Cho phép cuộn nếu menu quá dài */
+            background-color: #f8f9fa;
+            /* Màu nền xám nhạt */
             border-right: 1px solid #dee2e6;
         }
 
         /* Căn lề cho Nội dung chính */
         .main-content {
             /* Đẩy nội dung sang phải một khoảng bằng chiều rộng Sidebar */
-            margin-left: 240px; /* Cần khớp với chiều rộng .sidebar */
+            margin-left: 240px;
+            /* Cần khớp với chiều rộng .sidebar */
             padding: 20px;
         }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -44,12 +51,15 @@
             <div class="d-flex ms-auto">
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle"></i> Chào, Admin!
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="#">Thông tin cá nhân</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
                         </ul>
                     </li>
@@ -77,22 +87,22 @@
                             <i class="bi bi-tags"></i> Quản lý Loại sách
                         </a>
                     </li>
-                     <li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link" href="quan_li_nxb.html">
                             <i class="bi bi-book"></i> Quản lý NXB
                         </a>
                     </li>
-                     <li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link" href="quan_li_don_hang.html">
                             <i class="bi bi-book"></i> Quản lý Đơn hàng
                         </a>
                     </li>
-                     <li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link" href="quan_li_binh_luan.html">
                             <i class="bi bi-book"></i> Quản lý Binh luận
                         </a>
                     </li>
-                     <li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link" href="quan_li_phan_hoi.html">
                             <i class="bi bi-book"></i> Quản lý phản hồi
                         </a>
@@ -102,10 +112,12 @@
             </nav>
 
             <main class="main-content col-md-9 ms-sm-auto col-lg-10 px-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Quản lý Loại sách</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#categoryModal">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#categoryModal">
                             <i class="bi bi-tags-fill"></i> Thêm Loại sách
                         </button>
                     </div>
@@ -117,8 +129,9 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Tìm kiếm theo tên loại sách...">
-                                    <button class="btn btn-outline-secondary" type="button">
+                                    <input id="searchInput" type="text" class="form-control"
+                                        placeholder="Tìm kiếm theo tên loại sách...">
+                                    <button id="btnSearch" class="btn btn-outline-secondary" type="button">
                                         <i class="bi bi-search"></i>
                                     </button>
                                 </div>
@@ -127,11 +140,12 @@
                     </div>
                 </div>
 
+
                 <!-- Bảng hiển thị danh sách loại sách -->
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover align-middle" >
+                            <table class="table table-striped table-hover align-middle">
                                 <thead class="table-light">
                                     <tr>
                                         <th scope="col" class="text-center" style="width: 10%;">#</th>
@@ -144,7 +158,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <!-- Phân trang -->
                         <nav aria-label="Phân trang danh sách" class="d-flex justify-content-center mt-3">
                             <ul class="pagination">
@@ -165,36 +179,37 @@
         </div>
     </div>
 
-     <!-- Modal Thêm Loại sách -->
-<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="categoryModalLabel">Thông tin Loại sách</h5>
-            </div>
-            <div class="modal-body">
-                <form id="categoryForm">
-                    <!-- Input ẩn để lưu ID loại sách khi sửa -->
-                    <input type="hidden" id="categoryId">
-                    <div class="mb-3">
-                        <label for="categoryName" class="form-label">Tên Loại sách</label>
-                        <input type="text" class="form-control" id="categoryName" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="saveCategoryButton">Lưu lại</button>
+    <!-- Modal Thêm Loại sách -->
+    <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="categoryModalLabel">Thông tin Loại sách</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="categoryForm">
+                        <!-- Input ẩn để lưu ID loại sách khi sửa -->
+                        <input type="hidden" id="categoryId">
+                        <div class="mb-3">
+                            <label for="categoryName" class="form-label">Tên Loại sách</label>
+                            <input type="text" class="form-control" id="categoryName" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="saveCategoryButton">Lưu lại</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
 
- <!-- Liên kết thư viện jQuery
+    <!-- Liên kết thư viện jQuery
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../script.js"></script>
 </body>
+
 </html>
