@@ -1,6 +1,6 @@
 import express from "express";
 import path from "path";
-import { fileURLToPath } from "url";  // Import fileURLToPath from url module
+import { fileURLToPath } from "url"; // Import fileURLToPath from url module
 import dotenv from "dotenv";
 import cors from "cors";
 // Load environment variables from .env file
@@ -26,21 +26,29 @@ app.get("/", (req, res) => {
 // Admin routes
 import adminRouter from "./router/admin.router.js";
 // Serve admin static files (allow direct requests to .html files)
-app.use('/admin', express.static(path.join(__dirname, 'public', 'categories', 'admin')));
+app.use(
+  "/admin",
+  express.static(path.join(__dirname, "public", "categories", "admin"))
+);
 
 // Mount admin router for friendly routes (e.g. /admin/dashboard)
-app.use('/admin', adminRouter);
+app.use("/admin", adminRouter);
 
-
+app.use(express.json());
 // Other API routes
+import NXBRoute from "./router/nhaxuatban.router.js";
 import danhmucRouter from "./router/danhmuc.router.js";
 import sachRouter from "./router/sach.router.js";
 import cartRouter from "./router/cart.router.js";
 import cartDetailRouter from "./router/cartDetail.router.js";
 import khRouter from "./router/khachhang.router.js";
 import loaisachRouter from "./router/loaisach.router.js";
-import userRouter from "./router/UserRouter.js"; 
+import userRouter from "./router/UserRouter.js";
+import tacgiaRouter from "./router/tacgia.router.js";
+
 // Use API routes
+app.use("/api/user", userRouter);
+app.use("/api/nxb", NXBRoute);
 app.use("/api/danhmuc", danhmucRouter);
 app.use("/api/sach", sachRouter);
 app.use("/api/cart", cartRouter);
@@ -48,6 +56,8 @@ app.use("/api/cart-detail", cartDetailRouter);
 app.use("/api/khachhang", khRouter);
 app.use("/api/loaisach", loaisachRouter);
 app.use("/api/user",userRouter); 
+app.use("/api/tacgia", tacgiaRouter);
+
 // Fallback route for unknown URLs
 // app.use((req, res) => {
 //   res.sendFile(path.join(__dirname, "public", "index.html"));
