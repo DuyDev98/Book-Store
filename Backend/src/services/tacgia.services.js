@@ -12,9 +12,9 @@ export const getAuthors = async () => {
 };
 
 // Lấy tác giả theo ID
-export const getAuthorById = async (MaTacGia) => {
+export const getAuthorById = async (MaTG) => {
   try {
-    const author = await tacgiaModel.getAuthorById(MaTacGia);
+    const author = await tacgiaModel.getAuthorById(MaTG);
     return author;
   } catch (err) {
     throw new Error('Không thể lấy tác giả theo ID: ' + err.message);
@@ -22,9 +22,9 @@ export const getAuthorById = async (MaTacGia) => {
 };
 
 // Thêm tác giả
-export const addAuthor = async (TenTacGia, NamSinh, NamMat) => {
+export const addAuthor = async (TenTG, NamSinh, QueQuan, NamMat) => {
   try {
-    const result = await tacgiaModel.addAuthor(TenTacGia, NamSinh, NamMat);
+    const result = await tacgiaModel.addAuthor(TenTG, NamSinh, QueQuan, NamMat);
     return result;
   } catch (err) {
     console.error('Error in addAuthor service:', err);
@@ -33,9 +33,9 @@ export const addAuthor = async (TenTacGia, NamSinh, NamMat) => {
 };
 
 // Cập nhật tác giả
-export const updateAuthor = async (MaTacGia, TenTacGia, NamSinh, NamMat) => {
+export const updateAuthor = async (MaTG, TenTG, NamSinh, QueQuan, NamMat) => {
   try {
-    const result = await tacgiaModel.updateAuthor(MaTacGia, TenTacGia, NamSinh, NamMat);
+    const result = await tacgiaModel.updateAuthor(MaTG, TenTG, NamSinh, QueQuan, NamMat);
     return result;
   } catch (err) {
     throw new Error('Không thể sửa tác giả: ' + err.message);
@@ -43,9 +43,9 @@ export const updateAuthor = async (MaTacGia, TenTacGia, NamSinh, NamMat) => {
 };
 
 // Xóa tác giả
-export const deleteAuthor = async (MaTacGia) => {
+export const deleteAuthor = async (MaTG) => {
   try {
-    const result = await tacgiaModel.deleteAuthor(MaTacGia);
+    const result = await tacgiaModel.deleteAuthor(MaTG);
     return result;
   } catch (err) {
     throw new Error('Không thể xóa tác giả: ' + err.message);

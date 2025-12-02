@@ -29,13 +29,13 @@ export const getAuthorById = async (req, res) => {
 // Thêm tác giả mới
 export const addAuthor = async (req, res) => {
   try {
-    const { TenTacGia, NamSinh, NamMat } = req.body;
+    const { TenTG, NamSinh,QueQuan, NamMat } = req.body;
 
-    if (!TenTacGia) {
+    if (!TenTG) {
       return res.status(400).json({ message: 'Tên tác giả không được để trống' });
     }
 
-    await tacgiaService.addAuthor(TenTacGia, NamSinh, NamMat);
+    await tacgiaService.addAuthor(TenTG, NamSinh, QueQuan, NamMat);
     res.status(201).json({ success: true, message: 'Thêm tác giả thành công' });
   } catch (err) {
     console.error('Error adding author:', err);
@@ -50,11 +50,10 @@ export const addAuthor = async (req, res) => {
 // Cập nhật tác giả theo ID
 export const updateAuthor = async (req, res) => {
   const { id } = req.params;
-  const { TenTacGia, NamSinh, NamMat } = req.body;
+  const { TenTG, NamSinh, QueQuan, NamMat } = req.body;
 
   try {
-    const result = await tacgiaService.updateAuthor(id, TenTacGia, NamSinh, NamMat);
-
+    const result = await tacgiaService.updateAuthor(id, TenTG, NamSinh, QueQuan, NamMat);
     if (!result || result.affectedRows === 0) {
       return res.status(404).json({ message: 'Không tìm thấy tác giả để cập nhật' });
     }

@@ -1,19 +1,33 @@
+// modules/sach.model.js
+
 export const SQL_GET_ALL_SACH = `
   SELECT 
     s.MaSach, s.TenSach, s.AnhBia, s.LanTaiBan, s.GiaBan, s.NamXuatBan,
     s.MaTG, s.MaNXB, s.MaLoaiSach, s.MaDanhMuc,
+    tg.TenTG,
+    nxb.TenNXB,
+    ls.TenLoaiSach,
     d.TenDanhMuc
   FROM sach s
-  LEFT JOIN danhmuc d ON s.MaDanhMuc = d.MaDanhMuc;
+  LEFT JOIN tacgia   tg  ON s.MaTG       = tg.MaTG
+  LEFT JOIN nxb      nxb ON s.MaNXB      = nxb.MaNXB
+  LEFT JOIN loaisach ls  ON s.MaLoaiSach = ls.MaLoaiSach
+  LEFT JOIN danhmuc  d   ON s.MaDanhMuc  = d.MaDanhMuc;
 `;
 
 export const SQL_GET_SACH_BY_ID = `
   SELECT 
     s.MaSach, s.TenSach, s.AnhBia, s.LanTaiBan, s.GiaBan, s.NamXuatBan,
     s.MaTG, s.MaNXB, s.MaLoaiSach, s.MaDanhMuc,
+    tg.TenTG,
+    nxb.TenNXB,
+    ls.TenLoaiSach,
     d.TenDanhMuc
   FROM sach s
-  LEFT JOIN danhmuc d ON s.MaDanhMuc = d.MaDanhMuc
+  LEFT JOIN tacgia   tg  ON s.MaTG       = tg.MaTG
+  LEFT JOIN nxb      nxb ON s.MaNXB      = nxb.MaNXB
+  LEFT JOIN loaisach ls  ON s.MaLoaiSach = ls.MaLoaiSach
+  LEFT JOIN danhmuc  d   ON s.MaDanhMuc  = d.MaDanhMuc
   WHERE s.MaSach = ?;
 `;
 
@@ -33,13 +47,19 @@ export const SQL_UPDATE_SACH = `
 export const SQL_DELETE_SACH = `
   DELETE FROM sach WHERE MaSach=?;
 `;
+
 export const SQL_GET_SACH_BY_DANHMUC = `
   SELECT 
     s.MaSach, s.TenSach, s.AnhBia, s.LanTaiBan, s.GiaBan, s.NamXuatBan,
     s.MaTG, s.MaNXB, s.MaLoaiSach, s.MaDanhMuc,
+    tg.TenTG,
+    nxb.TenNXB,
+    ls.TenLoaiSach,
     d.TenDanhMuc
   FROM sach s
-  LEFT JOIN danhmuc d ON s.MaDanhMuc = d.MaDanhMuc
-  WHERE s.MaLoaiSach = ?;  -- Lọc theo MaLoaiSach thay vì MaDanhMuc
+  LEFT JOIN tacgia   tg  ON s.MaTG       = tg.MaTG
+  LEFT JOIN nxb      nxb ON s.MaNXB      = nxb.MaNXB
+  LEFT JOIN loaisach ls  ON s.MaLoaiSach = ls.MaLoaiSach
+  LEFT JOIN danhmuc  d   ON s.MaDanhMuc  = d.MaDanhMuc
+  WHERE s.MaLoaiSach = ?;  -- Lọc theo MaLoaiSach
 `;
-
