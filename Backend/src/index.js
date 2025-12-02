@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url"; // Import fileURLToPath from url module
 import dotenv from "dotenv";
-
+import cors from "cors";
 // Load environment variables from .env file
 dotenv.config();
 
@@ -14,6 +14,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());  // Middleware to parse JSON bodies
 
+app.use(cors()); 
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -44,6 +45,7 @@ import khRouter from "./router/khachhang.router.js";
 import loaisachRouter from "./router/loaisach.router.js";
 import userRouter from "./router/UserRouter.js";
 import tacgiaRouter from "./router/tacgia.router.js";
+
 // Use API routes
 app.use("/api/user", userRouter);
 app.use("/api/nxb", NXBRoute);
@@ -53,6 +55,7 @@ app.use("/api/cart", cartRouter);
 app.use("/api/cart-detail", cartDetailRouter);
 app.use("/api/khachhang", khRouter);
 app.use("/api/loaisach", loaisachRouter);
+app.use("/api/user",userRouter); 
 app.use("/api/tacgia", tacgiaRouter);
 
 // Fallback route for unknown URLs
