@@ -140,6 +140,10 @@ CREATE TABLE danhmuc (
 ALTER TABLE sach ADD COLUMN MaDanhMuc INT,
 ADD FOREIGN KEY (MaDanhMuc) REFERENCES danhmuc(MaDanhMuc);
 
+ALTER TABLE nhaxuatban
+ADD COLUMN DiaChi varchar(100);
 
-
-
+-- Thêm cột Mô Tả và Số Lượng Tồn nếu chưa có
+ALTER TABLE sach
+ADD COLUMN MoTa TEXT NULL,
+ADD COLUMN SoLuongTon INT DEFAULT 0;

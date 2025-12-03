@@ -6,7 +6,7 @@ import {
   addChiTietHoaDon,
   giamSoLuongKho,
   clearCart,
-} from "../models/paymentModel.js";
+} from "../modules/payment.module.js";
 
 export const thanhToanService = async (MaKH) => {
   const pool = await getPool();

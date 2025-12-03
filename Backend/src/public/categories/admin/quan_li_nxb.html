@@ -16,11 +16,7 @@
     <style>
       body {
         /* Thêm padding ở trên cùng để nội dung không bị Navbar che khuất */
-        padding-top: 57px;
-        background-color: #f5f6f8;
-        margin-left: 240px;
-        overflow-x: hidden; /* Ẩn thanh cuộn ngang của toàn trang */
-        
+        padding-top: 56px;
       }
 
       /* Tùy chỉnh cho Sidebar */
@@ -39,11 +35,11 @@
 
       /* Căn lề cho Nội dung chính */
       .main-content {
-        
+        /* Đẩy nội dung sang phải một khoảng bằng chiều rộng Sidebar */
+        margin-left: 240px; /* Cần khớp với chiều rộng .sidebar */
         padding: 20px;
       }
     </style>
-    
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -81,53 +77,42 @@
       <div class="row">
         <nav class="col-md-3 col-lg-2 d-md-block sidebar" style="width: 240px">
           <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="dashboard.html">
-                            <i class="bi bi-house-door"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_sach.html">
-                            <i class="bi bi-book"></i> Quản lý Sách
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_loai_sach.html">
-                            <i class="bi bi-tags"></i> Quản lý Loại sách
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_nxb.html">
-                            <i class="bi bi-building"></i> Quản lý NXB
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_don_hang.html">
-                            <i class="bi bi-cart"></i> Quản lý Đơn hàng
-                        </a>
-                    </li>
-                    
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_binh_luan.html">
-                            <i class="bi bi-chat-dots"></i> Quản lý Bình luận
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_phan_hoi.html">
-                            <i class="bi bi-envelope"></i> Quản lý Phản hồi
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_tac_gia.html">
-                            <i class="bi bi-people"></i> Quản lý tác giả
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="quan_li_danh_muc.html">
-                            <i class="bi bi-list-task"></i> Quản lý Danh mục
-                        </a>
-                    </li>
-                </ul>
+            <li class="nav-item">
+              <a class="nav-link active" href="dashboard.html">
+                <i class="bi bi-house-door"></i> Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="quan_li_sach.html">
+                <i class="bi bi-book"></i> Quản lý Sách
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="quan_li_loai_sach.html">
+                <i class="bi bi-tags"></i> Quản lý Loại sách
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="quan_li_nxb.html">
+                <i class="bi bi-building"></i> Quản lý NXB
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="quan_li_don_hang.html">
+                <i class="bi bi-cart"></i> Quản lý Đơn hàng
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="quan_li_binh_luan.html">
+                <i class="bi bi-chat-dots"></i> Quản lý Bình luận
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="quan_li_phan_hoi.html">
+                <i class="bi bi-envelope"></i> Quản lý Phản hồi
+              </a>
+            </li>
+          </ul>
         </nav>
 
         <main class="main-content">
@@ -279,17 +264,39 @@
 
                   <div class="row">
                     <div class="col-md-6">
-                      
+                      <div class="mb-3">
+                        <label for="publisherEmail" class="form-label"
+                          >Email</label
+                        >
+                        <input
+                          type="email"
+                          class="form-control"
+                          id="publisherEmail"
+                        />
+                      </div>
                     </div>
                     <div class="col-md-6">
                       <div class="mb-3">
-                     
+                        <label for="publisherPhone" class="form-label"
+                          >Số điện thoại</label
+                        >
+                        <input
+                          type="tel"
+                          class="form-control"
+                          id="publisherPhone"
+                        />
                       </div>
                     </div>
                   </div>
                   <div class="mb-3">
-                   
-                   
+                    <label for="publisherDescription" class="form-label"
+                      >Mô tả / Giới thiệu</label
+                    >
+                    <textarea
+                      class="form-control"
+                      id="publisherDescription"
+                      rows="4"
+                    ></textarea>
                   </div>
                 </form>
               </div>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Sách</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../style.css"> 
+    <link rel="icon" type="image/png" href="../logo/logo.png">
+</head>
+<body>
+    <div id="header-component" data-component-file="header.html" data-prefix="../"></div>
+
+    <div class="container my-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a href="../index.html" class="text-decoration-none text-muted">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Danh mục</a></li>
+                <li class="breadcrumb-item active" aria-current="page" id="breadcrumb-title">Đang tải...</li>
+            </ol>
+        </nav>
+
+        <div class="row bg-white p-3 shadow-sm rounded">
+            
+            <div class="col-lg-9 col-md-12">
+                
+                <div class="row mb-5">
+                    <div class="col-md-5 mb-4">
+                        <div class="main-image-wrapper text-center position-relative">
+                            <img id="main-image" src="https://via.placeholder.com/400x600?text=Loading..." class="img-fluid border rounded" alt="Ảnh Sách Chính" style="max-height: 450px; width: auto;">
+                            <span id="discount-badge" class="badge bg-danger position-absolute top-0 end-0 m-2 d-none">-0%</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-7 border-start">
+                        <h1 id="book-title" class="h4 fw-bold mb-2">Đang tải tên sách...</h1>
+                        <p class="text-muted small mb-3">Mã SP: <span id="book-sku">---</span></p>
+
+                        <div class="mb-2 text-secondary small">
+                            Tác giả: <a href="#" id="book-author" class="fw-bold text-decoration-none text-dark">---</a>
+                        </div>
+                        <div class="mb-3 text-secondary small">
+                            Nhà xuất bản: <a href="#" id="book-publisher" class="fw-bold text-decoration-none text-dark">---</a>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <span id="price-final" class="price-text display-6 fw-bold text-danger">0đ</span>
+                            <span id="price-original" class="old-price fs-5"></span>
+                        </div>
+
+                        <div class="d-flex align-items-center mb-4">
+                            <span class="me-3 fw-semibold small">Số lượng:</span>
+                            <div class="input-group input-group-sm" style="width: 130px;">
+                                <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity(-1)">-</button>
+                                <input type="text" id="quantity-input" class="form-control text-center fw-bold" value="1" readonly>
+                                <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity(1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 mt-4">
+                            <button class="btn btn-warning-custom btn-lg flex-grow-1 fw-bold text-uppercase py-3" onclick="addToCart()">
+                                <i class="bi bi-cart-plus me-1"></i> Thêm vào giỏ
+                            </button>
+                            <button class="btn btn-dark-custom btn-lg flex-grow-1 fw-bold text-uppercase py-3">
+                                Mua ngay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-top pt-4">
+                    <h5 class="fw-bold mb-4 text-uppercase">Thông Tin Chi Tiết</h5>
+                    
+                    <div class="mb-4 bg-light p-3 rounded">
+                        <h6 class="fw-bold mb-3 small text-uppercase text-muted"><i class="bi bi-info-circle me-1"></i> Thông số chính</h6>
+                        <ul id="specs-list" class="list-unstyled mb-0" style="font-size: 15px;">
+                            </ul>
+                    </div>
+
+                    <div>
+                        <h6 class="fw-bold mb-3 small text-uppercase text-muted"><i class="bi bi-book me-1"></i> Giới thiệu nội dung</h6>
+                        <div id="book-description" class="content-detail text-justify text-secondary lh-lg">
+                            </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-3 col-md-12 border-start ps-lg-4">
+                <div class="service-box p-3 mb-4 bg-light rounded">
+                    <h6 class="fw-bold small border-bottom pb-2 mb-3">YÊN TÂM MUA SẮM</h6>
+                    <ul class="list-unstyled small mb-0 d-flex flex-column gap-3">
+                        <li class="d-flex align-items-center"><i class="bi bi-check-circle-fill text-success me-2 fs-5"></i> <span>100% chính hãng</span></li>
+                        <li class="d-flex align-items-center"><i class="bi bi-truck text-warning me-2 fs-5"></i> <span>Free ship đơn > 250k</span></li>
+                        <li class="d-flex align-items-center"><i class="bi bi-arrow-repeat text-primary me-2 fs-5"></i> <span>Đổi trả trong 7 ngày</span></li>
+                        <li class="d-flex align-items-center"><i class="bi bi-telephone-fill text-danger me-2 fs-5"></i> <span>Hotline: 1900 6401</span></li>
+                    </ul>
+                </div>
+                
+                <div class="mt-4">
+                    <h6 class="fw-bold text-uppercase small border-bottom pb-2 mb-3">Sản Phẩm Gợi Ý</h6>
+                    
+                    <div class="d-flex mb-3 align-items-center border-bottom pb-2">
+                        <a href="detail-book.html?id=1">
+                            <img src="../images/sach_banchay1.png" class="rounded border me-2" alt="Sách 1" style="width: 60px; height: 80px; object-fit: cover;">
+                        </a>
+                        <div style="line-height: 1.2;">
+                            <a href="detail-book.html?id=1" class="text-decoration-none text-dark small fw-bold d-block mb-1 text-truncate" style="max-width: 140px;">
+                                Những Giấc Mơ...
+                            </a>
+                            <span class="text-danger fw-bold small">82.000đ</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-3 align-items-center border-bottom pb-2">
+                        <a href="detail-book.html?id=2">
+                            <img src="../images/sach_banchay2.png" class="rounded border me-2" alt="Sách 2" style="width: 60px; height: 80px; object-fit: cover;">
+                        </a>
+                        <div style="line-height: 1.2;">
+                            <a href="detail-book.html?id=2" class="text-decoration-none text-dark small fw-bold d-block mb-1 text-truncate" style="max-width: 140px;">
+                                Bộ Ba Phép Thuật...
+                            </a>
+                            <span class="text-danger fw-bold small">95.000đ</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-3 align-items-center border-bottom pb-2">
+                        <a href="detail-book.html?id=3">
+                            <img src="../images/sach_banchay3.png" class="rounded border me-2" alt="Sách 3" style="width: 60px; height: 80px; object-fit: cover;">
+                        </a>
+                        <div style="line-height: 1.2;">
+                            <a href="detail-book.html?id=3" class="text-decoration-none text-dark small fw-bold d-block mb-1 text-truncate" style="max-width: 140px;">
+                                Harry Potter...
+                            </a>
+                            <span class="text-danger fw-bold small">110.000đ</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-3 align-items-center border-bottom pb-2">
+                        <a href="detail-book.html?id=4">
+                            <img src="../images/sach_banchay4.png" class="rounded border me-2" alt="Sách 4" style="width: 60px; height: 80px; object-fit: cover;">
+                        </a>
+                        <div style="line-height: 1.2;">
+                            <a href="detail-book.html?id=4" class="text-decoration-none text-dark small fw-bold d-block mb-1 text-truncate" style="max-width: 140px;">
+                                Mẹ Tôi...
+                            </a>
+                            <span class="text-danger fw-bold small">120.000đ</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <a href="detail-book.html?id=5">
+                            <img src="../images/sach_banchay5.png" class="rounded border me-2" alt="Sách 5" style="width: 60px; height: 80px; object-fit: cover;">
+                        </a>
+                        <div style="line-height: 1.2;">
+                            <a href="detail-book.html?id=5" class="text-decoration-none text-dark small fw-bold d-block mb-1 text-truncate" style="max-width: 140px;">
+                                Nhật Ký Của Bố...
+                            </a>
+                            <span class="text-danger fw-bold small">89.000đ</span>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+            </div>
+    </div>
+
+    <div id="footer-component" data-component-file="footer.html" data-prefix="../"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>
