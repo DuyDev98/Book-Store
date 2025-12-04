@@ -13,7 +13,7 @@ const router = express.Router();
 // 2. CẤU HÌNH CLOUDINARY (Lấy từ .env)
 cloudinary.config({
     cloud_name: 'dleqaxjuv', // Tên cloud của bạn
-    api_key: process.env.API_KEY,       // Sửa thành API_KEY cho khớp file .env
+    api_key: process.env.API_KEY,       // Sửa thành Y cho khớp file .env
     api_secret: process.env.API_SECRET  // Sửa thành API_SECRET cho khớp file .env
 });
 
