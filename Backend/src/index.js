@@ -54,7 +54,6 @@ app.use("/api/cart", cartRouter);
 app.use("/api/cart-detail", cartDetailRouter);
 app.use("/api/khachhang", khRouter);
 app.use("/api/loaisach", loaisachRouter);
-app.use("/api/user", userRouter);
 // Fallback route for unknown URLs
 // app.use((req, res) => {
 //   res.sendFile(path.join(__dirname, "public", "index.html"));

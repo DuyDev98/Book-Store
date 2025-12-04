@@ -1,5 +1,9 @@
 import User from "../modules/User.model.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv"; // 1. Import dotenv
+
+dotenv.config(); // 2. Kích hoạt dotenv để đọc file .env
 
 const createUser = ({ Username, PassWord }) => {
   return new Promise(async (resolve, reject) => {
@@ -65,12 +69,12 @@ const createAdmin = ({ Username, PassWord }) => {
     }
   });
 };
+// --- ĐÂY LÀ HÀM BẠN CẦN HOÀN CHỈNH ---
 const loginUser = (userLogin) => {
   return new Promise(async (resolve, reject) => {
     try {
       const { Username, PassWord } = userLogin;
 
-      // Tìm user theo Username
       const user = await User.findOne(Username);
       if (!user) {
         return resolve({
@@ -79,7 +83,6 @@ const loginUser = (userLogin) => {
         });
       }
 
-      // So sánh mật khẩu nhập vào với mật khẩu hash trong DB
       const isMatch = await bcrypt.compare(PassWord, user.PassWord);
       if (!isMatch) {
         return resolve({
@@ -88,10 +91,21 @@ const loginUser = (userLogin) => {
         });
       }
 
-      // Thành công
+      // 3. SỬ DỤNG SECRET KEY TỪ FILE .ENV
+      // Thay vì viết 'ma_bi_mat_cua_ban', ta dùng process.env.TEN_BIEN
+      const access_token = jwt.sign(
+        {
+          id: user._id,
+          isAdmin: user.VaiTro === "Admin",
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "1d" }
+      );
+
       resolve({
         status: "OK",
         message: "Đăng nhập thành công",
+        access_token: access_token,
         data: {
           Username: user.Username,
           VaiTro: user.VaiTro,
