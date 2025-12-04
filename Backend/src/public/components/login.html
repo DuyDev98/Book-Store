@@ -167,10 +167,9 @@
             const data = await response.json();
 
             if (data.status === "OK") {
-              // Đăng nhập thành công!
+              // Lưu token để dùng cho các API cần phân quyền
+              localStorage.setItem("token", "Bearer " + data.access_token);
 
-              // 1. Lưu thông tin người dùng vào LocalStorage (Bộ nhớ trình duyệt)
-              // Dữ liệu này sẽ được dùng để hiển thị tên trên trang chủ
               const userInfo = {
                 username: data.data.Username,
                 role: data.data.VaiTro,

@@ -33,24 +33,27 @@
 <!-- === HEADER CHÍNH === -->
 <header>
   <div class="container d-flex justify-content-between align-items-center">
-    <!-- Logo Website -->
-    <button class="btn-logo" onclick="window.location.href='index.html'">
-      <img src="images/tenweb.png" alt="BookStore Logo" height="50" />
+    <a href="index.html" class="btn-logo">
+      <img src="images/tenweb.png" alt="BookStore Logo" height="50">
     </button>
 
     <!-- Ô tìm kiếm -->
+    </a>
+    
     <div class="search-box">
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Tìm kiếm sách, tác giả, thể loại..."
-      />
-      <button class="btn">Tìm kiếm</button>
+      <input type="text" class="form-control" placeholder="Tìm kiếm sách, tác giả, thể loại..."/>
+      <button class="btn">
+        <i class="bi bi-search"></i> Tìm kiếm 
+      </button>
     </div>
 
     <!-- Giỏ hàng -->
-    <button class="btn-cart">
-      <img src="logo/cart.png" alt="Giỏ hàng" />
-    </button>
+    <a href="pages/cart.html" class="btn-cart position-relative text-dark">
+      <img src="logo/cart.png" alt="Giỏ hàng" height="30">
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px;">
+        1
+      </span>
+    </a>
+    
   </div>
 </header>
