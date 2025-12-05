@@ -1,547 +1,270 @@
-/* =============================================
-    1. HÀM TỰ ĐỘNG LOAD COMPONENT (FIXED: Sử dụng data-prefix & Sửa lỗi Logo)
-============================================= */
+/* ==========================================================================
+   1. GLOBAL LOGIC - DÙNG CHUNG CHO MỌI TRANG (HEADER, FOOTER, SIDEBAR)
+   ========================================================================== */
+
+/**
+ * Tải file HTML component (Header, Footer, Sidebar) vào thẻ <div> chỉ định.
+ * @param {string} id - ID của thẻ div (ví dụ: 'header')
+ * @param {string} file - Tên file component (ví dụ: 'header.html')
+ */
 async function loadComponent(id, file) {
-    const el = document.getElementById(id);
-    if (!el) return;
+  const el = document.getElementById(id);
+  if (!el) return;
 
-    // 🌟🌟 FIX: Ưu tiên sử dụng prefix được cung cấp trong HTML (data-prefix="../") 🌟🌟
-    let prefix = el.getAttribute('data-prefix') || "";
+  // Lấy prefix (ví dụ: ../ hoặc ../../)
+  let prefix = el.getAttribute("data-prefix") || "";
 
-    // Nếu data-prefix KHÔNG TỒN TẠI (trên các trang khác), sử dụng logic cũ
-    if (!prefix) {
-        // Logic tính toán cũ của bạn
-        const depth = window.location.pathname.split("/").length;
-        if (depth > 3) prefix = "../../"; // ví dụ: pages/kinh-te/ngoai-thuong.html
-    }
-    
-    const path = `${prefix}components/${file}`;
-    
-    try {
-        const res = await fetch(path);
-        if (!res.ok) {
-            console.error(`❌ Không thể tải ${file} từ ${path}`);
-            return;
-        }
-
-        const html = await res.text();
-        el.innerHTML = html;
-
-        /* ✅ Sửa đường dẫn ẢNH TĨNH của Frontend */
-        el.querySelectorAll("img").forEach((img) => {
-            const src = img.getAttribute("src");
-            if (!src || src.startsWith("http")) return;
-            if (src.startsWith(prefix)) return;
-
-            if (src.startsWith("images/") || src.startsWith("public/")) {
-                img.src = prefix + src;
-            } 
-            // 🌟 CẬP NHẬT: CHỈ SỬA THẺ LOGO CHÍNH CÓ CLASS 'main-logo'
-            else if (img.classList.contains('main-logo')) { 
-                img.src = prefix + "logo/logo.png";
-            }
-            // Sửa đường dẫn tương đối cho các ảnh khác trong thư mục 'logo/'
-            else if (src.startsWith("logo/")) {
-                 img.src = prefix + src; 
-            }
-        });
-
-        /* ✅ Sửa đường dẫn LINK TĨNH của Frontend (Giữ nguyên) */
-        el.querySelectorAll("a").forEach((a) => {
-            const href = a.getAttribute("href");
-            if (!href || href.startsWith("#") || href.startsWith("http")) return;
-            if (href.startsWith(prefix)) return;
-
-            if (href.startsWith("pages/") || href.startsWith("categories/")) {
-                const correctedHref = href.replace("categories/", "pages/");
-                a.href = prefix + correctedHref;
-            } else if (href.startsWith("index.html")) {
-                a.href = prefix + href;
-            }
-        });
-
-        /* ✅ Sửa nút logo về trang chủ (onclick) (Giữ nguyên) */
-        el.querySelectorAll("button[onclick*='index.html']").forEach((btn) => {
-            btn.setAttribute("onclick", `window.location.href='${prefix}index.html'`);
-        });
-    } catch (err) {
-        console.error(`⚠️ Lỗi load component:`, err);
-    }
-}
-
-// =============================================
-// 2. HÀM TÔ ĐỎ LINK SIDEBAR (Giữ nguyên)
-// =============================================
-function highlightActiveCategory() {
-    // Logic của bạn
-    const currentPageFile = window.location.pathname.split("/").pop();
-    const links = document.querySelectorAll(".sidebar a");
-
-    links.forEach((link) => {
-        const href = link.getAttribute("href");
-        if (!href) return;
-        const linkFile = href.split("/").pop();
-
-        if (linkFile === currentPageFile) {
-            link.classList.remove("text-dark");
-            link.classList.add("active");
-            link.classList.add("text-danger", "fw-bold");
-            const parentSubmenu = link.closest(".submenu");
-            if(parentSubmenu) {
-                parentSubmenu.style.display = "block";
-            }
-        }
-    });
-}
-
-/* =============================================
-    3. HÀM CHẠY KHI TRANG TẢI XONG (Giữ nguyên)
-============================================= */
-window.addEventListener("DOMContentLoaded", () => {
-    // 1. Tải Favicon
-    const link = document.createElement("link");
-    link.rel = "icon";
-    link.type = "image/png";
+  if (!prefix) {
+    // Logic tính toán prefix dựa trên độ sâu URL
     const depth = window.location.pathname.split("/").length;
-    let prefix = "";
     if (depth > 3) prefix = "../../";
-    link.href = prefix + "public/logo.png?v=" + Date.now();
-    document.head.appendChild(link);
+  }
 
-    // 2. Tải tất cả component (Header, Footer, Sidebar)
-    const components = document.querySelectorAll("[data-component-file]");
-    components.forEach((el) => {
-        const file = el.getAttribute("data-component-file");
-        const id = el.id;
-        if (file && id) {
-            loadComponent(id, file); 
-        }
+  const path = `${prefix}components/${file}`;
+
+  try {
+    const res = await fetch(path);
+    if (!res.ok) {
+      console.error(`❌ Không thể tải ${file} từ ${path}`);
+      return;
+    }
+
+    const html = await res.text();
+    el.innerHTML = html;
+
+    /* ✅ Fix đường dẫn ẢNH TĨNH */
+    el.querySelectorAll("img").forEach((img) => {
+      const src = img.getAttribute("src");
+      // Bỏ qua nếu là HTTP/HTTPS hoặc đã có prefix
+      if (!src || src.startsWith("http") || src.startsWith(prefix)) return;
+
+      if (src.startsWith("images/") || src.startsWith("public/")) {
+        img.src = prefix + src;
+      } else if (img.classList.contains("main-logo")) {
+        img.src = prefix + "logo/logo.png";
+      } else if (src.startsWith("logo/")) {
+        img.src = prefix + src;
+      }
     });
 
-    // 3. Tô đỏ link sidebar
-    setTimeout(highlightActiveCategory, 200);
+    /* ✅ Fix đường dẫn LINK TĨNH */
+    el.querySelectorAll("a").forEach((a) => {
+      const href = a.getAttribute("href");
+      // Bỏ qua nếu là #, HTTP/HTTPS hoặc đã có prefix
+      if (
+        !href ||
+        href.startsWith("#") ||
+        href.startsWith("http") ||
+        href.startsWith(prefix)
+      )
+        return;
 
-    // 4. Tìm và gọi API cho trang này
-    const productList = document.querySelector("[data-api-category]");
-    if (productList) {
-        const category = productList.getAttribute("data-api-category");
-        if (category) {
-            // fetchBooks(category); 
-        }
+      if (href.startsWith("pages/") || href.startsWith("categories/")) {
+        const correctedHref = href.replace("categories/", "pages/");
+        a.href = prefix + correctedHref;
+      } else if (href.startsWith("index.html")) {
+        a.href = prefix + href;
+      }
+    });
+
+    /* ✅ Fix nút logo về trang chủ (onclick) */
+    el.querySelectorAll("button[onclick*='index.html']").forEach((btn) => {
+      btn.setAttribute("onclick", `window.location.href='${prefix}index.html'`);
+    });
+  } catch (err) {
+    console.error(`⚠️ Lỗi load component:`, err);
+  }
+}
+
+/**
+ * Tô đỏ link trên sidebar tương ứng với trang hiện tại.
+ */
+function highlightActiveCategory() {
+  const currentPageFile = window.location.pathname.split("/").pop();
+  const links = document.querySelectorAll(".sidebar a");
+
+  links.forEach((link) => {
+    const href = link.getAttribute("href");
+    if (!href) return;
+    const linkFile = href.split("/").pop();
+
+    if (linkFile === currentPageFile) {
+      link.classList.remove("text-dark");
+      link.classList.add("active", "text-danger", "fw-bold");
+      const parentSubmenu = link.closest(".submenu");
+      if (parentSubmenu) {
+        parentSubmenu.style.display = "block";
+      }
     }
-});
-
-
-// Chạy hàm này khi trang web load xong
-document.addEventListener('DOMContentLoaded', function() {
-    loadBookDetail();
-});
-
-// --- PHẦN 1: MOCK DATA (Dữ liệu giả để test frontend) ---
-// Sau này có API thì xóa phần này đi
-/* ==========================================================================
-   PHẦN 1: GLOBAL LOGIC - DÙNG CHUNG CHO MỌI TRANG (HEADER, FOOTER)
-   ========================================================================== */
-
-async function loadComponent(id, file) {
-    const el = document.getElementById(id);
-    if (!el) return;
-
-    let prefix = el.getAttribute('data-prefix') || "";
-    if (!prefix) {
-        const depth = window.location.pathname.split("/").length;
-        if (depth > 3) prefix = "../../"; 
-    }
-    
-    const path = `${prefix}components/${file}`;
-    
-    try {
-        const res = await fetch(path);
-        if (!res.ok) return;
-
-        const html = await res.text();
-        el.innerHTML = html;
-
-        // Fix đường dẫn ảnh tĩnh
-        el.querySelectorAll("img").forEach((img) => {
-            const src = img.getAttribute("src");
-            if (!src || src.startsWith("http") || src.startsWith(prefix)) return;
-
-            if (src.startsWith("images/") || src.startsWith("public/")) {
-                img.src = prefix + src;
-            } else if (img.classList.contains('main-logo')) { 
-                img.src = prefix + "logo/logo.png";
-            } else if (src.startsWith("logo/")) {
-                 img.src = prefix + src; 
-            }
-        });
-
-        // Fix đường dẫn link tĩnh
-        el.querySelectorAll("a").forEach((a) => {
-            const href = a.getAttribute("href");
-            if (!href || href.startsWith("#") || href.startsWith("http") || href.startsWith(prefix)) return;
-
-            if (href.startsWith("pages/") || href.startsWith("categories/")) {
-                a.href = prefix + href.replace("categories/", "pages/");
-            } else if (href.startsWith("index.html")) {
-                a.href = prefix + href;
-            }
-        });
-    } catch (err) {
-        console.error(`⚠️ Lỗi load component:`, err);
-    }
+  });
 }
 
 /* ==========================================================================
-   PHẦN 2: LOGIC RIÊNG CHO TRANG CHI TIẾT SÁCH (BOOK DETAIL)
+   2. LOGIC TẢI SÁCH CHO TRANG CHỦ VÀ TRANG DANH MỤC
    ========================================================================== */
 
-// --- DỮ LIỆU GIẢ 7 CUỐN SÁCH ---
-const MOCK_DB = {
-    "1": {
-        id: 1, title: "Những Giấc Mơ Ở Hiệu Sách Morisaki", sku: "BC001", author: "Yagisawa Satoshi", publisher: "NXB Hội Nhà Văn",
-        price: 82000, originalPrice: 95000,
-        description: "<p>Một cuốn sách chữa lành tâm hồn nhẹ nhàng. Câu chuyện về Takako, một cô gái trẻ mất phương hướng...</p>",
-        mainImage: "../images/sach_banchay1.png",
-        specs: { "Năm XB": "2023", "Kích thước": "13x19 cm", "Số trang": "200" }
-    },
-    "2": {
-        id: 2, title: "Bộ Ba Phép Thuật - Tập 1", sku: "BC002", author: "Nhiều Tác Giả", publisher: "NXB Kim Đồng",
-        price: 95000, originalPrice: 110000,
-        description: "<p>Cuốn sách mở ra một thế giới phép thuật kỳ diệu...</p>",
-        mainImage: "../images/sach_banchay2.png",
-        specs: { "Năm XB": "2024", "Kích thước": "14x20 cm", "Số trang": "350" }
-    },
-    "3": {
-        id: 3, title: "Harry Potter và Hòn Đá Phù Thủy", sku: "BC003", author: "J.K. Rowling", publisher: "NXB Trẻ",
-        price: 110000, originalPrice: 128000,
-        description: "<p>Khởi đầu của huyền thoại. Cậu bé Harry Potter khám phá ra thân thế thực sự...</p>",
-        mainImage: "../images/sach_banchay3.png",
-        specs: { "Năm XB": "2022", "Kích thước": "14x20 cm", "Số trang": "380" }
-    },
-    "4": {
-        id: 4, title: "Mẹ Tôi - Câu Chuyện Về Tình Mẫu Tử", sku: "BC004", author: "Edmondo De Amicis", publisher: "NXB Văn Học",
-        price: 120000, originalPrice: 135000,
-        description: "<p>Một tác phẩm kinh điển lấy đi nước mắt của hàng triệu độc giả...</p>",
-        mainImage: "../images/sach_banchay4.png",
-        specs: { "Năm XB": "2022", "Kích thước": "13x20 cm", "Số trang": "250" }
-    },
-    "5": {
-        id: 5, title: "Nhật Ký Của Bố", sku: "BC005", author: "Nhiều Tác Giả", publisher: "NXB Trẻ",
-        price: 89000, originalPrice: 99000,
-        description: "<p>Góc nhìn hài hước nhưng cũng đầy sâu sắc của một người đàn ông lần đầu làm bố...</p>",
-        mainImage: "../images/sach_banchay5.png",
-        specs: { "Năm XB": "2023", "Kích thước": "13x19 cm", "Số trang": "180" }
-    },
-    "6": {
-        id: 6, title: "Nghĩ Giàu & Làm Giàu", sku: "BC006", author: "Napoleon Hill", publisher: "NXB Tổng Hợp",
-        price: 102000, originalPrice: 118000,
-        description: "<p>Cuốn sách gối đầu giường của mọi doanh nhân...</p>",
-        mainImage: "../images/sach_banchay6.png",
-        specs: { "Năm XB": "2021", "Kích thước": "15x23 cm", "Số trang": "400" }
-    },
-    "7": {
-        id: 7, title: "Đừng Lựa Chọn An Nhàn Khi Còn Trẻ", sku: "BC007", author: "Gia Cát", publisher: "NXB Phụ Nữ",
-        price: 98000, originalPrice: 115000,
-        description: "<p>Cuốn sách là lời thức tỉnh mạnh mẽ dành cho những người trẻ...</p>",
-        mainImage: "../images/sach_banchay7.png",
-        specs: { "Năm XB": "2023", "Kích thước": "13x20 cm", "Số trang": "320" }
-    }
+/**
+ * Ánh xạ slug (tên thư mục) thành MaLoaiSach (ID trong DB).
+ * - Sử dụng ID ảo -1 cho 'hot-sale' (hoặc trang chủ) để biểu thị KHÔNG LỌC (Lấy tất cả).
+ */
+const CATEGORY_MAP = {
+  "hot-sale": -1,
+
+  // Kinh tế
+  "ngoai-thuong": 1,
+  "marketing-ban-hang": 2,
+  "tai-chinh-tien-te": 3,
+  "quan-tri-lanh-dao": 4,
+
+  // Xã hội & Nhân văn
+  "khoa-hoc-xa-hoi": 5,
+  "am-nhac-my-thuat": 6,
+  "truyen-tranh": 7,
+  "phe-binh-van-hoc": 8,
+  "phong-su-ky-su": 9,
+  "tho-ca": 10,
+  "tho-ca-nuoc-ngoai": 10,
+  "tieu-thuyet": 11,
+  "bi-quyet-lam-dep": 12,
+  "gia-dinh-hanh-phuc": 13,
+  "nha-o-vat-nuoi": 14,
+  "hoc-lam-nguoi": 15,
+  "danh-nhan": 16,
+  "tam-ly": 17,
+
+  // Giáo dục
+  sgk: 18,
+  "giao-trinh": 19,
+  "ngoai-ngu": 20,
+  "tu-dien": 21,
+  "tin-hoc": 22,
+  "thieu-nhi": 23,
 };
 
-// --- HÀM LOAD SÁCH ---
-async function loadBookDetail() {
-    if (!document.getElementById('book-title')) return; // Chỉ chạy ở trang chi tiết
-
-    const urlParams = new URLSearchParams(window.location.search);
-    let bookId = urlParams.get('id');
-    if (!bookId) bookId = "1"; // Mặc định ID 1
-
-    try {
-        // Giả lập API delay
-        await new Promise(r => setTimeout(r, 200)); 
-        const data = MOCK_DB[bookId]; 
-
-        if (data) {
-            renderBookToHTML(data);
-        } else {
-            document.getElementById('book-title').innerText = "Không tìm thấy sản phẩm!";
-        }
-    } catch (error) {
-        console.error("Lỗi:", error);
-    }
-}
-
-// --- HÀM RENDER HTML (QUAN TRỌNG: CHỈ XỬ LÝ 1 ẢNH) ---
-function renderBookToHTML(book) {
-    document.title = "Sách: " + book.title;
-    document.getElementById('breadcrumb-title').innerText = book.title;
-    document.getElementById('book-title').innerText = book.title;
-    document.getElementById('book-sku').innerText = book.sku;
-    document.getElementById('book-author').innerText = book.author;
-    document.getElementById('book-publisher').innerText = book.publisher;
-    document.getElementById('book-description').innerHTML = book.description;
-
-    const formatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
-    document.getElementById('price-final').innerText = formatter.format(book.price);
-    
-    if (book.originalPrice > book.price) {
-        document.getElementById('price-original').innerText = formatter.format(book.originalPrice);
-        const percent = Math.round(((book.originalPrice - book.price) / book.originalPrice) * 100);
-        const badge = document.getElementById('discount-badge');
-        if (badge) {
-            badge.innerText = `-${percent}%`;
-            badge.classList.remove('d-none');
-        }
-    }
-
-    const tableBody = document.getElementById('specs-table');
-    if (tableBody) {
-        tableBody.innerHTML = "";
-        for (const [key, value] of Object.entries(book.specs)) {
-            tableBody.innerHTML += `<tr><td class="fw-bold text-secondary">${key}</td><td>${value}</td></tr>`;
-        }
-    }
-
-    // XỬ LÝ ẢNH: CHỈ CẦN DÒNG NÀY LÀ ĐỦ
-    const mainImg = document.getElementById('main-image');
-    if (mainImg) mainImg.src = book.mainImage;
-}
-
-// --- TIỆN ÍCH ---
-function updateQuantity(change) {
-    const input = document.getElementById('quantity-input');
-    if (!input) return;
-    let val = parseInt(input.value) + change;
-    if (val >= 1) input.value = val;
-}
-
-function addToCart() {
-    alert("Đã thêm vào giỏ hàng!");
-}
-
-/* ==========================================================================
-   MAIN EVENT LISTENER
-   ========================================================================== */
-window.addEventListener("DOMContentLoaded", () => {
-    // 1. Load Components
-    const components = document.querySelectorAll("[data-component-file]");
-    components.forEach((el) => {
-        const file = el.getAttribute("data-component-file");
-        const id = el.id;
-        if (file && id) loadComponent(id, file); 
-    });
-
-    // 2. Load Book Detail (Nếu đang ở trang detail)
-    loadBookDetail();
-});
-
-// --- PHẦN 2: LOGIC CHÍNH ---
-
-// async function loadBookDetail() {
-//     // 1. Lấy ID từ URL (Ví dụ: detail-book.html?id=1)
-//     const urlParams = new URLSearchParams(window.location.search);
-//     let bookId = urlParams.get('id');
-
-//     // Mặc định ID = 1 nếu không có trên URL (để test cho dễ)
-//     if (!bookId) bookId = "1"; 
-
-//     console.log("Đang tải sách ID:", bookId);
-
-//     try {
-//         // --- NẾU DÙNG API THẬT (BỎ COMMENT DÒNG DƯỚI) ---
-//         // const response = await fetch(`http://localhost:5000/api/books/${bookId}`);
-//         // const data = await response.json();
-        
-//         // --- NẾU DÙNG MOCK DATA (TEST) ---
-//         // Giả lập độ trễ mạng 0.5s
-//         await new Promise(r => setTimeout(r, 500)); 
-//         const data = MOCK_DB[bookId]; 
-
-//         if (data) {
-//             renderBookToHTML(data);
-//         } else {
-//             document.getElementById('book-title').innerText = "Không tìm thấy sản phẩm!";
-//             document.querySelector('.btn-warning-custom').disabled = true;
-//         }
-
-//     } catch (error) {
-//         console.error("Lỗi:", error);
-//         alert("Có lỗi xảy ra khi tải dữ liệu.");
-//     }
-// }
-
-// Hàm hiển thị dữ liệu lên giao diện (ĐÃ SỬA: Bỏ Gallery & Sửa Thông số)
-function renderBookToHTML(book) {
-    // 1. Thông tin cơ bản (Giữ nguyên)
-    document.title = "Sách: " + book.title;
-    document.getElementById('breadcrumb-title').innerText = book.title;
-    document.getElementById('book-title').innerText = book.title;
-    document.getElementById('book-sku').innerText = book.sku;
-    document.getElementById('book-author').innerText = book.author;
-    document.getElementById('book-publisher').innerText = book.publisher;
-    document.getElementById('book-description').innerHTML = book.description;
-
-    // 2. Giá tiền (Giữ nguyên)
-    const formatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
-    document.getElementById('price-final').innerText = formatter.format(book.price);
-    
-    if (book.originalPrice > book.price) {
-        document.getElementById('price-original').innerText = formatter.format(book.originalPrice);
-        const percent = Math.round(((book.originalPrice - book.price) / book.originalPrice) * 100);
-        const badge = document.getElementById('discount-badge');
-        if (badge) {
-            badge.innerText = `-${percent}%`;
-            badge.classList.remove('d-none');
-        }
-    }
-
-    // 3. Render thông số kỹ thuật (SỬA MỚI: Dùng List <li> thay vì Table <tr>)
-    const specsContainer = document.getElementById('specs-list');
-    if (specsContainer) {
-        specsContainer.innerHTML = "";
-        for (const [key, value] of Object.entries(book.specs)) {
-            // Tạo thẻ li: <li class="mb-2"><strong>Tên:</strong> Giá trị</li>
-            let item = `
-                <li class="mb-2">
-                    <span class="fw-bold text-dark me-2" style="display:inline-block; width:120px;">${key}:</span>
-                    <span class="text-secondary">${value}</span>
-                </li>`;
-            specsContainer.innerHTML += item;
-        }
-    }
-
-    // 4. Xử lý Ảnh (SỬA MỚI: Chỉ set 1 ảnh to, bỏ thumbnail)
-    const mainImg = document.getElementById('main-image');
-    if (mainImg) {
-        mainImg.src = book.mainImage;
-    }
-}
-
-// --- PHẦN 3: CÁC HÀM TIỆN ÍCH ---
-
-// Hàm tăng giảm số lượng
-function updateQuantity(change) {
-    const input = document.getElementById('quantity-input');
-    let currentValue = parseInt(input.value);
-    let newValue = currentValue + change;
-
-    if (newValue >= 1) {
-        input.value = newValue;
-    }
-}
-
-// Hàm thêm vào giỏ (Demo)
-function addToCart() {
-    const quantity = document.getElementById('quantity-input').value;
-    const title = document.getElementById('book-title').innerText;
-    alert(`Đã thêm ${quantity} cuốn "${title}" vào giỏ hàng!`);
-}
-const CATEGORY_MAP = {
-    // Kinh tế
-    'ngoai-thuong': 1,
-    'marketing-ban-hang': 2,
-    'tai-chinh-tien-te': 3,
-    'quan-tri-lanh-dao': 4,
-
-    // Xã hội & Nhân văn
-    'khoa-hoc-xa-hoi': 5,
-    'am-nhac-my-thuat': 6,
-    'truyen-tranh': 7,
-    'phe-binh-van-hoc': 8,
-    'phong-su-ky-su': 9,
-    'Thơ Ca': 10,
-   // 'tho-ca-nuoc-ngoai': 10,
-    'tieu-thuyet': 11,
-    'bi-quyet-lam-dep': 12,
-    'gia-dinh-hanh-phuc': 13,
-    'nha-o-vat-nuoi': 14,
-    'hoc-lam-nguoi': 15,
-    'danh-nhan': 16,
-    'tam-ly': 17,
-
-    // Giáo dục
-    'sgk': 18,
-    'giao-trinh': 19,
-    'ngoai-ngu': 20,
-    'tu-dien': 21,
-    'tin-hoc': 22,
-    'thieu-nhi': 23
-};// --- 2. HÀM TẢI SÁCH ---
+/**
+ * Lấy dữ liệu sách từ API và hiển thị lên trang (index.html hoặc category pages).
+ */
 async function loadBooksForPage() {
-    const container = document.getElementById('product-list');
-    if (!container) return;
+  const container = document.getElementById("product-list-container");
+  if (!container) return;
 
-    const categorySlug = container.getAttribute('data-api-category');
-    const targetId = CATEGORY_MAP[categorySlug];
+  // Lấy slug từ HTML (div bao ngoài product-list-container)
+  const bookListSection = container.closest("[data-api-category]");
+  if (!bookListSection) return;
 
-    console.log(`Đang tải sách cho trang: ${categorySlug} (ID mong muốn: ${targetId})`);
+  const categorySlug = bookListSection.getAttribute("data-api-category");
+  const targetId = CATEGORY_MAP[categorySlug];
 
-    if (!targetId) {
-        container.innerHTML = `<p class="text-center text-danger">Lỗi: Chưa cấu hình ID cho mục "${categorySlug}" trong script.js</p>`;
-        return;
+  if (targetId === undefined) {
+    container.innerHTML = `<p class="text-center text-danger">Lỗi: Chưa cấu hình ID cho mục "${categorySlug}" trong script.js</p>`;
+    return;
+  }
+
+  container.innerHTML =
+    '<p class="text-center w-100 text-muted">Đang tải sách...</p>';
+
+  try {
+    // Fetch API (Sử dụng URL tương đối /api/sach)
+    const res = await fetch("/api/sach");
+    if (!res.ok) throw new Error("Không kết nối được API /api/sach");
+
+    const data = await res.json();
+    // Xử lý cả hai trường hợp: API trả về mảng trực tiếp hoặc { data: mảng }
+    const allBooks = Array.isArray(data) ? data : data.data || [];
+
+    let filteredBooks = allBooks;
+
+    // Lọc sách nếu targetId khác ID ảo (-1)
+    if (targetId !== -1) {
+      filteredBooks = allBooks.filter((book) => book.MaLoaiSach == targetId);
     }
 
-    try {
-        const res = await fetch('http://localhost:5001/api/sach');
-        if (!res.ok) throw new Error("Không kết nối được Backend");
-        
-        const data = await res.json();
-        const allBooks = Array.isArray(data) ? data : (data.data || []);
-
-        // LỌC SÁCH
-        // Lưu ý: Dùng '==' để so sánh chuỗi "1" với số 1 đều được
-        const filteredBooks = allBooks.filter(book => book.MaLoaiSach == targetId);
-
-        console.log(`Tìm thấy ${filteredBooks.length} quyển sách khớp ID ${targetId}`);
-
-        renderBooks(container, filteredBooks);
-
-    } catch (err) {
-        console.error(err);
-        container.innerHTML = `<div class="text-center w-100 text-danger">
+    renderBooks(container, filteredBooks);
+  } catch (err) {
+    console.error("Lỗi tải sách:", err);
+    container.innerHTML = `<div class="col-12 text-center text-danger py-5">
             <p>Lỗi tải sách: ${err.message}</p>
-            <small>Hãy chắc chắn Server đang chạy (npm start)</small>
+            <small>Hãy chắc chắn Server Backend đang chạy (npm start)</small>
         </div>`;
-    }
+  }
 }
 
-// --- 3. HÀM HIỂN THỊ (RENDER) ---
+/**
+ * Hiển thị danh sách sách dưới dạng HTML.
+ * @param {HTMLElement} container - Thẻ div chứa danh sách sách.
+ * @param {Array} books - Mảng dữ liệu sách.
+ */
 function renderBooks(container, books) {
-    if (books.length === 0) {
-        container.innerHTML = `<div class="col-12 text-center text-muted py-5">
+  // Xóa nội dung cũ và kiểm tra sách
+  container.innerHTML = "";
+  if (books.length === 0) {
+    container.innerHTML = `<div class="col-12 text-center text-muted py-5">
             <h4>Chưa có sách nào trong mục này</h4>
-            <p>Vui lòng vào trang Admin thêm sách với Loại sách tương ứng.</p>
+            <p>Vui lòng vào trang Admin thêm sách.</p>
         </div>`;
-        return;
+    return;
+  }
+
+  let html = "";
+  books.forEach((b) => {
+    let imgUrl = "https://placehold.co/200x300?text=No+Img";
+    const linkAnhDB = b.AnhBia || b.anhBia || b.anhbia;
+
+    if (linkAnhDB && linkAnhDB !== "null" && linkAnhDB.trim() !== "") {
+      imgUrl = linkAnhDB;
     }
 
-    let html = '';
-    books.forEach(b => {
-        // Link ảnh (dự phòng nếu null)
-        let imgUrl = "https://placehold.co/200x300?text=No+Img";
-        if (b.AnhBia && b.AnhBia !== 'null' && b.AnhBia.trim() !== '') {
-            imgUrl = b.AnhBia;
-        }
+    // Giá bán và Giá gốc (giả định có cột GiaGoc trong DB)
+    const price = b.GiaBan ? parseInt(b.GiaBan).toLocaleString("vi-VN") : 0;
+    const originalPriceValue = b.GiaGoc ? parseInt(b.GiaGoc) : 0;
 
-        const price = b.GiaBan ? parseInt(b.GiaBan).toLocaleString('vi-VN') : 0;
+    const discount =
+      originalPriceValue > b.GiaBan
+        ? Math.round(
+            ((originalPriceValue - b.GiaBan) / originalPriceValue) * 100
+          )
+        : null;
 
-        html += `
+    const originalPriceHtml = discount
+      ? `<s class="text-muted small ms-2">${originalPriceValue.toLocaleString(
+          "vi-VN"
+        )} đ</s>`
+      : "";
+
+    const discountBadgeHtml = discount
+      ? `<span class="badge bg-danger position-absolute top-0 end-0 m-2">-${discount}%</span>`
+      : "";
+
+    // Tạo thẻ sản phẩm
+    html += `
             <div class="col-6 col-md-3">
                 <div class="card h-100 border-0 shadow-sm product-card">
                     <div class="position-relative overflow-hidden text-center p-3">
-                        <img src="${imgUrl}" class="card-img-top" alt="${b.TenSach}" 
+                        <img src="${imgUrl}" class="card-img-top" alt="${
+      b.TenSach
+    }" 
                              style="height: 220px; object-fit: contain;"
                              onerror="this.src='https://placehold.co/200x300?text=Error'">
+                        ${discountBadgeHtml}
                     </div>
                     <div class="card-body d-flex flex-column">
-                        <h6 class="card-title text-truncate" title="${b.TenSach}">
-                            <a href="#" class="text-decoration-none text-dark fw-bold">${b.TenSach}</a>
+                        <h6 class="card-title text-truncate" title="${
+                          b.TenSach
+                        }">
+                            <a href="pages/detail-book.html?id=${
+                              b.MaSach
+                            }" class="text-decoration-none text-dark fw-bold">${
+      b.TenSach
+    }</a>
                         </h6>
-                        <p class="card-text text-danger fw-bold mb-1">${price} đ</p>
-                        <small class="text-muted mb-3 d-block text-truncate">${b.TenTG || 'Đang cập nhật'}</small>
+                        <p class="card-text text-danger fw-bold mb-1">${price} đ ${originalPriceHtml}</p>
+                        <small class="text-muted mb-3 d-block text-truncate">${
+                          b.TenTG || "Đang cập nhật"
+                        }</small>
                         <div class="mt-auto">
-                            <button class="btn btn-outline-danger w-100 btn-sm" onclick="addToCart(${b.MaSach})">
+                            <button class="btn btn-outline-danger w-100 btn-sm" onclick="addToCart(${
+                              b.MaSach
+                            })">
                                 <i class="bi bi-cart-plus"></i> Thêm vào giỏ
                             </button>
                         </div>
@@ -549,32 +272,466 @@ function renderBooks(container, books) {
                 </div>
             </div>
         `;
-    });
-    container.innerHTML = html;
+  });
+  container.innerHTML = html;
 }
-async function loadComponents() {
-    const includes = document.querySelectorAll('[data-component-file]');
-    
-    for (let el of includes) {
-        let fileName = el.getAttribute('data-component-file');
-        
-        // --- SỬA LỖI Ở ĐÂY ---
-        // Nếu đang ở trang con (ví dụ marketing-ban-hang.html), phải lùi ra 2 cấp mới thấy header.html
-        // Kiểm tra: Nếu URL hiện tại chứa "/pages/", thì thêm "../../" vào trước tên file
-        if (window.location.pathname.includes('/pages/')) {
-            fileName = '../../' + fileName;
-        }
-        // ---------------------
 
-        try {
-            const res = await fetch(fileName);
-            if (res.ok) {
-                el.innerHTML = await res.text();
+/**
+ * Hàm demo thêm vào giỏ hàng.
+ * @param {number} bookId - Mã sách
+ */
+function addToCart(bookId) {
+  alert(`Đã thêm sách ID: ${bookId} vào giỏ hàng!`);
+}
+
+/* ==========================================================================
+   3. LOGIC CHO TRANG CHI TIẾT SÁCH (Dùng MOCK DATA để demo)
+   ========================================================================== */
+
+// --- DỮ LIỆU GIẢ 7 CUỐN SÁCH (Giữ nguyên MOCK DB) ---
+const MOCK_DB = {
+  1: {
+    id: 1,
+    title: "Những Giấc Mơ Ở Hiệu Sách Morisaki",
+    sku: "BC001",
+    author: "Yagisawa Satoshi",
+    publisher: "NXB Hội Nhà Văn",
+    price: 82000,
+    originalPrice: 95000,
+    description:
+      "<p>Một cuốn sách chữa lành tâm hồn nhẹ nhàng. Câu chuyện về Takako, một cô gái trẻ mất phương hướng...</p>",
+    mainImage: "images/sach_banchay1.png",
+    specs: { "Năm XB": "2023", "Kích thước": "13x19 cm", "Số trang": "200" },
+  },
+  2: {
+    id: 2,
+    title: "Bộ Ba Phép Thuật - Tập 1",
+    sku: "BC002",
+    author: "Nhiều Tác Giả",
+    publisher: "NXB Kim Đồng",
+    price: 95000,
+    originalPrice: 110000,
+    description: "<p>Cuốn sách mở ra một thế giới phép thuật kỳ diệu...</p>",
+    mainImage: "images/sach_banchay2.png",
+    specs: { "Năm XB": "2024", "Kích thước": "14x20 cm", "Số trang": "350" },
+  },
+  3: {
+    id: 3,
+    title: "Harry Potter và Hòn Đá Phù Thủy",
+    sku: "BC003",
+    author: "J.K. Rowling",
+    publisher: "NXB Trẻ",
+    price: 110000,
+    originalPrice: 128000,
+    description:
+      "<p>Khởi đầu của huyền thoại. Cậu bé Harry Potter khám phá ra thân thế thực sự...</p>",
+    mainImage: "images/sach_banchay3.png",
+    specs: { "Năm XB": "2022", "Kích thước": "14x20 cm", "Số trang": "380" },
+  },
+  4: {
+    id: 4,
+    title: "Mẹ Tôi - Câu Chuyện Về Tình Mẫu Tử",
+    sku: "BC004",
+    author: "Edmondo De Amicis",
+    publisher: "NXB Văn Học",
+    price: 120000,
+    originalPrice: 135000,
+    description:
+      "<p>Một tác phẩm kinh điển lấy đi nước mắt của hàng triệu độc giả...</p>",
+    mainImage: "images/sach_banchay4.png",
+    specs: { "Năm XB": "2022", "Kích thước": "13x20 cm", "Số trang": "250" },
+  },
+  5: {
+    id: 5,
+    title: "Nhật Ký Của Bố",
+    sku: "BC005",
+    author: "Nhiều Tác Giả",
+    publisher: "NXB Trẻ",
+    price: 89000,
+    originalPrice: 99000,
+    description:
+      "<p>Góc nhìn hài hước nhưng cũng đầy sâu sắc của một người đàn ông lần đầu làm bố...</p>",
+    mainImage: "images/sach_banchay5.png",
+    specs: { "Năm XB": "2023", "Kích thước": "13x19 cm", "Số trang": "180" },
+  },
+  6: {
+    id: 6,
+    title: "Nghĩ Giàu & Làm Giàu",
+    sku: "BC006",
+    author: "Napoleon Hill",
+    publisher: "NXB Tổng Hợp",
+    price: 102000,
+    originalPrice: 118000,
+    description: "<p>Cuốn sách gối đầu giường của mọi doanh nhân...</p>",
+    mainImage: "images/sach_banchay6.png",
+    specs: { "Năm XB": "2021", "Kích thước": "15x23 cm", "Số trang": "400" },
+  },
+  7: {
+    id: 7,
+    title: "Đừng Lựa Chọn An Nhàn Khi Còn Trẻ",
+    sku: "BC007",
+    author: "Gia Cát",
+    publisher: "NXB Phụ Nữ",
+    price: 98000,
+    originalPrice: 115000,
+    description:
+      "<p>Cuốn sách là lời thức tỉnh mạnh mẽ dành cho những người trẻ...</p>",
+    mainImage: "images/sach_banchay7.png",
+    specs: { "Năm XB": "2023", "Kích thước": "13x20 cm", "Số trang": "320" },
+  },
+};
+
+/**
+ * Tải chi tiết sách (chỉ chạy ở trang detail-book.html).
+ */
+async function loadBookDetail() {
+  if (!document.getElementById("book-title")) return;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  let bookId = urlParams.get("id");
+  if (!bookId) bookId = "1";
+
+  try {
+    // Giả lập API delay
+    await new Promise((r) => setTimeout(r, 200));
+    const data = MOCK_DB[bookId];
+
+    if (data) {
+      renderBookToHTML(data);
+    } else {
+      document.getElementById("book-title").innerText =
+        "Không tìm thấy sản phẩm!";
+    }
+  } catch (error) {
+    console.error("Lỗi tải chi tiết sách (MOCK):", error);
+  }
+}
+
+/**
+ * Hiển thị dữ liệu MOCK sách lên giao diện trang chi tiết.
+ * @param {object} book - Dữ liệu sách MOCK.
+ */
+function renderBookToHTML(book) {
+  document.title = "Sách: " + book.title;
+  document.getElementById("breadcrumb-title").innerText = book.title;
+  document.getElementById("book-title").innerText = book.title;
+  document.getElementById("book-sku").innerText = book.sku;
+  document.getElementById("book-author").innerText = book.author;
+  document.getElementById("book-publisher").innerText = book.publisher;
+  document.getElementById("book-description").innerHTML = book.description;
+
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
+  document.getElementById("price-final").innerText = formatter.format(
+    book.price
+  );
+
+  // Giá gốc
+  if (book.originalPrice > book.price) {
+    document.getElementById("price-original").innerText = formatter.format(
+      book.originalPrice
+    );
+    const percent = Math.round(
+      ((book.originalPrice - book.price) / book.originalPrice) * 100
+    );
+    const badge = document.getElementById("discount-badge");
+    if (badge) {
+      badge.innerText = `-${percent}%`;
+      badge.classList.remove("d-none");
+    }
+  }
+
+  // Thông số kỹ thuật
+  const specsContainer = document.getElementById("specs-list");
+  if (specsContainer) {
+    specsContainer.innerHTML = "";
+    for (const [key, value] of Object.entries(book.specs)) {
+      let item = `
+                <li class="mb-2">
+                    <span class="fw-bold text-dark me-2" style="display:inline-block; width:120px;">${key}:</span>
+                    <span class="text-secondary">${value}</span>
+                </li>`;
+      specsContainer.innerHTML += item;
+    }
+  }
+
+  // Ảnh chính
+  const mainImg = document.getElementById("main-image");
+  if (mainImg)
+    mainImg.src =
+      mainImg.closest("[data-prefix]").getAttribute("data-prefix") +
+      book.mainImage;
+}
+
+/**
+ * Hàm tăng giảm số lượng sản phẩm.
+ * @param {number} change - Giá trị thay đổi (1 hoặc -1)
+ */
+function updateQuantity(change) {
+  const input = document.getElementById("quantity-input");
+  if (!input) return;
+  let currentValue = parseInt(input.value);
+  let newValue = currentValue + change;
+
+  if (newValue >= 1) {
+    input.value = newValue;
+  }
+}
+
+/* ==========================================================================
+   4. MAIN EVENT LISTENER - TỰ ĐỘNG CHẠY KHI TRANG TẢI XONG
+   ========================================================================== */
+
+window.addEventListener("DOMContentLoaded", () => {
+  // 1. Tải tất cả component (Header, Footer, Sidebar)
+  const components = document.querySelectorAll("[data-component-file]");
+  components.forEach((el) => {
+    const file = el.getAttribute("data-component-file");
+    const id = el.id;
+    if (file && id) {
+      loadComponent(id, file);
+    }
+  });
+
+  // 2. Tô đỏ link sidebar (Cần delay để component tải xong)
+  setTimeout(highlightActiveCategory, 200);
+
+  // 3. Tải danh sách sách (Nếu đang ở trang index/category)
+  const productListContainer = document.getElementById(
+    "product-list-container"
+  );
+  if (productListContainer) {
+    loadBooksForPage();
+  }
+
+  // 4. Tải chi tiết sách (Nếu đang ở trang detail)
+  loadBookDetail();
+});
+ /**
+ * Thêm sách vào giỏ hàng (Gọi API Backend)
+ * @param {number} bookId - Mã sách
+ */
+async function addToCart(bookId) {
+  // Lấy ID khách hàng (Tạm thời để cứng là 1, sau này bạn lấy từ localStorage khi làm Đăng nhập)
+  const MaKH = localStorage.getItem("MaKH") || 1; 
+  const SoLuong = 1;
+
+  try {
+    const res = await fetch("/api/cart/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        MaKH: MaKH,
+        MaSach: bookId,
+        SoLuong: SoLuong
+      })
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.status === "OK") {
+      alert("✅ " + data.message);
+      
+      // Nếu bạn muốn cập nhật số lượng trên icon giỏ hàng ngay lập tức, 
+      // bạn có thể gọi lại hàm lấy số lượng giỏ hàng ở đây (nếu có).
+    } else {
+      alert("❌ Lỗi: " + (data.message || "Không thể thêm vào giỏ"));
+    }
+  } catch (err) {
+    console.error("Lỗi kết nối:", err);
+    alert("Lỗi kết nối đến Server!");
+  }
+}
+/* ==========================================================================
+   LOGIC TRANG GIỎ HÀNG (Dành cho cart.html)
+   ========================================================================== */
+
+// Hàm định dạng tiền tệ (VD: 100000 -> 100.000 đ)
+const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+};
+
+// Hàm chính để tải dữ liệu giỏ hàng
+async function loadCartPage() {
+    const cartBody = document.getElementById("cart-body");
+    const totalEl = document.getElementById("cart-total-price");
+    const countEl = document.getElementById("cart-count-item");
+    
+    // Nếu không tìm thấy thẻ cart-body (nghĩa là không ở trang giỏ hàng) thì dừng lại
+    if (!cartBody) return;
+
+    // ⚠️ QUAN TRỌNG: Lấy ID khách hàng. 
+    // Nếu bạn chưa làm đăng nhập, hãy đảm bảo số này khớp với MaKH bạn đã tạo trong Database (VD: 1)
+    const MaKH = localStorage.getItem("MaKH") || 1;
+
+    try {
+        // Gọi API lấy giỏ hàng
+        const res = await fetch(`/api/cart/${MaKH}`);
+        const data = await res.json();
+
+        // 1. Kiểm tra lỗi từ Server
+        if (data.status !== "OK") {
+            // Nếu lỗi là do chưa có giỏ hàng (mới tạo user), coi như giỏ trống
+            if (data.data && data.data.length === 0) {
+                 renderEmptyCart(cartBody, countEl, totalEl);
+                 return;
             }
-        } catch (e) {
-            console.error("Không tải được file:", fileName);
+            console.error("Lỗi tải giỏ:", data.message);
+            return;
         }
+
+        const items = data.data || [];
+        const tongTien = data.tongTien || 0;
+
+        // 2. Cập nhật số lượng tổng và tổng tiền
+        if(countEl) countEl.innerText = items.length;
+        if(totalEl) totalEl.innerText = formatCurrency(tongTien);
+
+        // 3. Nếu giỏ hàng trống
+        if (items.length === 0) {
+            renderEmptyCart(cartBody, countEl, totalEl);
+            return;
+        }
+
+        // 4. Render danh sách sản phẩm
+        let html = "";
+        items.forEach(item => {
+            // Xử lý ảnh: Nếu null hoặc lỗi thì dùng ảnh giả
+            const imgUrl = (item.AnhBia && item.AnhBia !== 'null') ? item.AnhBia : "https://placehold.co/100x100?text=No+Img";
+            
+            // Tính thành tiền của từng món
+            const thanhTienItem = item.GiaBan * item.SoLuong;
+
+            html += `
+                <tr class="border-bottom">
+                    <td class="text-start ps-4">
+                        <div class="d-flex align-items-center">
+                            <img src="${imgUrl}" alt="${item.TenSach}" 
+                                 style="width: 70px; height: 90px; object-fit: cover;" 
+                                 class="rounded shadow-sm me-3 border">
+                            <div class="text-start">
+                                <h6 class="mb-1 text-truncate" style="max-width: 200px;" title="${item.TenSach}">${item.TenSach}</h6>
+                                <small class="text-muted">Mã: ${item.MaSach}</small>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="fw-bold text-secondary">${formatCurrency(item.GiaBan)}</td>
+
+                    <td>
+                        <div class="input-group input-group-sm mx-auto" style="width: 110px;">
+                            <button class="btn btn-outline-secondary" type="button" 
+                                    onclick="changeCartQuantity(${item.MaSach}, ${item.SoLuong - 1})">
+                                <i class="bi bi-dash"></i>
+                            </button>
+                            
+                            <input type="text" class="form-control text-center bg-white fw-bold" 
+                                   value="${item.SoLuong}" readonly>
+                            
+                            <button class="btn btn-outline-secondary" type="button" 
+                                    onclick="changeCartQuantity(${item.MaSach}, ${item.SoLuong + 1})">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
+                    </td>
+
+                    <td class="fw-bold text-danger">${formatCurrency(thanhTienItem)}</td>
+
+                    <td>
+                        <button class="btn btn-link text-danger p-0 opacity-75 hover-opacity-100" 
+                                onclick="removeCartItem(${item.MaSach})" title="Xóa sản phẩm">
+                            <i class="bi bi-trash3-fill fs-5"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        cartBody.innerHTML = html;
+
+    } catch (err) {
+        console.error(err);
+        cartBody.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">Không thể kết nối đến Server!</td></tr>`;
     }
 }
-alert("Script đã chạy!");
-loadComponents();
+
+// Hàm hiển thị khi giỏ hàng trống
+function renderEmptyCart(container, countEl, totalEl) {
+    if(countEl) countEl.innerText = "0";
+    if(totalEl) totalEl.innerText = "0 ₫";
+    container.innerHTML = `
+        <tr>
+            <td colspan="5" class="text-center py-5">
+                <i class="bi bi-cart-x fs-1 text-muted mb-3 d-block"></i>
+                <p class="text-muted">Giỏ hàng của bạn đang trống</p>
+                <a href="../index.html" class="btn btn-outline-warning btn-sm mt-2">Mua sắm ngay</a>
+            </td>
+        </tr>
+    `;
+}
+
+/**
+ * Hàm thay đổi số lượng (Gọi API Update)
+ */
+async function changeCartQuantity(maSach, newQty) {
+    const MaKH = localStorage.getItem("MaKH") || 1;
+    
+    if (newQty < 1) {
+        // Nếu giảm xuống dưới 1 thì hỏi xóa
+        if(confirm("Bạn muốn xóa sản phẩm này khỏi giỏ hàng?")) {
+            removeCartItem(maSach);
+        }
+        return;
+    }
+
+    try {
+        const res = await fetch("/api/cart/update", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ MaKH, MaSach: maSach, SoLuong: newQty })
+        });
+        
+        if (res.ok) {
+            loadCartPage(); // Tải lại giao diện sau khi update thành công
+        } else {
+            alert("Lỗi cập nhật số lượng!");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Lỗi kết nối!");
+    }
+}
+
+/**
+ * Hàm xóa sản phẩm (Gọi API Remove)
+ */
+async function removeCartItem(maSach) {
+    if(!confirm("Chắc chắn xóa sản phẩm này?")) return;
+
+    const MaKH = localStorage.getItem("MaKH") || 1;
+    try {
+        const res = await fetch("/api/cart/remove", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ MaKH, MaSach: maSach })
+        });
+
+        if (res.ok) {
+            loadCartPage(); // Tải lại giao diện
+        } else {
+            alert("Không thể xóa sản phẩm!");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Lỗi kết nối!");
+    }
+}
+
+// Tự động chạy khi trang load xong
+window.addEventListener("DOMContentLoaded", () => {
+    loadCartPage();
+});

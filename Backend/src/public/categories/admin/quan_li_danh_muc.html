@@ -1,187 +1,267 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard - Quản lý Danh Mục</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
 
     <style>
-        body {
-            padding-top: 57px;
-            background-color: #f5f6f8;
-            overflow-x: hidden;
-        }
-        .sidebar {
-            position: fixed;
-            top: 56px;
-            bottom: 0;
-            left: 0;
-            z-index: 1000;
-            padding: 20px 0;
-            overflow-x: hidden;
-            overflow-y: auto;
-            background-color: #f8f9fa;
-            border-right: 1px solid #dee2e6;
-        }
-        .main-content {
-            padding: 20px;
-        }
+      body {
+        padding-top: 57px;
+        background-color: #f5f6f8;
+        overflow-x: hidden;
+      }
+      .sidebar {
+        position: fixed;
+        top: 56px;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+        padding: 20px 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        background-color: #f8f9fa;
+        border-right: 1px solid #dee2e6;
+      }
+      .main-content {
+        padding: 20px;
+      }
     </style>
-</head>
-<body>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container-fluid">
+    <script src="../../js/admin-guard.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container-fluid">
         <a class="navbar-brand" href="#">Admin Bán Sách</a>
         <div class="d-flex ms-auto">
-            <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person-circle"></i> Chào, Admin!
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
-                    </ul>
-                </li>
-            </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="bi bi-person-circle"></i> Chào, Admin!
+              </a>
+              <ul
+                class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="navbarDropdown"
+              >
+                <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+              </ul>
+            </li>
+          </ul>
         </div>
-    </div>
-</nav>
+      </div>
+    </nav>
 
-<div class="container-fluid">
-    <div class="row">
+    <div class="container-fluid">
+      <div class="row">
         <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar">
-            <div class="position-sticky pt-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="bi bi-house-door"></i> Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="quan_li_sach.html"><i class="bi bi-book"></i> Quản lý Sách</a></li>
-                    <li class="nav-item"><a class="nav-link" href="quan_li_loai_sach.html"><i class="bi bi-people"></i> Quản lý Khách hàng</a></li>
-                    <li class="nav-item"><a class="nav-link" href="quan_li_don_hang.html"><i class="bi bi-cart-check"></i> Quản lý Đơn hàng</a></li>
-                    <li class="nav-item"><a class="nav-link" href="quan_li_nha_xuat_ban.html"><i class="bi bi-building"></i> Quản lý NXB</a></li>
-                    <li class="nav-item"><a class="nav-link" href="quan_li_tac_gia.html"><i class="bi bi-pen"></i> Quản lý Tác giả</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="quan_li_danh_muc.html"><i class="bi bi-list-task"></i> Quản lý Danh mục</a></li>
-                </ul>
-            </div>
+          <div class="position-sticky pt-3">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link" href="dashboard.html"
+                  ><i class="bi bi-house-door"></i> Dashboard</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="quan_li_sach.html"
+                  ><i class="bi bi-book"></i> Quản lý Sách</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="quan_li_loai_sach.html"
+                  ><i class="bi bi-people"></i> Quản lý Khách hàng</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="quan_li_don_hang.html"
+                  ><i class="bi bi-cart-check"></i> Quản lý Đơn hàng</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="quan_li_nha_xuat_ban.html"
+                  ><i class="bi bi-building"></i> Quản lý NXB</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="quan_li_tac_gia.html"
+                  ><i class="bi bi-pen"></i> Quản lý Tác giả</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="quan_li_danh_muc.html"
+                  ><i class="bi bi-list-task"></i> Quản lý Danh mục</a
+                >
+              </li>
+            </ul>
+          </div>
         </nav>
 
         <main class="main-content ms-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">Quản lý Danh Mục</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <button id="btnAddCategory" type="button" class="btn btn-primary"
-                            data-bs-toggle="modal" data-bs-target="#categoryModal" onclick="resetForm()">
-                        <i class="bi bi-plus-circle"></i> Thêm Danh Mục
-                    </button>
-                </div>
+          <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+          >
+            <h1 class="h2">Quản lý Danh Mục</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+              <button
+                id="btnAddCategory"
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#categoryModal"
+                onclick="resetForm()"
+              >
+                <i class="bi bi-plus-circle"></i> Thêm Danh Mục
+              </button>
             </div>
+          </div>
 
-            <div class="card shadow-sm border-0">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                            <tr>
-                                <th scope="col" class="text-center py-3">ID</th>
-                                <th scope="col" class="py-3">Tên Danh Mục</th>
-                                <th scope="col" class="py-3">Danh Mục Cha</th>
-                                <th scope="col" class="text-center py-3">Hành động</th>
-                            </tr>
-                            </thead>
-                            <tbody id="catTableBody">
-                                </tbody>
-                        </table>
-                    </div>
-                </div>
+          <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th scope="col" class="text-center py-3">ID</th>
+                      <th scope="col" class="py-3">Tên Danh Mục</th>
+                      <th scope="col" class="py-3">Danh Mục Cha</th>
+                      <th scope="col" class="text-center py-3">Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody id="catTableBody"></tbody>
+                </table>
+              </div>
             </div>
+          </div>
         </main>
+      </div>
     </div>
-</div>
 
-<div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Thông tin Danh Mục</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle">Thông tin Danh Mục</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
 
-            <div class="modal-body">
-                <form id="categoryForm">
-                    <input type="hidden" id="catId">
+          <div class="modal-body">
+            <form id="categoryForm">
+              <input type="hidden" id="catId" />
 
-                    <div class="mb-3">
-                        <label for="catName" class="form-label">Tên Danh Mục</label>
-                        <input type="text" class="form-control" id="catName" required placeholder="Ví dụ: Tiểu thuyết, Kinh tế...">
-                    </div>
+              <div class="mb-3">
+                <label for="catName" class="form-label">Tên Danh Mục</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="catName"
+                  required
+                  placeholder="Ví dụ: Tiểu thuyết, Kinh tế..."
+                />
+              </div>
 
-                    <div class="mb-3">
-                        <label for="catParent" class="form-label">Danh Mục Cha (Nếu có)</label>
-                        <select class="form-select" id="catParent">
-                            <option value="0">-- Là danh mục gốc --</option>
-                        </select>
-                        <div class="form-text">Chọn danh mục cha nếu đây là danh mục con.</div>
-                    </div>
-                    </form>
-            </div>
+              <div class="mb-3">
+                <label for="catParent" class="form-label"
+                  >Danh Mục Cha (Nếu có)</label
+                >
+                <select class="form-select" id="catParent">
+                  <option value="0">-- Là danh mục gốc --</option>
+                </select>
+                <div class="form-text">
+                  Chọn danh mục cha nếu đây là danh mục con.
+                </div>
+              </div>
+            </form>
+          </div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-primary" id="saveCatButton" onclick="saveCategory()">Lưu lại</button>
-            </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Đóng
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="saveCatButton"
+              onclick="saveCategory()"
+            >
+              Lưu lại
+            </button>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-    const API_URL = 'http://localhost:5001/api/danhmuc';
-    let categories = [];
-    const myModalEl = document.getElementById('categoryModal');
-    let myModal;
-    if(myModalEl) myModal = new bootstrap.Modal(myModalEl);
+    <script>
+      const API_URL = "http://localhost:5001/api/danhmuc";
+      let categories = [];
+      const myModalEl = document.getElementById("categoryModal");
+      let myModal;
+      if (myModalEl) myModal = new bootstrap.Modal(myModalEl);
 
-    document.addEventListener("DOMContentLoaded", () => {
+      document.addEventListener("DOMContentLoaded", () => {
         loadCategories();
-    });
+      });
 
-    // 1. Load Danh Mục
-    async function loadCategories() {
+      // 1. Load Danh Mục
+      async function loadCategories() {
         try {
-            const res = await fetch(API_URL);
-            const responseData = await res.json();
-            
-            // Xử lý cả 2 trường hợp API trả về mảng hoặc object chứa mảng
-            if (Array.isArray(responseData)) {
-                categories = responseData;
-            } else if (responseData.data && Array.isArray(responseData.data)) {
-                categories = responseData.data;
-            } else {
-                categories = [];
-            }
+          const res = await fetch(API_URL);
+          const responseData = await res.json();
 
-            renderTable(categories);
-            renderParentSelect(categories);
+          // Xử lý cả 2 trường hợp API trả về mảng hoặc object chứa mảng
+          if (Array.isArray(responseData)) {
+            categories = responseData;
+          } else if (responseData.data && Array.isArray(responseData.data)) {
+            categories = responseData.data;
+          } else {
+            categories = [];
+          }
 
+          renderTable(categories);
+          renderParentSelect(categories);
         } catch (err) {
-            console.error("Lỗi tải dữ liệu:", err);
+          console.error("Lỗi tải dữ liệu:", err);
         }
-    }
+      }
 
-    // 2. Render Table
-    function renderTable(list) {
+      // 2. Render Table
+      function renderTable(list) {
         const tbody = document.getElementById("catTableBody");
         if (!tbody) return;
         tbody.innerHTML = "";
 
-        list.forEach(item => {
-            const parent = list.find(p => p.MaDanhMuc == item.ParentID);
-            const parentName = parent ? `<span class="badge bg-secondary">${parent.TenDanhMuc}</span>` : '<span class="text-muted">-- Gốc --</span>';
+        list.forEach((item) => {
+          const parent = list.find((p) => p.MaDanhMuc == item.ParentID);
+          const parentName = parent
+            ? `<span class="badge bg-secondary">${parent.TenDanhMuc}</span>`
+            : '<span class="text-muted">-- Gốc --</span>';
 
-            tbody.innerHTML += `
+          tbody.innerHTML += `
                 <tr>
                     <td class="text-center">#${item.MaDanhMuc}</td>
                     <td class="fw-bold">${item.TenDanhMuc}</td>
@@ -193,93 +273,95 @@
                 </tr>
             `;
         });
-    }
+      }
 
-    // 3. Render Select (Điền danh sách vào menu thả xuống)
-    function renderParentSelect(list) {
+      // 3. Render Select (Điền danh sách vào menu thả xuống)
+      function renderParentSelect(list) {
         const select = document.getElementById("catParent");
         if (!select) return; // Nếu không có thẻ này thì return để tránh lỗi
 
         select.innerHTML = '<option value="0">-- Là danh mục gốc --</option>';
-        list.forEach(item => {
-            select.innerHTML += `<option value="${item.MaDanhMuc}">${item.TenDanhMuc}</option>`;
+        list.forEach((item) => {
+          select.innerHTML += `<option value="${item.MaDanhMuc}">${item.TenDanhMuc}</option>`;
         });
-    }
+      }
 
-    // 4. Reset Form
-    function resetForm() {
-        document.getElementById('catId').value = ''; 
-        document.getElementById('catName').value = '';
+      // 4. Reset Form
+      function resetForm() {
+        document.getElementById("catId").value = "";
+        document.getElementById("catName").value = "";
         // Bây giờ đã có thẻ này, dòng dưới sẽ không lỗi nữa
-        if(document.getElementById('catParent')) {
-            document.getElementById('catParent').value = '0';
+        if (document.getElementById("catParent")) {
+          document.getElementById("catParent").value = "0";
         }
-        document.getElementById('modalTitle').innerText = "Thêm Danh Mục Mới";
-    }
+        document.getElementById("modalTitle").innerText = "Thêm Danh Mục Mới";
+      }
 
-    // 5. Chuẩn bị Sửa
-    function prepareEdit(id) {
-        const item = categories.find(c => c.MaDanhMuc == id);
+      // 5. Chuẩn bị Sửa
+      function prepareEdit(id) {
+        const item = categories.find((c) => c.MaDanhMuc == id);
         if (item) {
-            document.getElementById('catId').value = item.MaDanhMuc;
-            document.getElementById('catName').value = item.TenDanhMuc;
-            if(document.getElementById('catParent')) {
-                document.getElementById('catParent').value = item.ParentID || 0;
-            }
-            document.getElementById('modalTitle').innerText = "Cập Nhật Danh Mục";
-            if(myModal) myModal.show();
+          document.getElementById("catId").value = item.MaDanhMuc;
+          document.getElementById("catName").value = item.TenDanhMuc;
+          if (document.getElementById("catParent")) {
+            document.getElementById("catParent").value = item.ParentID || 0;
+          }
+          document.getElementById("modalTitle").innerText = "Cập Nhật Danh Mục";
+          if (myModal) myModal.show();
         }
-    }
+      }
 
-    // 6. Lưu (Thêm/Sửa)
-    async function saveCategory() {
-        const id = document.getElementById('catId').value;
-        const TenDanhMuc = document.getElementById('catName').value.trim();
-        
+      // 6. Lưu (Thêm/Sửa)
+      async function saveCategory() {
+        const id = document.getElementById("catId").value;
+        const TenDanhMuc = document.getElementById("catName").value.trim();
+
         // LẤY GIÁ TRỊ TỪ SELECT BOX (Nguyên nhân lỗi trước đó là do thiếu thẻ này)
-        const parentEl = document.getElementById('catParent');
+        const parentEl = document.getElementById("catParent");
         const ParentID = parentEl ? parentEl.value : null;
 
         if (!TenDanhMuc) {
-            alert("Vui lòng nhập tên danh mục!");
-            return;
+          alert("Vui lòng nhập tên danh mục!");
+          return;
         }
 
-        const method = id ? 'PUT' : 'POST';
+        const method = id ? "PUT" : "POST";
         const url = id ? `${API_URL}/${id}` : API_URL;
 
         const payload = { TenDanhMuc, ParentID };
 
         try {
-            const res = await fetch(url, {
-                method: method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+          const res = await fetch(url, {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
 
-            const data = await res.json();
-            
-            if (res.ok) {
-                alert("Thành công!");
-                if(myModal) myModal.hide();
-                loadCategories();
-            } else {
-                alert("Lỗi: " + (data.message || "Không xác định"));
-            }
+          const data = await res.json();
+
+          if (res.ok) {
+            alert("Thành công!");
+            if (myModal) myModal.hide();
+            loadCategories();
+          } else {
+            alert("Lỗi: " + (data.message || "Không xác định"));
+          }
         } catch (err) {
-            alert("Lỗi kết nối Server!");
-            console.error(err);
+          alert("Lỗi kết nối Server!");
+          console.error(err);
         }
-    }
+      }
 
-    // 7. Xóa
-    async function deleteCategory(id) {
+      // 7. Xóa
+      async function deleteCategory(id) {
         if (!confirm("Xóa danh mục này?")) return;
         try {
-            await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-            loadCategories();
-        } catch (e) { console.log(e); }
-    }
-</script>
-</body>
+          await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+          loadCategories();
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    </script>
+  </body>
 </html>

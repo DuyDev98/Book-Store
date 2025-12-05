@@ -12,9 +12,9 @@ const __dirname = path.dirname(__filename);
 
 // Initialize express app
 const app = express();
-app.use(express.json());  // Middleware to parse JSON bodies
+app.use(express.json()); // Middleware to parse JSON bodies
 
-app.use(cors()); 
+app.use(cors());
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -46,7 +46,6 @@ import loaisachRouter from "./router/loaisach.router.js";
 import userRouter from "./router/UserRouter.js";
 import tacgiaRouter from "./router/tacgia.router.js";
 
-
 // Use API routes
 app.use("/api/user", userRouter);
 app.use("/api/nxb", NXBRoute);
@@ -56,7 +55,6 @@ app.use("/api/cart", cartRouter);
 app.use("/api/cart-detail", cartDetailRouter);
 app.use("/api/khachhang", khRouter);
 app.use("/api/loaisach", loaisachRouter);
-app.use("/api/user",userRouter); 
 app.use("/api/tacgia", tacgiaRouter);
 
 // Fallback route for unknown URLs
@@ -69,4 +67,3 @@ const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
- 
