@@ -191,80 +191,87 @@ async function loadBooksForPage() {
 
 /**
  * Hiển thị danh sách sách dưới dạng HTML.
+/**
+ * Hiển thị danh sách sách dưới dạng HTML.
  * @param {HTMLElement} container - Thẻ div chứa danh sách sách.
  * @param {Array} books - Mảng dữ liệu sách.
  */
 function renderBooks(container, books) {
-  // Xóa nội dung cũ và kiểm tra sách
   container.innerHTML = "";
-  if (books.length === 0) {
+  
+  if (!books || books.length === 0) {
     container.innerHTML = `<div class="col-12 text-center text-muted py-5">
             <h4>Chưa có sách nào trong mục này</h4>
-            <p>Vui lòng vào trang Admin thêm sách.</p>
         </div>`;
     return;
   }
 
+  // logic xác định đường dẫn tới trang chi tiết
+  // Nếu URL hiện tại chứa "/pages/" (tức là đang ở trang danh mục), thì link chỉ cần là "detail-book.html"
+  // Nếu không (đang ở index.html), thì link phải là "pages/detail-book.html"
+  const isInPagesFolder = window.location.pathname.includes("/pages/");
+  const detailBaseUrl = isInPagesFolder ? "detail-book.html" : "pages/detail-book.html";
+
   let html = "";
   books.forEach((b) => {
+    // Xử lý ảnh
     let imgUrl = "https://placehold.co/200x300?text=No+Img";
     const linkAnhDB = b.AnhBia || b.anhBia || b.anhbia;
-
     if (linkAnhDB && linkAnhDB !== "null" && linkAnhDB.trim() !== "") {
       imgUrl = linkAnhDB;
     }
 
-    // Giá bán và Giá gốc (giả định có cột GiaGoc trong DB)
+    // Xử lý giá
     const price = b.GiaBan ? parseInt(b.GiaBan).toLocaleString("vi-VN") : 0;
     const originalPriceValue = b.GiaGoc ? parseInt(b.GiaGoc) : 0;
-
-    const discount =
-      originalPriceValue > b.GiaBan
-        ? Math.round(
-            ((originalPriceValue - b.GiaBan) / originalPriceValue) * 100
-          )
+    
+    // Tính giảm giá
+    const discount = (originalPriceValue > b.GiaBan)
+        ? Math.round(((originalPriceValue - b.GiaBan) / originalPriceValue) * 100)
         : null;
 
     const originalPriceHtml = discount
-      ? `<s class="text-muted small ms-2">${originalPriceValue.toLocaleString(
-          "vi-VN"
-        )} đ</s>`
+      ? `<s class="text-muted small ms-2">${originalPriceValue.toLocaleString("vi-VN")} đ</s>`
       : "";
 
     const discountBadgeHtml = discount
       ? `<span class="badge bg-danger position-absolute top-0 end-0 m-2">-${discount}%</span>`
       : "";
 
-    // Tạo thẻ sản phẩm
+    // Tạo Link chi tiết kèm ID sách
+    const detailLink = `${detailBaseUrl}?id=${b.MaSach}`;
+
+    // Tạo HTML thẻ sản phẩm
     html += `
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-3 mb-4">
                 <div class="card h-100 border-0 shadow-sm product-card">
+                    
                     <div class="position-relative overflow-hidden text-center p-3">
-                        <img src="${imgUrl}" class="card-img-top" alt="${
-      b.TenSach
-    }" 
-                             style="height: 220px; object-fit: contain;"
-                             onerror="this.src='https://placehold.co/200x300?text=Error'">
+                        <a href="${detailLink}">
+                            <img src="${imgUrl}" class="card-img-top" alt="${b.TenSach}" 
+                                 style="height: 220px; object-fit: contain; cursor: pointer;"
+                                 onerror="this.src='https://placehold.co/200x300?text=Error'">
+                        </a>
                         ${discountBadgeHtml}
                     </div>
+
                     <div class="card-body d-flex flex-column">
-                        <h6 class="card-title text-truncate" title="${
-                          b.TenSach
-                        }">
-                            <a href="pages/detail-book.html?id=${
-                              b.MaSach
-                            }" class="text-decoration-none text-dark fw-bold">${
-      b.TenSach
-    }</a>
+                        <h6 class="card-title text-truncate" title="${b.TenSach}">
+                            <a href="${detailLink}" class="text-decoration-none text-dark fw-bold stretched-link-custom">
+                                ${b.TenSach}
+                            </a>
                         </h6>
-                        <p class="card-text text-danger fw-bold mb-1">${price} đ ${originalPriceHtml}</p>
-                        <small class="text-muted mb-3 d-block text-truncate">${
-                          b.TenTG || "Đang cập nhật"
-                        }</small>
+                        
+                        <p class="card-text text-danger fw-bold mb-1">
+                            ${price} đ ${originalPriceHtml}
+                        </p>
+                        
+                        <small class="text-muted mb-3 d-block text-truncate">
+                            ${b.TenTG || "Đang cập nhật"}
+                        </small>
+                        
                         <div class="mt-auto">
-                            <button class="btn btn-outline-danger w-100 btn-sm" onclick="addToCart(${
-                              b.MaSach
-                            })">
+                            <button class="btn btn-outline-danger w-100 btn-sm" onclick="addToCart(${b.MaSach})">
                                 <i class="bi bi-cart-plus"></i> Thêm vào giỏ
                             </button>
                         </div>
@@ -273,6 +280,7 @@ function renderBooks(container, books) {
             </div>
         `;
   });
+  
   container.innerHTML = html;
 }
 
