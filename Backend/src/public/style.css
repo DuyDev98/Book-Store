@@ -686,3 +686,27 @@ main.col-md-10 {
     border-color: #f7941e;
     transform: scale(1.05);
 }
+
+
+//thanh toán 
+/* --- STYLE CHO TRANG THANH TOÁN --- */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.payment-option {
+    transition: all 0.2s;
+}
+
+.payment-option:hover {
+    background-color: #f8f9fa;
+    border-color: #4B7900 !important; /* Màu xanh chủ đạo */
+}
+
+/* Khi radio được chọn, đổi màu viền box */
+.form-check-input:checked + label {
+    color: #4B7900;
+}
+.form-check-input:checked ~ div { /* Hiện thông tin banking */
+    display: block !important; 
+}
