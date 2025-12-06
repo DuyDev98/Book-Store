@@ -1,365 +1,353 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard - Quản lý Loại sách</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <script src="../../js/admin-guard.js"></script>
 
     <style>
         body {
-            padding-top: 57px;
+            padding-top: 56px;
             background-color: #f5f6f8;
-            
-            overflow-x: hidden; /* Ẩn thanh cuộn ngang của toàn trang */
+            overflow-x: hidden;
         }
 
-      /* Tùy chỉnh cho Sidebar */
-      .sidebar {
-        position: fixed;
-        /* Cố định sidebar */
-        top: 56px;
-        /* Ngay dưới Navbar */
-        bottom: 0;
-        left: 0;
-        z-index: 1000;
-        padding: 20px 0;
-        overflow-x: hidden;
-        overflow-y: auto;
-        /* Cho phép cuộn nếu menu quá dài */
-        background-color: #f8f9fa;
-        /* Màu nền xám nhạt */
-        border-right: 1px solid #dee2e6;
-      }
+        /* Sidebar cố định */
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 20px 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            background-color: #fff;
+        }
 
-        /* Căn lề cho Nội dung chính */
+        /* Phần nội dung chính đẩy sang phải */
         .main-content {
-            /* Đẩy nội dung sang phải một khoảng bằng chiều rộng Sidebar */
-            
-            /* Cần khớp với chiều rộng .sidebar */
+            margin-left: 240px; /* Khớp với độ rộng sidebar */
             padding: 20px;
         }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
     </style>
-  </head>
+</head>
 
-  <body>
+<body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Admin Bán Sách</a>
-
-        <div class="d-flex ms-auto">
-          <ul class="navbar-nav">
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navbarDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <i class="bi bi-person-circle"></i> Chào, Admin!
-              </a>
-              <ul
-                class="dropdown-menu dropdown-menu-end"
-                aria-labelledby="navbarDropdown"
-              >
-                <li><a class="dropdown-item" href="#">Thông tin cá nhân</a></li>
-                <li>
-                  <hr class="dropdown-divider" />
-                </li>
-                <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
-              </ul>
-            </li>
-          </ul>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Admin Bán Sách</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="d-flex ms-auto">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> Chào, Admin!
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Thông tin cá nhân</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </div>
     </nav>
 
     <div class="container-fluid">
         <div class="row">
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar" style="width: 240px;">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="dashboard.html">
-                            <i class="bi bi-house-door"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_sach.html">
-                            <i class="bi bi-book"></i> Quản lý Sách
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_loai_sach.html">
-                            <i class="bi bi-tags"></i> Quản lý Loại sách
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_nxb.html">
-                            <i class="bi bi-building"></i> Quản lý NXB
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_don_hang.html">
-                            <i class="bi bi-cart"></i> Quản lý Đơn hàng
-                        </a>
-                    </li>
-                    
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_binh_luan.html">
-                            <i class="bi bi-chat-dots"></i> Quản lý Bình luận
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_phan_hoi.html">
-                            <i class="bi bi-envelope"></i> Quản lý Phản hồi
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_tac_gia.html">
-                            <i class="bi bi-people"></i> Quản lý tác giả
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="quan_li_danh_muc.html">
-                            <i class="bi bi-list-task"></i> Quản lý Danh mục
-                        </a>
-                    </li>
-                </ul>
-              </nav>
-            </div>
-          </div>
-        </main>
-      </div>
-    </div>
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse bg-white">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <i class="bi bi-house-door"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="quan_li_sach.html">
+                                <i class="bi bi-book"></i> Quản lý Sách
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active text-primary" href="quan_li_loai_sach.html">
+                                <i class="bi bi-tags"></i> Quản lý Loại sách
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="quan_li_nxb.html">
+                                <i class="bi bi-building"></i> Quản lý NXB
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="quan_li_don_hang.html">
+                                <i class="bi bi-cart"></i> Quản lý Đơn hàng
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="quan_li_binh_luan.html">
+                                <i class="bi bi-chat-dots"></i> Quản lý Bình luận
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="quan_li_phan_hoi.html">
+                                <i class="bi bi-envelope"></i> Quản lý Phản hồi
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="quan_li_tac_gia.html">
+                                <i class="bi bi-people"></i> Quản lý Tác giả
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="quan_li_danh_muc.html">
+                                <i class="bi bi-list-task"></i> Quản lý Danh mục
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
 
-    <!-- Modal Thêm Loại sách -->
-    <div
-      class="modal fade"
-      id="categoryModal"
-      tabindex="-1"
-      aria-labelledby="categoryModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="categoryModalLabel">
-              Thông tin Loại sách
-            </h5>
-          </div>
-          <div class="modal-body">
-            <form id="categoryForm">
-              <!-- Input ẩn để lưu ID loại sách khi sửa -->
-              <input type="hidden" id="categoryId" />
-              <div class="mb-3">
-                <label for="categoryName" class="form-label"
-                  >Tên Loại sách</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="categoryName"
-                  required
-                />
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-primary"
-              id="saveCategoryButton"
-            >
-              Lưu lại
-            </button>
-          </div>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Quản lý Loại sách</h1>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#categoryModal" onclick="document.getElementById('categoryForm').reset(); document.getElementById('categoryId').value='';">
+                        <i class="bi bi-plus-lg"></i> Thêm mới
+                    </button>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm loại sách...">
+                            <button class="btn btn-outline-secondary" type="button" id="btnSearch">
+                                <i class="bi bi-search"></i> Tìm kiếm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive bg-white rounded shadow-sm p-3">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" style="width: 50px;">STT</th>
+                                <th scope="col">Tên Loại sách</th>
+                                <th scope="col" style="width: 200px;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoryTableBody">
+                            <tr>
+                                <td colspan="3" class="text-center">Đang tải dữ liệu...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
         </div>
-      </div>
     </div>
 
-<script>
-// 3. QUẢN LÝ LOẠI SÁCH (THÊM / SỬA / XÓA/TK) TRONG MODAL
-
-
-// Hàm tải danh sách loại sách và hiển thị trong bảng
-// Biến lưu toàn bộ loại sách để search
-let allCategories = [];
-
-// Hàm tải danh sách loại sách và hiển thị trong bảng
-const loadCategories = async () => {
-    try {
-        const response = await fetch('http://localhost:5001/api/loaisach');
-        const categories = await response.json();
-
-        // ✅ LƯU LẠI để còn lọc tìm kiếm
-        allCategories = categories;
-
-        // ✅ Dùng hàm render riêng để dễ tái sử dụng
-        renderCategories(categories);
-    } catch (err) {
-        console.error('Lỗi khi tải danh sách loại sách:', err);
-        alert('Không thể lấy danh sách loại sách');
-    }
-};
-
-
-
-// Hàm edit (Sửa thông tin loại sách)
-async function editCategory(id) {
-    try {
-        // Gửi yêu cầu lấy thông tin loại sách theo ID
-        const response = await fetch(`http://localhost:5001/api/loaisach/${id}`);
-        if (!response.ok) {
-            alert('Không lấy được dữ liệu loại sách để sửa');
-            return;
-        }
-
-        const category = await response.json();
-
-        // Điền thông tin loại sách vào form trong modal
-        document.getElementById('categoryId').value = category.MaLoaiSach;  // ID loại sách ẩn
-        document.getElementById('categoryName').value = category.TenLoaiSach;  // Tên loại sách
-
-        // Đổi tiêu đề modal và nút "Lưu lại" thành "Cập nhật"
-        document.getElementById('categoryModalLabel').textContent = 'Sửa Loại sách';
-        document.getElementById('saveCategoryButton').textContent = 'Cập nhật';
-
-        // Mở modal
-        const modalElement = document.getElementById('categoryModal');
-        const modal = new bootstrap.Modal(modalElement);
-        modal.show();  // Hiển thị modal
-    } catch (err) {
-        console.error('Lỗi khi lấy dữ liệu loại sách:', err);
-        alert('Không thể lấy thông tin loại sách để sửa');
-    }
-}
-
-
-
-// Hàm cập nhật thông tin loại sách trong bảng (khi sửa thành công)
-function updateCategoryInTable(id, categoryName) {
-    const rows = document.querySelectorAll('#categoryTableBody tr');
-
-    rows.forEach(row => {
-        const categoryId = row.getAttribute('data-id'); // Lấy id loại sách từ thuộc tính data-id trong bảng
-        
-        if (categoryId === id.toString()) {
-            // Cập nhật tên loại sách trong bảng
-            const categoryCell = row.querySelector('.category-name');
-            categoryCell.textContent = categoryName;
-        }
-    });
-}
-
-
-// Hàm lưu loại sách (Thêm/Sửa)
-document.getElementById('saveCategoryButton').addEventListener('click', async function () {
-    const name = document.getElementById('categoryName').value.trim();
-    const id = document.getElementById('categoryId').value.trim();
-    const method = id ? 'PUT' : 'POST';
-    const url = id ? `http://localhost:5001/api/loaisach/${id}` : 'http://localhost:5001/api/loaisach';
-
-    if (!name) {
-        alert('Tên loại sách không được để trống');
-        return;
-    }
-
-    try {
-        const response = await fetch(url, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ TenLoaiSach: name }),
-        });
-        const result = await response.json();
-
-        await loadCategories();
-        document.getElementById('categoryForm').reset();
-        new bootstrap.Modal(document.getElementById('categoryModal')).hide();
-        alert(id ? 'Cập nhật loại sách thành công!' : 'Thêm loại sách thành công!');
-    } catch (error) {
-        console.error('Lỗi khi lưu loại sách:', error);
-        alert('Có lỗi xảy ra: ' + error.message);
-    }
-});
-
-// Hàm xóa loại sách
-async function deleteCategory(id) {
-    if (!confirm('Bạn có chắc muốn xóa loại sách này không?')) return;
-
-    try {
-        const response = await fetch(`http://localhost:5001/api/loaisach/${id}`, { method: 'DELETE' });
-        if (!response.ok) {
-            alert('Không thể xóa loại sách');
-            return;
-        }
-        const result = await response.json();
-        alert(result.message || 'Xóa loại sách thành công');
-        await loadCategories();
-    } catch (err) {
-        console.error('Lỗi khi xóa loại sách:', err);
-        alert('Có lỗi xảy ra khi xóa loại sách');
-    }
-}
-function renderCategories(list) {
-    const tableBody = document.getElementById('categoryTableBody');
-    tableBody.innerHTML = '';
-
-    if (list.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="3" class="text-center">Không có loại sách nào</td></tr>`;
-        return;
-    }
-
-    list.forEach((category, index) => {
-        tableBody.innerHTML += `
-            <tr>
-                <td>${index + 1}</td>
-                <td>${category.TenLoaiSach}</td>
-                <td>
-                    <button class="btn btn-warning" onclick="editCategory(${category.MaLoaiSach})">Sửa</button>
-                    <button class="btn btn-danger" onclick="deleteCategory(${category.MaLoaiSach})">Xóa</button>
-                </td>
-            </tr>
-        `;
-    });
-}
-document.getElementById("searchInput").addEventListener("input", function () {
-    const keyword = this.value.trim().toLowerCase();
-
-    const filtered = allCategories.filter(item =>
-        item.TenLoaiSach.toLowerCase().includes(keyword)
-    );
-
-    renderCategories(filtered);
-});
-// Hàm tìm kiếm loại sách khi nhấn nút Tìm kiếm
-document.getElementById("btnSearch").addEventListener("click", function () {
-    const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
-
-    const filtered = allCategories.filter(item =>
-        item.TenLoaiSach.toLowerCase().includes(keyword)
-    );
-
-    renderCategories(filtered);
-});
-
-// Gọi hàm loadCategories khi trang tải xong
-document.addEventListener('DOMContentLoaded', loadCategories);</script>
-
-
+    <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="categoryModalLabel">Thông tin Loại sách</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="categoryForm">
+                        <input type="hidden" id="categoryId" />
+                        <div class="mb-3">
+                            <label for="categoryName" class="form-label">Tên Loại sách <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="categoryName" required placeholder="Nhập tên loại sách" />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="saveCategoryButton">Lưu lại</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-   
+
+    <script>
+        // 3. QUẢN LÝ LOẠI SÁCH (THÊM / SỬA / XÓA / TK)
+
+        let allCategories = [];
+
+        // Hàm tải danh sách loại sách
+        const loadCategories = async () => {
+            try {
+                // Giả lập API nếu chạy local mà không có backend, thay URL này bằng URL thật của bạn
+                const response = await fetch('http://localhost:5001/api/loaisach'); 
+                if(!response.ok) throw new Error("Kết nối thất bại");
+                
+                const categories = await response.json();
+                allCategories = categories;
+                renderCategories(categories);
+            } catch (err) {
+                console.error('Lỗi khi tải danh sách:', err);
+                // Hiển thị mẫu nếu API lỗi để test giao diện
+                // document.getElementById('categoryTableBody').innerHTML = `<tr><td colspan="3" class="text-center text-danger">Lỗi kết nối API: ${err.message}</td></tr>`;
+            }
+        };
+
+        // Hàm render bảng
+        function renderCategories(list) {
+            const tableBody = document.getElementById('categoryTableBody');
+            tableBody.innerHTML = '';
+
+            if (!list || list.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="3" class="text-center">Không có loại sách nào</td></tr>`;
+                return;
+            }
+
+            list.forEach((category, index) => {
+                tableBody.innerHTML += `
+                    <tr data-id="${category.MaLoaiSach}">
+                        <td>${index + 1}</td>
+                        <td class="category-name fw-bold">${category.TenLoaiSach}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning me-2" onclick="editCategory(${category.MaLoaiSach})">
+                                <i class="bi bi-pencil-square"></i> Sửa
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteCategory(${category.MaLoaiSach})">
+                                <i class="bi bi-trash"></i> Xóa
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Hàm chuẩn bị form để Sửa
+        async function editCategory(id) {
+            try {
+                const response = await fetch(`http://localhost:5001/api/loaisach/${id}`);
+                if (!response.ok) {
+                    alert('Không lấy được dữ liệu loại sách để sửa');
+                    return;
+                }
+                const category = await response.json();
+
+                document.getElementById('categoryId').value = category.MaLoaiSach;
+                document.getElementById('categoryName').value = category.TenLoaiSach;
+
+                document.getElementById('categoryModalLabel').textContent = 'Sửa Loại sách';
+                document.getElementById('saveCategoryButton').textContent = 'Cập nhật';
+
+                const modal = new bootstrap.Modal(document.getElementById('categoryModal'));
+                modal.show();
+            } catch (err) {
+                console.error('Lỗi:', err);
+                alert('Có lỗi xảy ra khi lấy thông tin.');
+            }
+        }
+
+        // Hàm Lưu (Thêm mới hoặc Cập nhật)
+        document.getElementById('saveCategoryButton').addEventListener('click', async function () {
+            const name = document.getElementById('categoryName').value.trim();
+            const id = document.getElementById('categoryId').value.trim();
+            
+            if (!name) {
+                alert('Tên loại sách không được để trống');
+                return;
+            }
+
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `http://localhost:5001/api/loaisach/${id}` : 'http://localhost:5001/api/loaisach';
+
+            try {
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ TenLoaiSach: name }),
+                });
+                
+                // Kiểm tra status code (200, 201 là OK)
+                if(!response.ok) {
+                   const errData = await response.json();
+                   throw new Error(errData.message || "Lỗi server");
+                }
+
+                await loadCategories(); // Tải lại bảng
+
+                // Ẩn modal và reset form
+                const modalEl = document.getElementById('categoryModal');
+                const modal = bootstrap.Modal.getInstance(modalEl); 
+                if (modal) modal.hide();
+                
+                document.getElementById('categoryForm').reset();
+                document.getElementById('categoryId').value = ''; // Reset ID về rỗng để lần sau là Thêm mới
+                document.getElementById('categoryModalLabel').textContent = 'Thông tin Loại sách';
+                document.getElementById('saveCategoryButton').textContent = 'Lưu lại';
+
+                alert(id ? 'Cập nhật thành công!' : 'Thêm mới thành công!');
+            } catch (error) {
+                console.error('Lỗi khi lưu:', error);
+                alert('Có lỗi xảy ra: ' + error.message);
+            }
+        });
+
+        // Hàm Xóa
+        async function deleteCategory(id) {
+            if (!confirm('Bạn có chắc muốn xóa loại sách này không?')) return;
+
+            try {
+                const response = await fetch(`http://localhost:5001/api/loaisach/${id}`, { method: 'DELETE' });
+                if (!response.ok) {
+                    alert('Không thể xóa loại sách (có thể đang có sách thuộc loại này)');
+                    return;
+                }
+                alert('Xóa loại sách thành công');
+                await loadCategories();
+            } catch (err) {
+                console.error('Lỗi xóa:', err);
+                alert('Có lỗi xảy ra khi xóa');
+            }
+        }
+
+        // Tìm kiếm (khi gõ phím)
+        document.getElementById("searchInput").addEventListener("input", function () {
+            const keyword = this.value.trim().toLowerCase();
+            const filtered = allCategories.filter(item =>
+                item.TenLoaiSach.toLowerCase().includes(keyword)
+            );
+            renderCategories(filtered);
+        });
+
+        // Tìm kiếm (nút bấm - tùy chọn vì đã có sự kiện input ở trên)
+        document.getElementById("btnSearch").addEventListener("click", function () {
+            const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+            const filtered = allCategories.filter(item =>
+                item.TenLoaiSach.toLowerCase().includes(keyword)
+            );
+            renderCategories(filtered);
+        });
+
+        // Khởi chạy khi trang load
+        document.addEventListener('DOMContentLoaded', loadCategories);
     </script>
 </body>
-
 </html>
