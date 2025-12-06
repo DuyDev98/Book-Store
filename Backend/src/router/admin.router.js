@@ -29,5 +29,5 @@ router.get("/quan-li-nxb", (req, res) => sendPage(res, "quan_li_nxb.html"));
 router.get("/quan-li-don-hang", (req, res) => sendPage(res, "quan_li_don_hang.html"));
 router.get("/quan-li-binh-luan", (req, res) => sendPage(res, "quan_li_binh_luan.html"));
 router.get("/quan-li-phan-hoi", (req, res) => sendPage(res, "quan_li_phan_hoi.html"));
-
+router.get("/quan-li-tacgia", (req, res) => sendPage(res, "quan_li_tac_gia.html"));
 export default router;

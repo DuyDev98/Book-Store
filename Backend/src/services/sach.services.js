@@ -1,65 +1,67 @@
 import { getPool } from "../config/db.js";
-import * as model from "../modules/sach.model.js";
+// LƯU Ý: Kiểm tra lại tên thư mục là 'models' hay 'modules' trong máy bạn
+import * as sachModel from "../modules/sach.model.js"; 
 
-// --- Lấy toàn bộ sách ---
-export const getAllSach = async () => {
+export const getAll = async () => {
   const pool = await getPool();
-  const [rows] = await pool.query(model.SQL_GET_ALL_SACH);
-  return rows;
+  // QUAN TRỌNG: Dùng [rows] để bóc tách dữ liệu ra khỏi mảng [rows, fields]
+  const [rows] = await pool.query(sachModel.SQL_GET_ALL);
+  return rows; 
 };
 
-// --- Lấy sách theo ID ---
-export const getSachById = async (id) => {
+export const getById = async (id) => {
   const pool = await getPool();
-  const [rows] = await pool.query(model.SQL_GET_SACH_BY_ID, [id]);
+  const [rows] = await pool.query(sachModel.SQL_GET_BY_ID, [id]);
   return rows[0];
 };
 
-// --- Thêm sách ---
-// services/sach.services.js
-export const createSach = async (payload) => {
+export const create = async (data) => {
   const pool = await getPool();
-  const [result] = await pool.query(model.SQL_INSERT_SACH, [
-    payload.TenSach,
-    payload.AnhBia,
-    payload.LanTaiBan,
-    payload.GiaBan,
-    payload.NamXuatBan,
-    payload.MaTG,
-    payload.MaNXB,
-    payload.MaLoaiSach,
-    payload.MaDanhMuc,
-  ]);
-  return { insertedId: result.insertId };  // Trả về ID của sách vừa được thêm
+  const params = [
+    data.TenSach,
+    data.AnhBia || null,
+    data.GiaBan || 0,
+    data.SoLuongTon || 0,
+    data.NamXuatBan || null,
+    data.LanTaiBan || null,
+    data.MoTa || '',
+    data.MaTG || null,
+    data.MaNXB || null,
+    data.MaLoaiSach || null,
+    data.MaDanhMuc || null
+  ];
+  const [result] = await pool.query(sachModel.SQL_CREATE, params);
+  return result;
 };
 
-// --- Cập nhật sách ---
-export const updateSach = async (payload) => {
+export const update = async (id, data) => {
   const pool = await getPool();
-  await pool.query(model.SQL_UPDATE_SACH, [
-    payload.TenSach,
-    payload.AnhBia,
-    payload.LanTaiBan,
-    payload.GiaBan,
-    payload.NamXuatBan,
-    payload.MaTG,
-    payload.MaNXB,
-    payload.MaLoaiSach,
-    payload.MaDanhMuc,
-    payload.MaSach,
-  ]);
-  return { success: true };
+  const params = [
+    data.TenSach,
+    data.AnhBia || null,
+    data.GiaBan,
+    data.SoLuongTon,
+    data.NamXuatBan,
+    data.LanTaiBan,
+    data.MoTa,
+    data.MaTG,
+    data.MaNXB,
+    data.MaLoaiSach,
+    data.MaDanhMuc,
+    id
+  ];
+  const [result] = await pool.query(sachModel.SQL_UPDATE, params);
+  return result;
 };
 
-// --- Xoá sách ---
-export const deleteSach = async (id) => {
+export const remove = async (id) => {
   const pool = await getPool();
-  await pool.query(model.SQL_DELETE_SACH, [id]);
-  return { success: true };
-};
-export const getSachByDanhMuc = async (maLoaiSach) => {
-  const pool = await getPool();
-  const [rows] = await pool.query(model.SQL_GET_SACH_BY_DANHMUC, [maLoaiSach]);
-  return rows;
+  const [result] = await pool.query(sachModel.SQL_DELETE, [id]);
+  return result;
 };
 
+export const importStock = async (id, soLuongNhap) => {
+  const pool = await getPool();
+  const [result] = await pool.query(sachModel.SQL_IMPORT_STOCK, [soLuongNhap, id]);
+  return result;
+};
