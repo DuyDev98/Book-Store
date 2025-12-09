@@ -11,38 +11,60 @@
 
     <style>
         body {
-            padding-top: 56px;
+            padding-top: 57px;
             background-color: #f5f6f8;
-            overflow-x: hidden;
+           
+            overflow-x: hidden; /* Ẩn thanh cuộn ngang của toàn trang */
         }
 
-        /* Sidebar cố định */
         .sidebar {
             position: fixed;
             top: 56px;
             bottom: 0;
             left: 0;
-            z-index: 100;
+            z-index: 1000;
             padding: 20px 0;
-            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
-            background-color: #fff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #ffffff;
+            border-right: 1px solid #dee2e6;
         }
 
-        /* Phần nội dung chính đẩy sang phải */
+        .sidebar .nav-link {
+            color: #333;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 8px;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #0d6efd;
+            color: #fff;
+        }
+
+        .sidebar .nav-link.active i {
+            color: #fff;
+        }
+
         .main-content {
-            margin-left: 240px; /* Khớp với độ rộng sidebar */
+            
             padding: 20px;
         }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-            .main-content {
-                margin-left: 0;
-            }
+        .card {
+            border-radius: 0.5rem;
+            border: 1px solid #e3e6ea;
+            box-shadow: 0 2px 4px rgba(15, 34, 58, 0.05);
+        }
+
+        .table thead th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.04em;
         }
     </style>
 </head>
@@ -51,20 +73,15 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Admin Bán Sách</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+
             <div class="d-flex ms-auto">
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle"></i> Chào, Admin!
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Thông tin cá nhân</a></li>
-                            <li><hr class="dropdown-divider" /></li>
-                            <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                            <li><a class="dropdown-item" href="../../index.html">Đăng xuất</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -74,56 +91,50 @@
 
     <div class="container-fluid">
         <div class="row">
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse bg-white">
-                <div class="position-sticky pt-3">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="dashboard.html">
-                                <i class="bi bi-house-door"></i> Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="quan_li_sach.html">
-                                <i class="bi bi-book"></i> Quản lý Sách
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active text-primary" href="quan_li_loai_sach.html">
-                                <i class="bi bi-tags"></i> Quản lý Loại sách
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="quan_li_nxb.html">
-                                <i class="bi bi-building"></i> Quản lý NXB
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="quan_li_don_hang.html">
-                                <i class="bi bi-cart"></i> Quản lý Đơn hàng
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="quan_li_binh_luan.html">
-                                <i class="bi bi-chat-dots"></i> Quản lý Bình luận
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="quan_li_phan_hoi.html">
-                                <i class="bi bi-envelope"></i> Quản lý Phản hồi
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="quan_li_tac_gia.html">
-                                <i class="bi bi-people"></i> Quản lý Tác giả
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="quan_li_danh_muc.html">
-                                <i class="bi bi-list-task"></i> Quản lý Danh mục
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar" style="width: 240px;">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="bi bi-house-door"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_sach.html">
+                            <i class="bi bi-book"></i> Quản lý Sách
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="quan_li_loai_sach.html">
+                            <i class="bi bi-tags"></i> Quản lý Loại sách
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_nxb.html">
+                            <i class="bi bi-building"></i> Quản lý NXB
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_don_hang.html">
+                            <i class="bi bi-cart"></i> Quản lý Đơn hàng
+                        </a>
+                    </li>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="quan_li_binh_luan.html">
+                            <i class="bi bi-chat-dots"></i> Quản lý Bình luận
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="quan_li_tac_gia.html">
+                            <i class="bi bi-people"></i> Quản lý tác giả
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="quan_li_danh_muc.html">
+                            <i class="bi bi-list-task"></i> Quản lý Danh mục
+                        </a>
+                    </li>
+                </ul>
             </nav>
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
