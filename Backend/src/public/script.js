@@ -457,6 +457,76 @@ async function updateCartBadge() {
     }
 }
 /* ==========================================================================
+   LOGIC BÌNH LUẬN
+   ========================================================================== */
+
+// 1. Kiểm tra quyền (Chạy khi load trang)
+function checkCommentPermission() {
+    const userId = localStorage.getItem("MaKH"); // Lấy ID khách từ bộ nhớ
+    const form = document.getElementById("user-comment-form");
+    const alert = document.getElementById("guest-login-alert");
+
+    if (userId) {
+        // Đã đăng nhập -> Hiện form
+        if(form) form.style.display = "block";
+        if(alert) alert.style.display = "none";
+    } else {
+        // Chưa đăng nhập -> Hiện cảnh báo
+        if(form) form.style.display = "none";
+        if(alert) alert.style.display = "block";
+    }
+}
+
+// 2. Gửi bình luận
+async function submitComment() {
+    const userId = localStorage.getItem("MaKH");
+    const content = document.getElementById("comment-content").value;
+    const bookId = new URLSearchParams(window.location.search).get("id");
+
+    if (!content.trim()) return alert("Vui lòng nhập nội dung!");
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/binhluan/add`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ MaKH: userId, MaSach: bookId, NoiDung: content })
+        });
+        const data = await res.json();
+        
+        if (data.status === "OK") {
+            alert("Đã gửi bình luận!");
+            document.getElementById("comment-content").value = ""; // Xóa ô nhập
+            loadComments(bookId); // Tải lại danh sách
+        } else {
+            alert("Lỗi: " + data.message);
+        }
+    } catch (e) { alert("Lỗi kết nối!"); }
+}
+
+// 3. Tải danh sách bình luận
+async function loadComments(bookId) {
+    const listEl = document.getElementById("comment-list");
+    try {
+        const res = await fetch(`${API_BASE_URL}/binhluan/${bookId}`);
+        const data = await res.json();
+        
+        if (data.status === "OK" && data.data.length > 0) {
+            let html = "";
+            data.data.forEach(c => {
+                html += `
+                    <div class="border-bottom pb-3 mb-3">
+                        <span class="fw-bold">${c.HoTen || "Khách hàng"}</span>
+                        <span class="text-muted small ms-2">${new Date(c.NgayBinhLuan).toLocaleDateString()}</span>
+                        <p class="mb-0 mt-1">${c.NoiDung}</p>
+                    </div>`;
+            });
+            listEl.innerHTML = html;
+        } else {
+            listEl.innerHTML = "<p class='text-center text-muted'>Chưa có bình luận nào.</p>";
+        }
+    } catch (e) { console.error(e); }
+}
+/* ==========================================================================
    7. LOGIC ĐĂNG NHẬP / ĐĂNG XUẤT (Dán vào cuối file script.js)
    ========================================================================== */
 

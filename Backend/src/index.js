@@ -45,7 +45,7 @@ import khRouter from "./router/khachhang.router.js";
 import loaisachRouter from "./router/loaisach.router.js";
 import userRouter from "./router/UserRouter.js";
 import tacgiaRouter from "./router/tacgia.router.js";
-
+import binhLuanRouter from "./router/binhluan.router.js";
 // Use API routes
 app.use("/api/user", userRouter);
 app.use("/api/nxb", NXBRoute);
@@ -56,7 +56,7 @@ app.use("/api/cart-detail", cartDetailRouter);
 app.use("/api/khachhang", khRouter);
 app.use("/api/loaisach", loaisachRouter);
 app.use("/api/tacgia", tacgiaRouter);
-
+app.use("/api/binhluan", binhLuanRouter);
 // Fallback route for unknown URLs
 // app.use((req, res) => {
 //   res.sendFile(path.join(__dirname, "public", "index.html"));
