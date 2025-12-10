@@ -10,29 +10,60 @@
 
     <style>
         body {
-            /* Thêm padding ở trên cùng để nội dung không bị Navbar che khuất */
-            padding-top: 56px; 
+            padding-top: 57px;
+            background-color: #f5f6f8;
+            margin-left: 240px;
+            overflow-x: hidden; /* Ẩn thanh cuộn ngang của toàn trang */
         }
 
-        /* Tùy chỉnh cho Sidebar */
         .sidebar {
-            position: fixed; /* Cố định sidebar */
-            top: 56px;       /* Ngay dưới Navbar */
+            position: fixed;
+            top: 56px;
             bottom: 0;
             left: 0;
             z-index: 1000;
             padding: 20px 0;
             overflow-x: hidden;
-            overflow-y: auto; /* Cho phép cuộn nếu menu quá dài */
-            background-color: #f8f9fa; /* Màu nền xám nhạt */
+            overflow-y: auto;
+            background-color: #ffffff;
             border-right: 1px solid #dee2e6;
         }
 
-        /* Căn lề cho Nội dung chính */
+        .sidebar .nav-link {
+            color: #333;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 8px;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #0d6efd;
+            color: #fff;
+        }
+
+        .sidebar .nav-link.active i {
+            color: #fff;
+        }
+
         .main-content {
-            /* Đẩy nội dung sang phải một khoảng bằng chiều rộng Sidebar */
-            margin-left: 240px; /* Cần khớp với chiều rộng .sidebar */
+            
             padding: 20px;
+        }
+
+        .card {
+            border-radius: 0.5rem;
+            border: 1px solid #e3e6ea;
+            box-shadow: 0 2px 4px rgba(15, 34, 58, 0.05);
+        }
+
+        .table thead th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.04em;
         }
     </style>
 </head>
@@ -49,9 +80,7 @@
                             <i class="bi bi-person-circle"></i> Chào, Admin!
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Thông tin cá nhân</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                            <li><a class="dropdown-item" href="../../index.html">Đăng xuất</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -89,19 +118,10 @@
                             <i class="bi bi-cart"></i> Quản lý Đơn hàng
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_hoi_vien.html">
-                            <i class="bi bi-people"></i> Quản lý Hội viên
-                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="quan_li_binh_luan.html">
+                        <a class="nav-link active" href="quan_li_binh_luan.html">
                             <i class="bi bi-chat-dots"></i> Quản lý Bình luận
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_phan_hoi.html">
-                            <i class="bi bi-envelope"></i> Quản lý Phản hồi
                         </a>
                     </li>
                     <li class="nav-item">
@@ -110,13 +130,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="quan_li_danh_muc.html">
+                        <a class="nav-link " href="quan_li_danh_muc.html">
                             <i class="bi bi-list-task"></i> Quản lý Danh mục
                         </a>
                     </li>
                 </ul>
             </nav>
-
             <main class="main-content">
 
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">

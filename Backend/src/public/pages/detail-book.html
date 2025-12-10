@@ -25,22 +25,28 @@
         <div class="row">
             <div class="col-lg-9 col-md-12">
                 
+                <!-- PHẦN THÔNG TIN CHÍNH -->
                 <div class="row bg-white p-4 rounded shadow-sm mb-4">
+                    <!-- CỘT ẢNH -->
                     <div class="col-md-5 mb-4 mb-md-0 text-center">
-                        <img id="main-image" src="https://via.placeholder.com/400x600?text=Loading..." 
+                        <img id="main-image" 
+                             src="https://via.placeholder.com/400x600?text=Loading..." 
                              class="img-fluid border rounded shadow-sm" 
                              alt="Ảnh bìa sách" 
                              style="max-height: 450px; width: auto; object-fit: cover;">
                     </div>
 
+                    <!-- CỘT THÔNG TIN -->
                     <div class="col-md-7 border-start ps-md-4">
                         <h1 id="book-title" class="h4 fw-bold mb-2">Đang tải tên sách...</h1>
                         <p class="text-muted small mb-3">Mã SP: <span id="book-sku" class="fw-bold text-dark">---</span></p>
 
                         <div class="mb-2 text-secondary">
+                            <i class="bi bi-person-fill me-1"></i>
                             Tác giả: <span id="book-author" class="fw-bold text-dark">---</span>
                         </div>
                         <div class="mb-3 text-secondary">
+                            <i class="bi bi-building me-1"></i>
                             Nhà xuất bản: <span id="book-publisher" class="fw-bold text-dark">---</span>
                         </div>
 
@@ -68,23 +74,27 @@
                     </div>
                 </div>
 
+                <!-- PHẦN THÔNG TIN CHI TIẾT -->
                 <div class="bg-white p-4 rounded shadow-sm mb-4">
-                    <h5 class="fw-bold mb-4 border-bottom pb-2 text-uppercase">Thông Tin Chi Tiết</h5>
+                    <h5 class="fw-bold mb-4 border-bottom pb-2 text-uppercase">
+                        <i class="bi bi-info-circle-fill text-primary me-2"></i>Thông Tin Chi Tiết
+                    </h5>
                     
-                    <div class="mb-4 bg-light p-3 rounded">
-                        <ul id="specs-list" class="list-unstyled mb-0 small text-secondary">
-                            <li>Đang cập nhật thông số...</li>
-                        </ul>
+                    <div id="book-specs" class="mb-4">
+                        <p class="text-center text-muted">Đang tải thông tin...</p>
                     </div>
 
                     <div>
-                        <h6 class="fw-bold mb-3 small text-uppercase text-muted"><i class="bi bi-book me-1"></i> Giới thiệu nội dung</h6>
+                        <h6 class="fw-bold mb-3 small text-uppercase text-muted">
+                            <i class="bi bi-book me-1"></i> Giới thiệu nội dung
+                        </h6>
                         <div id="book-description" class="text-justify text-secondary lh-lg">
                             Đang tải nội dung...
                         </div>
                     </div>
                 </div>
 
+                <!-- PHẦN BÌNH LUẬN -->
                 <div class="bg-white p-4 rounded shadow-sm" id="comment-section">
                     <h5 class="fw-bold mb-4 border-bottom pb-2">
                         <i class="bi bi-chat-square-text-fill text-primary me-2"></i>Bình Luận & Đánh Giá
@@ -108,7 +118,7 @@
 
                     <div id="guest-login-alert" class="alert alert-warning text-center border-0 shadow-sm" style="display: none;">
                         <i class="bi bi-shield-lock-fill me-2 fs-5 align-middle"></i> 
-                        Bạn cần <a href="javascript:void(0)" onclick="window.location.href='../components/login.html'" class="fw-bold text-dark text-decoration-underline">Đăng nhập</a> để viết bình luận.
+                        Bạn cần <a href="javascript:void(0)" onclick="window.location.href='../components/login.html'" class="fw-bold text-dark text-decoration-underline">đăng nhập</a> để viết bình luận.
                     </div>
 
                     <div id="comment-list" class="mt-4">
@@ -118,6 +128,7 @@
 
             </div>
 
+            <!-- SIDEBAR PHẢI -->
             <div class="col-lg-3 col-md-12 mt-4 mt-lg-0">
                 <div class="bg-white p-3 mb-4 rounded shadow-sm border">
                     <h6 class="fw-bold small border-bottom pb-2 mb-3 text-uppercase text-secondary">Yên tâm mua sắm</h6>
@@ -170,5 +181,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../script.js"></script>
+    <script src="../cart-logic.js"></script>
 </body>
 </html>

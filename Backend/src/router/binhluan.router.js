@@ -1,9 +1,12 @@
 import express from "express";
-import { BinhLuanController } from "../controller/binhluan.controller.js";
+import * as binhLuanController from "../controller/binhluan.controller.js";
 
 const router = express.Router();
 
-router.post("/add", BinhLuanController.add);       // API thêm bình luận
-router.get("/:MaSach", BinhLuanController.getByBook); // API lấy bình luận
+// POST: /api/binhluan/add
+router.post("/add", binhLuanController.add);
+
+// GET: /api/binhluan/:MaSach
+router.get("/:MaSach", binhLuanController.getByBook);
 
 export default router;

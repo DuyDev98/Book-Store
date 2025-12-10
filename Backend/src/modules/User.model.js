@@ -1,27 +1,24 @@
 import { getPool } from "../config/db.js";
 
-const User = {
-  async create({ Username, PassWord, VaiTro = "User" }) {
-    const pool = await getPool();
+// File này chỉ chứa các câu lệnh SQL, KHÔNG chứa logic
 
-    const query = `INSERT INTO user (Username, PassWord, VaiTro) VALUES (?, ?, ?)`;
-    await pool.query(query, [Username, PassWord, VaiTro]);
-    return { Username, VaiTro };
-  },
-  // async creates({ Username, PassWord, VaiTro = "Admin" }) {
-  //   const pool = await getPool();
+// 1. Tìm thông tin User (Kèm MaKH từ bảng khachhang)
+export const SQL_GET_USER_BY_USERNAME = `
+  SELECT u.*, k.MaKH, k.HoTen 
+  FROM user u
+  LEFT JOIN khachhang k ON u.Username = k.Username
+  WHERE u.Username = ? 
+  LIMIT 1
+`;
 
-  //   const query = `INSERT INTO user (Username, PassWord, VaiTro) VALUES (?, ?, ?)`;
-  //   await pool.query(query, [Username, PassWord, VaiTro]);
-  //   return { Username, VaiTro };
-  // },
-  async findOne(Username) {
-    const pool = await getPool();
+// 2. Thêm tài khoản vào bảng User
+export const SQL_ADD_USER = `
+  INSERT INTO user (Username, PassWord, VaiTro) 
+  VALUES (?, ?, ?)
+`;
 
-    const query = `SELECT * FROM user WHERE Username = ? LIMIT 1`;
-    const [rows] = await pool.query(query, [Username]);
-    return rows[0] || null;
-  },
-};
-
-export default User;
+// 3. Thêm thông tin vào bảng Khách Hàng (Quan trọng: Để sinh ra MaKH)
+export const SQL_ADD_CUSTOMER = `
+  INSERT INTO khachhang (Username, HoTen) 
+  VALUES (?, ?)
+`;
