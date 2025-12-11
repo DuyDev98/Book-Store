@@ -36,6 +36,7 @@ app.use("/admin", adminRouter);
 
 app.use(express.json());
 // Other API routes
+import orderrouter from "./router/order.router.js";
 import NXBRoute from "./router/nhaxuatban.router.js";
 import danhmucRouter from "./router/danhmuc.router.js";
 import sachRouter from "./router/sach.router.js";
@@ -47,6 +48,7 @@ import userRouter from "./router/UserRouter.js";
 import tacgiaRouter from "./router/tacgia.router.js";
 
 // Use API routes
+app.use("/api/orders", orderrouter);
 app.use("/api/user", userRouter);
 app.use("/api/nxb", NXBRoute);
 app.use("/api/danhmuc", danhmucRouter);
