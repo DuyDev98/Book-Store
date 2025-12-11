@@ -52,6 +52,53 @@ const Order = {
     const [result] = await pool.query(sql, [id]);
     return result.affectedRows > 0;
   },
+
+  // 1. Lấy dữ liệu sách từ bảng chi tiết giỏ hàng
+  getCartItemsForCheckout: async (connection, maKH) => {
+    const sql = `
+      SELECT c.MaSach, c.SoLuong, s.GiaBan 
+      FROM giohang g
+      JOIN chitietgiohang c ON g.MaGioHang = c.MaGioHang
+      JOIN sach s ON c.MaSach = s.MaSach
+      WHERE g.MaKH = ?
+    `;
+    const [rows] = await connection.query(sql, [maKH]);
+    return rows;
+  },
+
+  // 2. Insert header đơn hàng
+  insertOrder: async (connection, data) => {
+    const sql = `
+      INSERT INTO donhang 
+      (MaKH, TongTien, PhiVanChuyen, DiaChiGiaoHang, GhiChuGiaoHang, TrangThai, NgayDat)
+      VALUES (?, ?, ?, ?, ?, ?, NOW())
+    `;
+    const [result] = await connection.query(sql, [
+      data.MaKH,
+      data.TongTien,
+      data.PhiVanChuyen,
+      data.DiaChiGiaoHang,
+      data.GhiChuGiaoHang,
+      data.TrangThai,
+    ]);
+    return result.insertId;
+  },
+
+  // 3. Insert chi tiết đơn hàng (Bulk Insert)
+  insertOrderDetails: async (connection, values) => {
+    const sql = `INSERT INTO chitietdonhang (MaDH, MaSach, SoLuong, DonGia) VALUES ?`;
+    await connection.query(sql, [values]);
+  },
+
+  // 4. Xóa sạch giỏ hàng sau khi mua
+  clearCartAfterCheckout: async (connection, maKH) => {
+    const sql = `
+      DELETE c FROM chitietgiohang c 
+      JOIN giohang g ON c.MaGioHang = g.MaGioHang 
+      WHERE g.MaKH = ?
+    `;
+    await connection.query(sql, [maKH]);
+  },
 };
 
 export default Order;

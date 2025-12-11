@@ -1,18 +1,20 @@
 import express from "express";
-import UserController from "../controller/User.Controller.js";
-import { authMiddleware, requireAdmin } from "../middleware/authMiddleware.js";
+// QUAN TRỌNG: Import * as để lấy tất cả hàm export lẻ
+import * as UserController from "../controller/User.Controller.js";
+// Import middleware (Lưu ý: Nếu bạn đã đổi tên thành verifyToken ở bài trước thì dùng verifyToken)
+import { verifyToken, requireAdmin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Guest + User + Admin (public)
+// Public routes (Ai cũng dùng được)
 router.post("/signup", UserController.createUser);
 router.post("/login", UserController.loginUser);
 
-// Chỉ Admin mới có quyền tạo admin
+// Private routes (Chỉ Admin)
 router.post(
   "/admin/signup",
-  authMiddleware,
-  requireAdmin,
+   verifyToken,  // Dùng verifyToken thay cho authMiddleware cũ
+   requireAdmin,
   UserController.createAdmin
 );
 

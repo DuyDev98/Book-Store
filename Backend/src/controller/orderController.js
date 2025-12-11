@@ -47,3 +47,48 @@ export const cancelOrder = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+export const createOrder = async (req, res) => {
+  try {
+    const {
+      MaKH,
+      TenNguoiNhan,
+      SDT,
+      DiaChiGiaoHang,
+      GhiChu,
+      PhuongThucThanhToan,
+    } = req.body;
+
+    // Validate dữ liệu
+    if (!MaKH || !TenNguoiNhan || !SDT || !DiaChiGiaoHang) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: "Vui lòng nhập đầy đủ thông tin giao hàng!",
+      });
+    }
+
+    // Gọi Service
+    const result = await orderService.createClientOrder({
+      MaKH,
+      TenNguoiNhan,
+      SDT,
+      DiaChiGiaoHang,
+      GhiChu,
+      PhuongThucThanhToan,
+    });
+
+    // Trả về kết quả
+    res.status(200).json({
+      status: "OK",
+      message: "Đặt hàng thành công!",
+      data: result,
+    });
+  } catch (error) {
+    // Nếu lỗi logic (ví dụ giỏ hàng trống)
+    if (error.message === "Giỏ hàng trống, không thể thanh toán!") {
+      return res.status(400).json({ status: "ERROR", message: error.message });
+    }
+    res
+      .status(500)
+      .json({ status: "ERROR", message: error.message || "Lỗi server" });
+  }
+};

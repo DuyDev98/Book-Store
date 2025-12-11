@@ -570,7 +570,6 @@ main.col-md-10 {
 }
 
 
-// trang giỏ hàng
 /* --- STYLE CHO GIỎ HÀNG --- */
 
 /* Nút số lượng (+ -) */
@@ -621,9 +620,7 @@ main.col-md-10 {
 
 
 
-//sách chi tiết 
-//sách chi tiết 
-//sách chi tiết 
+
 /* Sidebar tiện ích */
 .service-box {
     border: 1px solid #e0e0e0;
@@ -685,4 +682,134 @@ main.col-md-10 {
 .thumb-img.active {
     border-color: #f7941e;
     transform: scale(1.05);
+}
+
+
+/* --- STYLE CHO TRANG THANH TOÁN --- */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.payment-option {
+    transition: all 0.2s;
+}
+
+.payment-option:hover {
+    background-color: #f8f9fa;
+    border-color: #4B7900 !important; /* Màu xanh chủ đạo */
+}
+
+/* Khi radio được chọn, đổi màu viền box */
+.form-check-input:checked + label {
+    color: #4B7900;
+}
+.form-check-input:checked ~ div { /* Hiện thông tin banking */
+    display: block !important; 
+}
+/* --- SLIDER SÁCH (CAROUSEL) --- */
+.book-slider-wrapper {
+    position: relative;
+    padding: 0 20px; /* Chừa chỗ cho nút bấm */
+}
+
+.book-slider-container {
+    display: flex;            /* Xếp các sách thành hàng ngang */
+    gap: 20px;               /* Khoảng cách giữa các sách */
+    overflow-x: auto;        /* Cho phép cuộn ngang */
+    scroll-behavior: smooth; /* Hiệu ứng cuộn mượt mà */
+    padding-bottom: 10px;
+    
+    /* Ẩn thanh cuộn (Scrollbar) cho đẹp */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+.book-slider-container::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari, Opera */
+}
+
+/* Định dạng từng thẻ sách trong slider */
+.book-slider-item {
+    flex: 0 0 auto;           /* Không cho thẻ co giãn, giữ nguyên kích thước */
+    width: 220px;             /* Chiều rộng cố định của một cuốn sách */
+}
+
+/* Nút mũi tên lướt trái/phải */
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.slider-btn:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+.slider-btn.prev { left: -10px; }
+.slider-btn.next { right: -10px; }
+/* --- SIDEBAR STYLE (GIỐNG ẢNH CŨ) --- */
+
+/* Mỗi dòng danh mục */
+.category-item {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0f0f0; /* Đường kẻ mờ giữa các dòng */
+    cursor: pointer;
+    position: relative; /* Để định vị menu con */
+    transition: background-color 0.2s;
+}
+
+/* Hiệu ứng khi di chuột vào dòng danh mục */
+.category-item:hover {
+    background-color: #f8f9fa; /* Màu nền xám nhẹ giống ảnh */
+}
+
+/* Mũi tên > bên phải */
+.category-item i {
+    font-size: 10px;
+    color: #aaa;
+}
+
+/* --- MENU CON (SUBMENU) --- */
+.category-item .submenu {
+    display: none; /* Ẩn mặc định */
+    position: absolute;
+    top: 0;
+    left: 100%; /* Hiện bên phải */
+    width: 230px;
+    background: #fff;
+    list-style: none;
+    padding: 5px 0;
+    margin: 0;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    z-index: 1000;
+}
+
+/* Hiện menu con khi di chuột */
+.category-item:hover .submenu {
+    display: block;
+}
+
+/* Link trong menu con */
+.category-item .submenu li a {
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+}
+
+.category-item .submenu li a:hover {
+    background-color: #fceef1; /* Màu hồng nhạt khi di chuột menu con */
+    color: #d32f2f;
 }

@@ -48,9 +48,10 @@ export const create = async (req, res) => {
 };
 
 // Cập nhật thông tin khách hàng
+// Cập nhật thông tin khách hàng
 export const update = async (req, res) => {
   try {
-    const id = +req.params.id;
+    const id = req.params.id; // [QUAN TRỌNG] Bỏ dấu + đi để nhận cả chữ (Username)
     const data = await KhachHangServices.updateKH(id, req.body);
     res.status(200).json(data);
   } catch (err) {
