@@ -480,7 +480,140 @@
 </div>
         </div>
     </div>
+<script>
+    const API_URL = "http://localhost:5001/api/binhluan/admin"; 
 
+    // 1. Hàm tải danh sách bình luận
+    async function loadComments() {
+        try {
+            const res = await fetch(`${API_URL}/all`);
+            const data = await res.json();
+            
+            const tbody = document.querySelector("table tbody");
+            tbody.innerHTML = ""; 
+
+            if (data.status === "OK" && data.data) {
+                data.data.forEach(cmt => {
+                    const row = document.createElement("tr");
+                    
+                    // --- 1. Xử lý Badge Trạng thái ---
+                    let statusBadge = '';
+                    if(cmt.TrangThai === 'approved') {
+                        statusBadge = '<span class="badge bg-success">Đã duyệt</span>';
+                    } else if(cmt.TrangThai === 'spam') {
+                        statusBadge = '<span class="badge bg-danger">Spam</span>';
+                    } else {
+                        statusBadge = '<span class="badge bg-warning text-dark">Chờ duyệt</span>';
+                    }
+
+                    // --- 2. Xử lý Nút bấm (Hành động) ---
+                    let actionBtns = '';
+
+                    // Nếu là "Chờ duyệt": Cần nút Duyệt (V) và nút Báo Spam (!)
+                    if(cmt.TrangThai === 'pending') {
+                        actionBtns = `
+                            <button class="btn btn-outline-success" title="Duyệt bài" onclick="updateStatus(${cmt.MaBL}, 'approved')">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+                            <button class="btn btn-outline-warning" title="Đánh dấu Spam" onclick="updateStatus(${cmt.MaBL}, 'spam')">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                            </button>
+                        `;
+                    } 
+                    // Nếu "Đã duyệt": Cần nút Ẩn bài (đưa về chờ duyệt)
+                    else if(cmt.TrangThai === 'approved') {
+                        actionBtns = `
+                            <button class="btn btn-outline-secondary" title="Ẩn bài (Gỡ xuống)" onclick="updateStatus(${cmt.MaBL}, 'pending')">
+                                <i class="bi bi-eye-slash-fill"></i>
+                            </button>
+                        `;
+                    }
+                    // Nếu là "Spam": Cần nút Khôi phục (nếu lỡ tay spam nhầm)
+                    else if(cmt.TrangThai === 'spam') {
+                        actionBtns = `
+                            <button class="btn btn-outline-success" title="Khôi phục (Duyệt lại)" onclick="updateStatus(${cmt.MaBL}, 'approved')">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </button>
+                        `;
+                    }
+
+                    // Format ngày giờ
+                    const date = new Date(cmt.NgayBinhLuan).toLocaleDateString('vi-VN');
+
+                    row.innerHTML = `
+                        <td class="text-center"><input class="form-check-input" type="checkbox"></td>
+                        <td>
+                            <div class="d-flex align-items-start">
+                                <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold me-2" style="width:40px; height:40px">
+                                    ${cmt.HoTen ? cmt.HoTen.charAt(0).toUpperCase() : "U"}
+                                </div>
+                                <div>
+                                    <div class="fw-bold">${cmt.HoTen || "Khách ẩn danh"}</div>
+                                    <div class="text-muted small">${cmt.Email || "Không có email"}</div>
+                                    <p class="mb-0 mt-1 text-break">${cmt.NoiDung}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${cmt.TenSach || "Sách đã xóa"}</td>
+                        <td>${date}</td>
+                        <td class="text-center">${statusBadge}</td>
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm" role="group">
+                                ${actionBtns}
+                                <button class="btn btn-outline-danger" title="Xóa vĩnh viễn" onclick="deleteComment(${cmt.MaBL})">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Lỗi tải danh sách bình luận");
+        }
+    }
+
+    // 2. Hàm cập nhật trạng thái
+    async function updateStatus(id, status) {
+        try {
+            const res = await fetch(`${API_URL}/status/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status })
+            });
+            if(res.ok) {
+                loadComments(); // Tải lại bảng ngay lập tức
+            } else {
+                alert("Lỗi cập nhật trạng thái");
+            }
+        } catch (e) {
+            alert("Lỗi kết nối");
+        }
+    }
+
+    // 3. Hàm xóa bình luận
+    async function deleteComment(id) {
+        if(!confirm("CẢNH BÁO: Hành động này sẽ xóa vĩnh viễn bình luận và KHÔNG THỂ khôi phục. Bạn chắc chứ?")) return;
+        
+        try {
+            const res = await fetch(`${API_URL}/delete/${id}`, {
+                method: "DELETE"
+            });
+            if(res.ok) {
+                loadComments();
+            } else {
+                alert("Lỗi xóa bình luận");
+            }
+        } catch (e) {
+            alert("Lỗi kết nối");
+        }
+    }
+
+    // Chạy ngay khi mở trang
+    document.addEventListener("DOMContentLoaded", loadComments);
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
