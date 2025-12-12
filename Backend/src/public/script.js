@@ -1,4 +1,67 @@
 /* ==========================================================================
+   0. TỰ ĐỘNG NHÚNG TOASTIFY & LÀM ĐẸP THÔNG BÁO (Auto-Inject)
+   ========================================================================== */
+(function setupToastifyUser() {
+    // 1. Tự động chèn CSS Toastify nếu chưa có
+    if (!document.querySelector('link[href*="toastify"]')) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css";
+        document.head.appendChild(link);
+    }
+
+    // 2. Tự động chèn JS Toastify nếu chưa có
+    if (!document.querySelector('script[src*="toastify"]')) {
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/toastify-js";
+        script.onload = () => {
+            overrideUserAlert(); // Kích hoạt ghi đè alert sau khi thư viện tải xong
+        };
+        document.head.appendChild(script);
+    }
+})();
+
+function overrideUserAlert() {
+    // Giữ lại alert gốc (đề phòng)
+    const originalAlert = window.alert;
+
+    // Định nghĩa lại hàm alert
+    window.alert = function(message) {
+        if (!window.Toastify) {
+            // Nếu mạng chậm, thư viện chưa tải xong thì dùng tạm alert cũ
+            originalAlert(message); 
+            return;
+        }
+
+        const msgStr = String(message).toLowerCase();
+        // Tự động đoán màu dựa vào nội dung tin nhắn
+        const isError = msgStr.includes("lỗi") || msgStr.includes("error") || 
+                        msgStr.includes("thất bại") || msgStr.includes("không thể") || 
+                        msgStr.includes("vui lòng");
+
+        const bgColors = isError 
+            ? "linear-gradient(to right, #ff5f6d, #ffc371)" // Đỏ cam (Lỗi)
+            : "linear-gradient(to right, #00b09b, #96c93d)"; // Xanh lá (Thành công)
+
+        Toastify({
+            text: message,
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            stopOnFocus: true,
+            style: {
+                background: bgColors,
+                borderRadius: "8px",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                zIndex: 999999 // Đảm bảo nổi lên trên cùng (trên cả Modal)
+            }
+        }).showToast();
+        
+        console.log(`[Web Alert]: ${message}`);
+    };
+}
+/* ==========================================================================
    1. CẤU HÌNH & TIỆN ÍCH CHUNG
    ========================================================================== */
 const API_BASE_URL = "/api";
@@ -265,27 +328,70 @@ const CATEGORY_MAP = {
 };
 
 async function loadBooksForPage() {
-    const c = document.getElementById("product-list") || document.getElementById("product-list-container");
-    if (!c) return;
-    const slug = c.closest("[data-api-category]")?.getAttribute("data-api-category");
-    if (!slug) return;
+    // Tìm tất cả các container cần load sách (thay vì chỉ 1 cái như trước)
+    const containers = document.querySelectorAll("[data-api-category]");
+    if (containers.length === 0) return;
 
     try {
+        // Gọi API lấy TẤT CẢ sách 1 lần duy nhất để dùng chung
         const res = await fetch(`${API_BASE_URL}/sach`);
         const data = await res.json();
-        const all = Array.isArray(data) ? data : (data.data || []);
-        let list = all;
+        const allBooks = Array.isArray(data) ? data : (data.data || []);
 
-        if (slug === "search") {
-            const k = (new URLSearchParams(window.location.search).get("q") || "").toLowerCase();
-            const keywordEl = document.getElementById("search-keyword");
-            if (keywordEl) keywordEl.innerText = `"${k}"`;
-            list = k ? all.filter(b => b.TenSach.toLowerCase().includes(k)) : [];
-        } else if (CATEGORY_MAP[slug] && CATEGORY_MAP[slug] !== -1) {
-            list = all.filter(b => b.MaLoaiSach == CATEGORY_MAP[slug]);
-        }
-        renderBooks(c, list);
-    } catch (e) { }
+        // Duyệt qua từng mục trên trang chủ để điền sách vào
+        containers.forEach(container => {
+            const slug = container.getAttribute("data-api-category");
+            let list = [];
+
+            // --- 1. TÌM KIẾM ---
+            if (slug === "search") {
+                const k = (new URLSearchParams(window.location.search).get("q") || "").toLowerCase();
+                const keywordEl = document.getElementById("search-keyword");
+                if (keywordEl) keywordEl.innerText = `"${k}"`;
+                list = k ? allBooks.filter(b => b.TenSach.toLowerCase().includes(k)) : [];
+            } 
+            
+            // --- 2. FLASH SALE (Giảm giá) ---
+            else if (slug === "flash-sale") {
+                list = allBooks.filter(b => b.GiaGoc > b.GiaBan);
+            }
+
+            // --- 3. SÁCH MỚI (Lấy 10 cuốn cuối cùng) ---
+            else if (slug === "hot-sale") {
+                list = allBooks.slice(-10).reverse();
+            }
+
+            // --- 4. [MỚI] SÁCH ĐỀ XUẤT (Ngẫu nhiên 10 cuốn) ---
+            else if (slug === "recommended") {
+                // Thuật toán xáo trộn ngẫu nhiên (Shuffle)
+                let shuffled = [...allBooks].sort(() => 0.5 - Math.random());
+                list = shuffled.slice(0, 10); // Lấy 10 cuốn
+            }
+
+            // --- 5. [MỚI] SERIES SÁCH (Lấy 10 cuốn theo tiêu chí nào đó) ---
+            else if (slug === "series") {
+                // Ví dụ: Lấy 10 cuốn thuộc loại "Tiểu thuyết" (Mã 11) hoặc "Truyện tranh" (Mã 7)
+                // Hoặc lọc những sách có chữ "Tập" trong tên
+                list = allBooks
+                    .filter(b => b.MaLoaiSach == 7 || b.TenSach.includes("Tập")) 
+                    .slice(0, 10);
+                
+                // Nếu không có sách nào thỏa mãn, lấy tạm 10 cuốn đầu tiên
+                if (list.length === 0) list = allBooks.slice(0, 10);
+            }
+
+            // --- 6. CÁC DANH MỤC KHÁC ---
+            else if (CATEGORY_MAP[slug]) {
+                list = allBooks.filter(b => b.MaLoaiSach == CATEGORY_MAP[slug]);
+            }
+
+            // Render ra màn hình
+            renderBooks(container, list);
+        });
+
+    } catch (e) {
+        console.error("Lỗi tải sách:", e);
+    }
 }
 // Hàm xử lý khi bấm nút mũi tên
 function scrollSlider(id, amount) {

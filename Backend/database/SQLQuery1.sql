@@ -50,11 +50,7 @@ CREATE TABLE sach (
 -- =============================================
 -- BẢNG KHO
 -- =============================================
-CREATE TABLE kho (
-  MaSach INT PRIMARY KEY,
-  SoLuong INT,
-  FOREIGN KEY (MaSach) REFERENCES sach(MaSach)
-);
+
 -- =============================================
 -- BẢNG TÀI KHOẢN
 -- =============================================
@@ -168,3 +164,28 @@ CREATE TABLE chitietdonhang (
   FOREIGN KEY (MaDH) REFERENCES donhang(MaDH),
   FOREIGN KEY (MaSach) REFERENCES sach(MaSach)
 );
+CREATE TABLE binhluan (
+  MaBL INT AUTO_INCREMENT PRIMARY KEY,
+  MaKH INT,
+  MaSach INT,
+  NoiDung TEXT,
+  NgayBinhLuan DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (MaKH) REFERENCES khachhang(MaKH),
+  FOREIGN KEY (MaSach) REFERENCES sach(MaSach)
+);
+ALTER TABLE binhluan 
+ADD COLUMN TrangThai VARCHAR(20) DEFAULT 'pending'; 
+-- (Tùy chọn) Cập nhật tất cả bình luận cũ thành "đã duyệt" để nó hiện lên web luôn
+UPDATE binhluan SET TrangThai = 'approved';
+UPDATE binhluan SET TrangThai = 'approved' WHERE MaBL > 0;
+-- 1. Thêm cột TrangThai
+ALTER TABLE binhluan ADD COLUMN TrangThai VARCHAR(20) DEFAULT 'pending';
+
+-- 2. Tắt chế độ an toàn tạm thời để update được
+SET SQL_SAFE_UPDATES = 0;
+
+-- 3. Update tất cả bình luận cũ thành "Đã duyệt" (approved)
+UPDATE binhluan SET TrangThai = 'approved';
+
+-- 4. Bật lại chế độ an toàn
+SET SQL_SAFE_UPDATES = 1;
