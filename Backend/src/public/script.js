@@ -26,20 +26,20 @@ function overrideUserAlert() {
     const originalAlert = window.alert;
 
     // Định nghĩa lại hàm alert
-    window.alert = function(message) {
+    window.alert = function (message) {
         if (!window.Toastify) {
             // Nếu mạng chậm, thư viện chưa tải xong thì dùng tạm alert cũ
-            originalAlert(message); 
+            originalAlert(message);
             return;
         }
 
         const msgStr = String(message).toLowerCase();
         // Tự động đoán màu dựa vào nội dung tin nhắn
-        const isError = msgStr.includes("lỗi") || msgStr.includes("error") || 
-                        msgStr.includes("thất bại") || msgStr.includes("không thể") || 
-                        msgStr.includes("vui lòng");
+        const isError = msgStr.includes("lỗi") || msgStr.includes("error") ||
+            msgStr.includes("thất bại") || msgStr.includes("không thể") ||
+            msgStr.includes("vui lòng");
 
-        const bgColors = isError 
+        const bgColors = isError
             ? "linear-gradient(to right, #ff5f6d, #ffc371)" // Đỏ cam (Lỗi)
             : "linear-gradient(to right, #00b09b, #96c93d)"; // Xanh lá (Thành công)
 
@@ -57,7 +57,7 @@ function overrideUserAlert() {
                 zIndex: 999999 // Đảm bảo nổi lên trên cùng (trên cả Modal)
             }
         }).showToast();
-        
+
         console.log(`[Web Alert]: ${message}`);
     };
 }
@@ -349,8 +349,8 @@ async function loadBooksForPage() {
                 const keywordEl = document.getElementById("search-keyword");
                 if (keywordEl) keywordEl.innerText = `"${k}"`;
                 list = k ? allBooks.filter(b => b.TenSach.toLowerCase().includes(k)) : [];
-            } 
-            
+            }
+
             // --- 2. FLASH SALE (Giảm giá) ---
             else if (slug === "flash-sale") {
                 list = allBooks.filter(b => b.GiaGoc > b.GiaBan);
@@ -368,18 +368,26 @@ async function loadBooksForPage() {
                 list = shuffled.slice(0, 10); // Lấy 10 cuốn
             }
 
-            // --- 5. [MỚI] SERIES SÁCH (Lấy 10 cuốn theo tiêu chí nào đó) ---
-            else if (slug === "series") {
-                // Ví dụ: Lấy 10 cuốn thuộc loại "Tiểu thuyết" (Mã 11) hoặc "Truyện tranh" (Mã 7)
-                // Hoặc lọc những sách có chữ "Tập" trong tên
-                list = allBooks
-                    .filter(b => b.MaLoaiSach == 7 || b.TenSach.includes("Tập")) 
-                    .slice(0, 10);
-                
-                // Nếu không có sách nào thỏa mãn, lấy tạm 10 cuốn đầu tiên
-                if (list.length === 0) list = allBooks.slice(0, 10);
-            }
+            else if (slug === "best-seller") {
+                // LOGIC: Sắp xếp sách theo số lượng bán giảm dần
 
+                // Kiểm tra xem dữ liệu sách có trường 'DaBan' hay không
+                const hasSalesData = allBooks.some(b => b.DaBan !== undefined);
+
+                if (hasSalesData) {
+                    // CÁCH 1: Nếu Backend đã trả về số lượng bán (Chuẩn nhất)
+                    list = [...allBooks]
+                        .sort((a, b) => (b.DaBan || 0) - (a.DaBan || 0)) // Sắp xếp giảm dần
+                        .slice(0, 10); // Lấy Top 10
+                } else {
+                    // CÁCH 2: FALLBACK (Khi Backend chưa tính toán số bán)
+                    // Tạm thời ta sẽ giả lập logic: Ưu tiên hiển thị các sách có giá rẻ hoặc ngẫu nhiên
+                    // để tạo cảm giác danh sách này luôn thay đổi
+                    list = [...allBooks]
+                        .sort(() => 0.5 - Math.random()) // Trộn ngẫu nhiên
+                        .slice(0, 10);
+                }
+            }
             // --- 6. CÁC DANH MỤC KHÁC ---
             else if (CATEGORY_MAP[slug]) {
                 list = allBooks.filter(b => b.MaLoaiSach == CATEGORY_MAP[slug]);
@@ -401,6 +409,66 @@ function scrollSlider(id, amount) {
     }
 }
 /* ==========================================================================
+   [NEW] HÀM LOAD SẢN PHẨM TƯƠNG TỰ
+   ========================================================================== */
+async function loadSimilarBooks(currentBook) {
+    const container = document.getElementById("similar-books-list");
+    if (!container) return; // Không tìm thấy chỗ chứa thì thoát
+
+    try {
+        // Gọi lại API lấy tất cả sách (hoặc dùng biến toàn cục nếu đã lưu)
+        const res = await fetch(`${API_BASE_URL}/sach`);
+        const data = await res.json();
+        const allBooks = Array.isArray(data) ? data : (data.data || []);
+
+        // LOGIC LỌC:
+        // 1. Cùng mã loại sách (MaLoaiSach)
+        // 2. Không trùng với cuốn đang xem (MaSach)
+        const similarBooks = allBooks.filter(b => 
+            b.MaLoaiSach == currentBook.MaLoaiSach && 
+            b.MaSach != currentBook.MaSach
+        );
+
+        // Lấy ngẫu nhiên 5 cuốn hoặc 5 cuốn đầu tiên
+        const limitList = similarBooks
+                            .sort(() => 0.5 - Math.random()) // Xáo trộn ngẫu nhiên
+                            .slice(0, 5); // Lấy 5 cuốn
+
+        // Render ra HTML
+        if (limitList.length === 0) {
+            container.innerHTML = '<p class="text-center small text-muted">Chưa có sản phẩm tương tự.</p>';
+            return;
+        }
+
+        const root = getRootPrefix(); // Hàm có sẵn trong script.js
+        let html = "";
+
+        limitList.forEach(b => {
+            let img = (b.AnhBia && b.AnhBia !== 'null') ? b.AnhBia : "https://placehold.co/100x150";
+            if (!img.startsWith("http")) img = root + img;
+
+            html += `
+            <div class="d-flex mb-3 align-items-center border-bottom pb-2">
+                <a href="detail-book.html?id=${b.MaSach}">
+                    <img src="${img}" class="rounded border me-2" alt="${b.TenSach}" style="width: 50px; height: 70px; object-fit: cover;">
+                </a>
+                <div>
+                    <a href="detail-book.html?id=${b.MaSach}" class="text-decoration-none text-dark small fw-bold d-block text-truncate" style="max-width: 130px;" title="${b.TenSach}">
+                        ${b.TenSach}
+                    </a>
+                    <span class="text-danger fw-bold small">${formatCurrency(b.GiaBan)}</span>
+                </div>
+            </div>`;
+        });
+
+        container.innerHTML = html;
+
+    } catch (e) {
+        console.error("Lỗi load sách tương tự:", e);
+        container.innerHTML = '<p class="text-center small text-danger">Lỗi tải dữ liệu.</p>';
+    }
+}
+/* ==========================================================================
    5. ✅ HÀM LOAD CHI TIẾT SÁCH - HIỂN THỊ ĐẦY ĐỦ
    ========================================================================== */
 async function loadBookDetail() {
@@ -416,6 +484,9 @@ async function loadBookDetail() {
         if (!res.ok) throw new Error("Không tìm thấy sách");
 
         const book = await res.json();
+         
+        loadSimilarBooks(book);
+
         console.log("📚 Chi tiết sách:", book);
 
         // ========== 1. HIỂN THỊ ẢNH BÌA ==========

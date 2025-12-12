@@ -25,9 +25,7 @@
         <div class="row">
             <div class="col-lg-9 col-md-12">
                 
-                <!-- PHẦN THÔNG TIN CHÍNH -->
                 <div class="row bg-white p-4 rounded shadow-sm mb-4">
-                    <!-- CỘT ẢNH -->
                     <div class="col-md-5 mb-4 mb-md-0 text-center">
                         <img id="main-image" 
                              src="https://via.placeholder.com/400x600?text=Loading..." 
@@ -36,7 +34,6 @@
                              style="max-height: 450px; width: auto; object-fit: cover;">
                     </div>
 
-                    <!-- CỘT THÔNG TIN -->
                     <div class="col-md-7 border-start ps-md-4">
                         <h1 id="book-title" class="h4 fw-bold mb-2">Đang tải tên sách...</h1>
                         <p class="text-muted small mb-3">Mã SP: <span id="book-sku" class="fw-bold text-dark">---</span></p>
@@ -74,7 +71,6 @@
                     </div>
                 </div>
 
-                <!-- PHẦN THÔNG TIN CHI TIẾT -->
                 <div class="bg-white p-4 rounded shadow-sm mb-4">
                     <h5 class="fw-bold mb-4 border-bottom pb-2 text-uppercase">
                         <i class="bi bi-info-circle-fill text-primary me-2"></i>Thông Tin Chi Tiết
@@ -94,7 +90,6 @@
                     </div>
                 </div>
 
-                <!-- PHẦN BÌNH LUẬN -->
                 <div class="bg-white p-4 rounded shadow-sm" id="comment-section">
                     <h5 class="fw-bold mb-4 border-bottom pb-2">
                         <i class="bi bi-chat-square-text-fill text-primary me-2"></i>Bình Luận & Đánh Giá
@@ -126,10 +121,8 @@
                     </div>
                 </div>
 
-            </div>
-
-            <!-- SIDEBAR PHẢI -->
-            <div class="col-lg-3 col-md-12 mt-4 mt-lg-0">
+            </div> <div class="col-lg-3 col-md-12 mt-4 mt-lg-0">
+                
                 <div class="bg-white p-3 mb-4 rounded shadow-sm border">
                     <h6 class="fw-bold small border-bottom pb-2 mb-3 text-uppercase text-secondary">Yên tâm mua sắm</h6>
                     <ul class="list-unstyled small mb-0 d-flex flex-column gap-3 text-secondary">
@@ -141,40 +134,16 @@
                 </div>
                 
                 <div class="bg-white p-3 rounded shadow-sm border">
-                    <h6 class="fw-bold small border-bottom pb-2 mb-3 text-uppercase text-secondary">Sách Bán Chạy</h6>
+                    <h6 class="fw-bold small border-bottom pb-2 mb-3 text-uppercase text-secondary">
+                        Sản Phẩm Tương Tự
+                    </h6>
                     
-                    <div class="d-flex mb-3 align-items-center border-bottom pb-2">
-                        <a href="detail-book.html?id=1">
-                            <img src="../images/sach_banchay1.png" class="rounded border me-2" alt="Book" style="width: 50px; height: 70px; object-fit: cover;">
-                        </a>
-                        <div>
-                            <a href="detail-book.html?id=1" class="text-decoration-none text-dark small fw-bold d-block text-truncate" style="max-width: 130px;">Những Giấc Mơ...</a>
-                            <span class="text-danger fw-bold small">82.000đ</span>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex mb-3 align-items-center border-bottom pb-2">
-                        <a href="detail-book.html?id=2">
-                            <img src="../images/sach_banchay2.png" class="rounded border me-2" alt="Book" style="width: 50px; height: 70px; object-fit: cover;">
-                        </a>
-                        <div>
-                            <a href="detail-book.html?id=2" class="text-decoration-none text-dark small fw-bold d-block text-truncate" style="max-width: 130px;">Harry Potter...</a>
-                            <span class="text-danger fw-bold small">110.000đ</span>
-                        </div>
-                    </div>
-
-                    <div class="d-flex align-items-center">
-                        <a href="detail-book.html?id=3">
-                            <img src="../images/sach_banchay3.png" class="rounded border me-2" alt="Book" style="width: 50px; height: 70px; object-fit: cover;">
-                        </a>
-                        <div>
-                            <a href="detail-book.html?id=3" class="text-decoration-none text-dark small fw-bold d-block text-truncate" style="max-width: 130px;">Nhà Giả Kim...</a>
-                            <span class="text-danger fw-bold small">65.000đ</span>
-                        </div>
+                    <div id="similar-books-list">
+                        <p class="text-center text-muted small py-3">Đang tìm sách liên quan...</p>
                     </div>
                 </div> 
-            </div>
-        </div>
+
+            </div> </div>
     </div>
 
     <div id="footer-component" data-component-file="footer.html" data-prefix="../"></div>
