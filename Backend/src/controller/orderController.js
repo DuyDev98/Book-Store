@@ -92,3 +92,12 @@ export const createOrder = async (req, res) => {
       .json({ status: "ERROR", message: error.message || "Lỗi server" });
   }
 };
+
+export const getTopSelling = async (req, res) => {
+  try {
+    const data = await orderService.getTopSellingBooks();
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi server", error: error.message });
+  }
+};

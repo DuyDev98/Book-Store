@@ -136,3 +136,7 @@ export const createClientOrder = async (orderData) => {
     connection.release(); // Trả kết nối về hồ
   }
 };
+
+export const getTopSellingBooks = async () => {
+  return await OrderModel.getTopSelling();
+};
