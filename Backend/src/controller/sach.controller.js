@@ -60,3 +60,33 @@ export const nhapHang = async (req, res) => {
     res.status(200).json({ message: "Nhập hàng thành công" });
   } catch (err) { res.status(500).json({ message: err.message }); }
 };
+//API trả về số liệu thống kê sách sắp hết hàng
+export const getLowStockStats = async (req, res) => {
+  try {
+    const result = await sachService.getLowStockCount();
+    
+    // Trả về: { count: 5 }
+    res.status(200).json({ 
+      count: result.SoLuong 
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi server: " + err.message });
+  }
+};
+// FILE: controller/sach.controller.js (Thêm vào cuối file)
+
+export const getDashboardCharts = async (req, res) => {
+    try {
+        const [revenue, topSelling] = await Promise.all([
+            sachService.getRevenueStats(),
+            sachService.getTopSellingStats()
+        ]);
+
+        res.status(200).json({
+            revenue,      // Dữ liệu biểu đồ cột
+            topSelling    // Dữ liệu biểu đồ tròn
+        });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};

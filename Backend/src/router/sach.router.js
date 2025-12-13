@@ -39,5 +39,6 @@ router.put("/:id", upload.single("AnhBia"), sachController.update);
 
 router.delete("/:id", sachController.remove);
 router.put("/:id/nhap-hang", sachController.nhapHang);
-
+router.get("/thong-ke/sap-het-hang", sachController.getLowStockStats);
+router.get("/thong-ke/bieu-do", sachController.getDashboardCharts);
 export default router;

@@ -65,3 +65,23 @@ export const importStock = async (id, soLuongNhap) => {
   const [result] = await pool.query(sachModel.SQL_IMPORT_STOCK, [soLuongNhap, id]);
   return result;
 };
+//Hàm lấy số lượng sách sắp hết
+export const getLowStockCount = async () => {
+  const pool = await getPool();
+  const [rows] = await pool.query(sachModel.SQL_COUNT_LOW_STOCK);
+  // Kết quả trả về dạng: [ { SoLuong: 5 } ]
+  return rows[0]; 
+};
+// FILE: services/sach.services.js (Thêm vào cuối file)
+
+export const getRevenueStats = async () => {
+    const pool = await getPool();
+    const [rows] = await pool.query(sachModel.SQL_STATS_REVENUE_7DAYS);
+    return rows;
+};
+
+export const getTopSellingStats = async () => {
+    const pool = await getPool();
+    const [rows] = await pool.query(sachModel.SQL_STATS_TOP_SELLING);
+    return rows;
+};
