@@ -72,7 +72,7 @@ export const getLowStockCount = async () => {
   // Kết quả trả về dạng: [ { SoLuong: 5 } ]
   return rows[0]; 
 };
-// FILE: services/sach.services.js (Thêm vào cuối file)
+
 
 export const getRevenueStats = async () => {
     const pool = await getPool();
@@ -84,4 +84,13 @@ export const getTopSellingStats = async () => {
     const pool = await getPool();
     const [rows] = await pool.query(sachModel.SQL_STATS_TOP_SELLING);
     return rows;
+};
+
+
+// SỬA: Hàm này để lấy danh sách chi tiết các sách có tồn kho < 10
+export const getLowStockList = async () => {
+  const pool = await getPool();
+  // SQL_GET_LOW_STOCK_ITEMS đã có trong model bạn gửi
+  const [rows] = await pool.query(sachModel.SQL_GET_LOW_STOCK_ITEMS); 
+  return rows; 
 };

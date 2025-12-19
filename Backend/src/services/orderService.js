@@ -1,12 +1,19 @@
 import OrderModel from "../modules/Order.model.js";
 import { getPool } from "../config/db.js";
 // Lấy danh sách và format ngày tháng cho đẹp
+// ... import
+
 export const getAllOrders = async () => {
   const orders = await OrderModel.getAll();
 
   return orders.map((order) => ({
     ...order,
-    NgayDat: new Date(order.NgayDat).toLocaleDateString("vi-VN"),
+    // --- SỬA Ở ĐÂY: ---
+    // Không format NgayDat thành chuỗi "dd/mm/yyyy" nữa.
+    // Hãy để nguyên object Date hoặc chuỗi ISO từ Database để Frontend tính toán biểu đồ.
+    NgayDat: order.NgayDat, 
+    // ------------------
+    
     TongTienFormatted: new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
@@ -14,6 +21,7 @@ export const getAllOrders = async () => {
   }));
 };
 
+// ... các hàm khác giữ nguyên
 // Lấy chi tiết
 export const getOrderDetails = async (id) => {
   const orderData = await OrderModel.getById(id);
@@ -135,4 +143,8 @@ export const createClientOrder = async (orderData) => {
   } finally {
     connection.release(); // Trả kết nối về hồ
   }
+};
+
+export const getTopSellingBooks = async () => {
+  return await OrderModel.getTopSelling();
 };

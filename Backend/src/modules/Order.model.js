@@ -91,6 +91,7 @@ const Order = {
   },
 
   // 4. Xóa sạch giỏ hàng sau khi mua
+  // ... (Phần code bên trên của hàm clearCartAfterCheckout giữ nguyên)
   clearCartAfterCheckout: async (connection, maKH) => {
     const sql = `
       DELETE c FROM chitietgiohang c 
@@ -98,7 +99,25 @@ const Order = {
       WHERE g.MaKH = ?
     `;
     await connection.query(sql, [maKH]);
+  }, // <--- QUAN TRỌNG: Phải có dấu phẩy ở đây để ngăn cách với hàm mới
+
+  // --- DÁN ĐOẠN NÀY VÀO TRƯỚC KHI ĐÓNG OBJECT ---
+  getTopSelling: async () => {
+    const pool = await getPool();
+    const sql = `
+      SELECT s.TenSach, SUM(c.SoLuong) as TongSoLuong
+      FROM chitietdonhang c
+      JOIN sach s ON c.MaSach = s.MaSach
+      JOIN donhang d ON c.MaDH = d.MaDH
+      WHERE d.TrangThai = 'Đã giao' 
+      GROUP BY s.MaSach, s.TenSach
+      ORDER BY TongSoLuong DESC
+      LIMIT 5
+    `;
+    const [rows] = await pool.query(sql);
+    return rows;
   },
-};
+  // ----------------------------------------------
+}; 
 
 export default Order;
