@@ -118,7 +118,19 @@
             </div>
         </div>
     </main>
-
+    <nav aria-label="Phân trang danh sách" class="d-flex justify-content-center mt-3">
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Trang trước</a>
+                    </li>
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Trang sau</a>
+                    </li>
+                </ul>
+            </nav>
     <div class="modal fade" id="bookModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -209,250 +221,319 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const API_URL = "http://localhost:5001/api";
-        let allBooks = [];
-        const bookModal = new bootstrap.Modal(document.getElementById('bookModal'));
-        const importModal = new bootstrap.Modal(document.getElementById('importModal'));
+    const API_URL = "http://localhost:5001/api";
+    
+    // --- CẤU HÌNH PHÂN TRANG & DỮ LIỆU ---
+    let allBooks = [];       // Chứa toàn bộ sách từ DB
+    let currentBooks = [];   // Chứa danh sách đang hiển thị (sau khi lọc/tìm kiếm)
+    
+    let currentPage = 1;     // Trang hiện tại
+    const rowsPerPage = 10;  // Hiển thị 10 cuốn sách mỗi trang 
 
-        // --- 1. KHỞI TẠO & LOAD DỮ LIỆU ---
-        document.addEventListener("DOMContentLoaded", async () => {
-            await Promise.all([
-                loadDropdown('danhmuc', 'MaDanhMuc', 'TenDanhMuc'),
-                loadDropdown('tacgia', 'MaTG', 'TenTG'),
-                loadDropdown('nxb', 'MaNXB', 'TenNXB'),
-                loadDropdown('loaisach', 'MaLoaiSach', 'TenLoaiSach')
-            ]);
-            loadBooks();
+    const bookModal = new bootstrap.Modal(document.getElementById('bookModal'));
+    const importModal = new bootstrap.Modal(document.getElementById('importModal'));
+
+    // --- 1. KHỞI TẠO & LOAD DỮ LIỆU ---
+    document.addEventListener("DOMContentLoaded", async () => {
+        // Load các dropdown trước
+        await Promise.all([
+            loadDropdown('danhmuc', 'MaDanhMuc', 'TenDanhMuc'),
+            loadDropdown('tacgia', 'MaTG', 'TenTG'),
+            loadDropdown('nxb', 'MaNXB', 'TenNXB'),
+            loadDropdown('loaisach', 'MaLoaiSach', 'TenLoaiSach')
+        ]);
+        // Sau đó load sách
+        loadBooks();
+    });
+
+    async function loadBooks() {
+        try {
+            const res = await fetch(`${API_URL}/sach`);
+            const json = await res.json();
+            
+            // Lưu dữ liệu gốc
+            allBooks = Array.isArray(json) ? json : (json.data || []);
+            
+            // Ban đầu chưa lọc gì thì danh sách hiện tại = danh sách gốc
+            currentBooks = [...allBooks];
+
+            // Render giao diện
+            updateView();
+        } catch (e) {
+            console.error(e);
+            document.getElementById('bookTableBody').innerHTML = `<tr><td colspan="7" class="text-center text-danger">Lỗi kết nối Server!</td></tr>`;
+        }
+    }
+
+    // --- 2. HÀM ĐIỀU PHỐI HIỂN THỊ (QUAN TRỌNG) ---
+    function updateView() {
+        renderTable(currentBooks);
+        renderPagination(currentBooks);
+        
+        // Cập nhật số lượng tổng
+        document.getElementById('totalCount').innerText = `Tổng: ${currentBooks.length} sách`;
+    }
+
+    // --- 3. RENDER BẢNG (ĐÃ CÓ PHÂN TRANG) ---
+    function renderTable(list) {
+        const tbody = document.getElementById('bookTableBody');
+        tbody.innerHTML = "";
+
+        if (list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4">Không tìm thấy sách nào</td></tr>`;
+            return;
+        }
+
+        // TÍNH TOÁN CẮT MẢNG
+        const startIndex = (currentPage - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+        const pageItems = list.slice(startIndex, endIndex);
+
+        pageItems.forEach(b => {
+            const img = (b.AnhBia && b.AnhBia !== 'null') ? b.AnhBia : "https://placehold.co/50x70?text=NoImg";
+            const price = b.GiaBan ? parseInt(b.GiaBan).toLocaleString() + 'đ' : '0đ';
+            const stockClass = (b.SoLuongTon < 10) ? 'bg-danger' : 'bg-success';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="text-center text-muted">#${b.MaSach}</td>
+                <td><img src="${img}" class="book-cover-thumb"></td>
+                <td>
+                    <div class="fw-bold text-primary">${b.TenSach}</div>
+                    <small class="text-muted">Năm XB: ${b.NamXuatBan || '-'}</small>
+                </td>
+                <td class="fw-bold text-danger">${price}</td>
+                <td class="text-center">
+                    <span class="badge ${stockClass}">${b.SoLuongTon || 0}</span>
+                </td>
+                <td>
+                    <small class="d-block">TG: ${getNameInDropdown('MaTG', b.MaTG)}</small>
+                    <small class="d-block">DM: ${getNameInDropdown('MaDanhMuc', b.MaDanhMuc)}</small>
+                </td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-success me-1" title="Nhập hàng" onclick="openImport(${b.MaSach}, '${b.TenSach}')">
+                        <i class="bi bi-box-seam"></i>
+                    </button>
+                    <button class="btn btn-sm btn-warning me-1" title="Sửa" onclick="openEdit(${b.MaSach})">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" title="Xóa" onclick="deleteBook(${b.MaSach})">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // --- 4. RENDER THANH PHÂN TRANG ---
+    function renderPagination(list) {
+        const paginationUl = document.querySelector('.pagination');
+        if (!paginationUl) return;
+        paginationUl.innerHTML = "";
+
+        const totalPages = Math.ceil(list.length / rowsPerPage);
+
+        if (totalPages <= 1) return; // Ẩn nếu chỉ có 1 trang
+
+        // Nút Trước
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Trang trước</a>`;
+        paginationUl.appendChild(prevLi);
+
+        // Các nút số (Chỉ hiện tối đa 5 nút để đỡ dài nếu có nhiều trang)
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, currentPage + 2);
+
+        if (startPage > 1) {
+             paginationUl.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(1)">1</a></li>`;
+             if(startPage > 2) paginationUl.innerHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const li = document.createElement('li');
+            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+            paginationUl.appendChild(li);
+        }
+
+        if (endPage < totalPages) {
+             if(endPage < totalPages - 1) paginationUl.innerHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+             paginationUl.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${totalPages})">${totalPages}</a></li>`;
+        }
+
+        // Nút Sau
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+        nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Trang sau</a>`;
+        paginationUl.appendChild(nextLi);
+    }
+
+    function changePage(page) {
+        const totalPages = Math.ceil(currentBooks.length / rowsPerPage);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        updateView(); // Vẽ lại bảng ở trang mới
+    }
+
+    // --- 5. TÌM KIẾM & LỌC (ĐÃ TÍCH HỢP PHÂN TRANG) ---
+    function filterBooks() {
+        const key = document.getElementById('searchInput').value.toLowerCase();
+        const cat = document.getElementById('filterCategory').value;
+        
+        // Lọc từ danh sách gốc
+        currentBooks = allBooks.filter(b => {
+            const matchName = b.TenSach.toLowerCase().includes(key);
+            const matchCat = cat === "" || b.MaDanhMuc == cat;
+            return matchName && matchCat;
         });
 
-        async function loadBooks() {
-            try {
-                const res = await fetch(`${API_URL}/sach`);
-                const json = await res.json();
-                // Xử lý dữ liệu trả về (có thể là mảng hoặc object {data: []})
-                allBooks = Array.isArray(json) ? json : (json.data || []);
-                renderTable(allBooks);
-            } catch (e) {
-                console.error(e);
-                document.getElementById('bookTableBody').innerHTML = `<tr><td colspan="7" class="text-center text-danger">Lỗi kết nối Server!</td></tr>`;
-            }
-        }
+        currentPage = 1; // Reset về trang 1 khi tìm kiếm
+        updateView();
+    }
 
-        // --- 2. RENDER BẢNG ---
-        function renderTable(list) {
-            const tbody = document.getElementById('bookTableBody');
-            document.getElementById('totalCount').innerText = `Tổng: ${list.length} sách`;
-            tbody.innerHTML = "";
+    // --- CÁC HÀM CŨ (GIỮ NGUYÊN) ---
 
-            if (list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center">Không có dữ liệu</td></tr>`;
-                return;
-            }
+    // Mở Modal Thêm
+    function openAddModal() {
+        document.getElementById('bookForm').reset();
+        document.getElementById('MaSach').value = ''; 
+        document.getElementById('bookModalLabel').innerText = "Thêm Sách Mới";
+        document.getElementById('previewImg').src = "https://placehold.co/150x200?text=Upload";
+        document.getElementById('SoLuongTon').disabled = false;
+        bookModal.show();
+    }
 
-            list.forEach(b => {
-                const img = (b.AnhBia && b.AnhBia !== 'null') ? b.AnhBia : "https://placehold.co/50x70?text=NoImg";
-                const price = b.GiaBan ? parseInt(b.GiaBan).toLocaleString() + 'đ' : '0đ';
-                const stockClass = (b.SoLuongTon < 10) ? 'bg-danger' : 'bg-success';
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="text-center text-muted">#${b.MaSach}</td>
-                    <td><img src="${img}" class="book-cover-thumb"></td>
-                    <td>
-                        <div class="fw-bold text-primary">${b.TenSach}</div>
-                        <small class="text-muted">Năm XB: ${b.NamXuatBan || '-'}</small>
-                    </td>
-                    <td class="fw-bold text-danger">${price}</td>
-                    <td class="text-center">
-                        <span class="badge ${stockClass}">${b.SoLuongTon || 0}</span>
-                    </td>
-                    <td>
-                        <small class="d-block">TG: ${getNameInDropdown('MaTG', b.MaTG)}</small>
-                        <small class="d-block">DM: ${getNameInDropdown('MaDanhMuc', b.MaDanhMuc)}</small>
-                    </td>
-                    <td class="text-center">
-                        <button class="btn btn-sm btn-outline-success me-1" title="Nhập hàng" onclick="openImport(${b.MaSach}, '${b.TenSach}')">
-                            <i class="bi bi-box-seam"></i>
-                        </button>
-                        <button class="btn btn-sm btn-warning me-1" title="Sửa" onclick="openEdit(${b.MaSach})">
-                            <i class="bi bi-pencil-square"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger" title="Xóa" onclick="deleteBook(${b.MaSach})">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
+    // Mở Modal Sửa
+    async function openEdit(id) {
+        try {
+            const res = await fetch(`${API_URL}/sach/${id}`);
+            const book = await res.json();
+            
+            document.getElementById('MaSach').value = book.MaSach;
+            document.getElementById('TenSach').value = book.TenSach;
+            document.getElementById('GiaBan').value = book.GiaBan;
+            document.getElementById('SoLuongTon').value = book.SoLuongTon;
+            document.getElementById('SoLuongTon').disabled = true; 
+            document.getElementById('MoTa').value = book.MoTa || '';
+            
+            ['MaTG', 'MaDanhMuc', 'MaNXB', 'MaLoaiSach'].forEach(key => {
+                document.getElementById(key).value = book[key] || "";
             });
-        }
 
-        // --- 3. THÊM / SỬA SÁCH (DÙNG FORMDATA ĐỂ UPLOAD ẢNH) ---
-        function openAddModal() {
-            document.getElementById('bookForm').reset();
-            document.getElementById('MaSach').value = ''; // Rỗng là thêm mới
-            document.getElementById('bookModalLabel').innerText = "Thêm Sách Mới";
-            document.getElementById('previewImg').src = "https://placehold.co/150x200?text=Upload";
-            document.getElementById('SoLuongTon').disabled = false; // Cho phép nhập tồn kho khi tạo mới
+            document.getElementById('previewImg').src = book.AnhBia || "https://placehold.co/150x200?text=NoImg";
+            document.getElementById('bookModalLabel').innerText = "Cập nhật sách: #" + id;
             bookModal.show();
+        } catch(e) { alert("Lỗi tải thông tin sách"); }
+    }
+
+    // Lưu Sách
+    async function saveBook() {
+        const id = document.getElementById('MaSach').value;
+        const isEdit = !!id;
+        
+        const formData = new FormData();
+        formData.append('TenSach', document.getElementById('TenSach').value);
+        formData.append('GiaBan', document.getElementById('GiaBan').value);
+        formData.append('SoLuongTon', document.getElementById('SoLuongTon').value);
+        formData.append('MoTa', document.getElementById('MoTa').value);
+        
+        ['MaTG', 'MaDanhMuc', 'MaNXB', 'MaLoaiSach'].forEach(k => {
+            formData.append(k, document.getElementById(k).value);
+        });
+
+        const fileInput = document.getElementById('AnhBiaInput');
+        if (fileInput.files[0]) {
+            formData.append('AnhBia', fileInput.files[0]);
         }
 
-        async function openEdit(id) {
-            try {
-                const res = await fetch(`${API_URL}/sach/${id}`);
-                const data = await res.json();
-                // Backend của bạn trả về object trực tiếp (theo code controller bạn gửi)
-                const book = data; 
+        const url = isEdit ?(`${API_URL}/sach/${id}`) : (`${API_URL}/sach`);
+        const method = isEdit ? 'PUT' : 'POST';
 
-                document.getElementById('MaSach').value = book.MaSach;
-                document.getElementById('TenSach').value = book.TenSach;
-                document.getElementById('GiaBan').value = book.GiaBan;
-                document.getElementById('SoLuongTon').value = book.SoLuongTon;
-                document.getElementById('SoLuongTon').disabled = true; // Không sửa tồn kho ở đây, phải dùng Nhập hàng
-                document.getElementById('MoTa').value = book.MoTa || '';
-                
-                // Set dropdowns
-                ['MaTG', 'MaDanhMuc', 'MaNXB', 'MaLoaiSach'].forEach(key => {
-                    document.getElementById(key).value = book[key] || "";
-                });
-
-                document.getElementById('previewImg').src = book.AnhBia || "https://placehold.co/150x200?text=NoImg";
-                document.getElementById('bookModalLabel').innerText = "Cập nhật sách: #" + id;
-                bookModal.show();
-            } catch(e) { alert("Lỗi tải thông tin sách"); }
-        }
-
-        async function saveBook() {
-            const id = document.getElementById('MaSach').value;
-            const isEdit = !!id;
-            
-            // Dùng FormData để gửi cả Text và File
-            const formData = new FormData();
-            formData.append('TenSach', document.getElementById('TenSach').value);
-            formData.append('GiaBan', document.getElementById('GiaBan').value);
-            formData.append('SoLuongTon', document.getElementById('SoLuongTon').value);
-            formData.append('MoTa', document.getElementById('MoTa').value);
-            
-            // Append dropdowns
-            ['MaTG', 'MaDanhMuc', 'MaNXB', 'MaLoaiSach'].forEach(k => {
-                formData.append(k, document.getElementById(k).value);
-            });
-
-            // Append File ảnh nếu có chọn
-            const fileInput = document.getElementById('AnhBiaInput');
-            if (fileInput.files[0]) {
-                formData.append('AnhBia', fileInput.files[0]);
+        try {
+            const res = await fetch(url, { method: method, body: formData });
+            if (res.ok) {
+                alert("Lưu thành công!");
+                bookModal.hide();
+                loadBooks(); // Load lại sẽ tự reset về trang 1
+            } else {
+                const err = await res.json();
+                alert("Lỗi: " + err.message);
             }
+        } catch (e) { alert("Lỗi kết nối server"); }
+    }
 
-            const url = isEdit ?(`${API_URL}/sach/${id}`) : (`${API_URL}/sach`);
-            const method = isEdit ? 'PUT' : 'POST';
+    // Nhập hàng
+    function openImport(id, name) {
+        document.getElementById('importBookId').value = id;
+        document.getElementById('importBookName').innerText = name;
+        document.getElementById('importQty').value = "";
+        importModal.show();
+    }
 
-            try {
-                // Fetch gửi FormData (Không cần set Content-Type, trình duyệt tự làm)
-                const res = await fetch(url, {
-                    method: method,
-                    body: formData
-                });
+    async function confirmImport() {
+        const id = document.getElementById('importBookId').value;
+        const qty = document.getElementById('importQty').value;
+        if(!qty || qty < 1) return alert("Nhập số lượng hợp lệ!");
 
-                if (res.ok) {
-                    alert("Lưu thành công!");
-                    bookModal.hide();
-                    loadBooks();
-                } else {
-                    const err = await res.json();
-                    alert("Lỗi: " + err.message);
-                }
-            } catch (e) { alert("Lỗi kết nối server"); }
-        }
-
-        // --- 4. NHẬP HÀNG ---
-        function openImport(id, name) {
-            document.getElementById('importBookId').value = id;
-            document.getElementById('importBookName').innerText = name;
-            document.getElementById('importQty').value = "";
-            importModal.show();
-        }
-
-        async function confirmImport() {
-            const id = document.getElementById('importBookId').value;
-            const qty = document.getElementById('importQty').value;
-            if(!qty || qty < 1) return alert("Nhập số lượng hợp lệ!");
-
-            try {
-                const res = await fetch(`${API_URL}/sach/${id}/nhap-hang`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ soLuong: parseInt(qty) })
-                });
-                if(res.ok) {
-                    alert("Nhập hàng thành công!");
-                    importModal.hide();
-                    loadBooks();
-                } else { alert("Lỗi nhập hàng"); }
-            } catch(e) { alert("Lỗi kết nối"); }
-        }
-
-        // --- 5. XÓA SÁCH ---
-        async function deleteBook(id) {
-            if(!confirm("Bạn có chắc chắn xóa sách này?")) return;
-            try {
-                const res = await fetch(`${API_URL}/sach/${id}`, { method: 'DELETE' });
-                if(res.ok) loadBooks();
-                else alert("Không thể xóa sách này");
-            } catch(e) { alert("Lỗi server"); }
-        }
-
-        // --- TIỆN ÍCH ---
-        // Xem trước ảnh khi chọn file
-        document.getElementById('AnhBiaInput').onchange = evt => {
-            const [file] = evt.target.files;
-            if (file) document.getElementById('previewImg').src = URL.createObjectURL(file);
-        };
-
-        // Lọc sách client-side
-        function filterBooks() {
-            const key = document.getElementById('searchInput').value.toLowerCase();
-            const cat = document.getElementById('filterCategory').value;
-            
-            const filtered = allBooks.filter(b => {
-                const matchName = b.TenSach.toLowerCase().includes(key);
-                const matchCat = cat === "" || b.MaDanhMuc == cat;
-                return matchName && matchCat;
+        try {
+            const res = await fetch(`${API_URL}/sach/${id}/nhap-hang`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ soLuong: parseInt(qty) })
             });
-            renderTable(filtered);
-        }
+            if(res.ok) {
+                alert("Nhập hàng thành công!");
+                importModal.hide();
+                loadBooks();
+            } else { alert("Lỗi nhập hàng"); }
+        } catch(e) { alert("Lỗi kết nối"); }
+    }
 
-        // Helper tải dropdown
-        async function loadDropdown(endpoint, idElem, nameField) {
-            try {
-                const res = await fetch(`${API_URL}/${endpoint}`);
-                const data = await res.json();
-                const list = Array.isArray(data) ? data : data.data;
-                const select = document.getElementById(idElem);
-                if (!select) return; // Nếu form không có select này (ví dụ ở thanh lọc)
-                
-                // Nếu là thanh lọc (filterCategory) thì giữ nguyên option "Tất cả"
-                if(idElem === 'filterCategory') {
-                    select.innerHTML = '<option value="">Tất cả danh mục</option>';
-                } else {
-                    select.innerHTML = '<option value="">-- Chọn --</option>';
-                }
+    // Xóa Sách
+    async function deleteBook(id) {
+        if(!confirm("Bạn có chắc chắn xóa sách này?")) return;
+        try {
+            const res = await fetch(`${API_URL}/sach/${id}`, { method: 'DELETE' });
+            if(res.ok) loadBooks();
+            else alert("Không thể xóa sách này");
+        } catch(e) { alert("Lỗi server"); }
+    }
 
-                // Mapping ID field (MaTG, MaNXB...)
-                const idField = list.length > 0 ? Object.keys(list[0])[0] : 'id'; 
+    // Xem trước ảnh
+    document.getElementById('AnhBiaInput').onchange = evt => {
+        const [file] = evt.target.files;
+        if (file) document.getElementById('previewImg').src = URL.createObjectURL(file);
+    };
 
-                list.forEach(item => {
-                    select.innerHTML += `<option value="${item[idField]}">${item[nameField]}</option>`;
-                });
-            } catch(e) {}
-        }
+    // Helper Dropdown
+    async function loadDropdown(endpoint, idElem, nameField) {
+        try {
+            const res = await fetch(`${API_URL}/${endpoint}`);
+            const data = await res.json();
+            const list = Array.isArray(data) ? data : data.data;
+            const select = document.getElementById(idElem);
+            if (!select) return; 
+            
+            if(idElem === 'filterCategory') {
+                select.innerHTML = '<option value="">Tất cả danh mục</option>';
+            } else {
+                select.innerHTML = '<option value="">-- Chọn --</option>';
+            }
+            const idField = list.length > 0 ? Object.keys(list[0])[0] : 'id'; 
+            list.forEach(item => {
+                select.innerHTML += `<option value="${item[idField]}">${item[nameField]}</option>`;
+            });
+        } catch(e) {}
+    }
 
-        // Helper lấy tên từ dropdown để hiển thị lên bảng
-        function getNameInDropdown(elemId, value) {
-            const select = document.getElementById(elemId);
-            if(!select) return "-";
-            const option = select.querySelector(`option[value="${value}"]`);
-            return option ? option.text : "-";
-        }
-    </script>
+    function getNameInDropdown(elemId, value) {
+        const select = document.getElementById(elemId);
+        if(!select) return "-";
+        const option = select.querySelector(`option[value="${value}"]`);
+        return option ? option.text : "-";
+    }
+</script>
 </body>
 </html>

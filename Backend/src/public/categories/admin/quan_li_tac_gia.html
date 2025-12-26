@@ -182,7 +182,20 @@
                 </div>
 
             </main>
-        </div>
+            <nav aria-label="Phân trang danh sách" class="d-flex justify-content-center mt-3">
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Trang trước</a>
+                    </li>
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Trang sau</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>  
     </div>
 
     <!-- MODAL THÊM / SỬA TÁC GIẢ -->
@@ -236,103 +249,81 @@
 
     <!-- SCRIPT GỌI API TÁC GIẢ -->
     <script>
-    let allAuthors = [];
+    // --- CẤU HÌNH PHÂN TRANG ---
+    let allAuthors = []; // Chứa toàn bộ dữ liệu từ API
+    let currentPage = 1; // Trang hiện tại
+    const rowsPerPage = 15; // Số lượng tác giả mỗi trang (15 dòng)
+
+    // Biến cho Modal và Form
     let isEditing = false;
     let editingId = null;
 
     document.addEventListener("DOMContentLoaded", () => {
         loadAuthors();
 
-        const addBtn  = document.getElementById("openAddAuthorBtn");
+        const addBtn = document.getElementById("openAddAuthorBtn");
         const saveBtn = document.getElementById("saveAuthorButton");
-        const form    = document.getElementById("authorForm");
+        const form = document.getElementById("authorForm");
 
         // Mở modal ở chế độ THÊM
         addBtn.addEventListener("click", () => {
             isEditing = false;
             editingId = null;
             form.reset();
-            document.getElementById("authorCode").value   = "";
+            document.getElementById("authorCode").value = "";
             document.getElementById("authorModalLabel").textContent = "Thêm tác giả";
         });
 
-        // Lưu (THÊM hoặc SỬA)
-        saveBtn.addEventListener("click", async () => {
-            const TenTG   = document.getElementById("authorName").value.trim();
-            const NamSinh = document.getElementById("authorBirth").value || null;
-            const NamMat  = document.getElementById("authorDeath").value || null;
-            const QueQuan = document.getElementById("authorQueQuan").value || null;
-
-            if (!TenTG) {
-                alert("Vui lòng nhập tên tác giả");
-                return;
-            }
-
-            try {
-                let url  = "/api/tacgia";
-                let method = "POST";
-
-                if (isEditing && editingId != null) {
-                    url    = `/api/tacgia/${editingId}`;
-                    method = "PUT";
-                }
-
-                const res = await fetch(url, {
-                    method,
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ TenTG, NamSinh, NamMat, QueQuan })
-                });
-
-                if (!res.ok) {
-                    const txt = await res.text();
-                    console.error("Lỗi lưu tác giả:", txt);
-                    alert("Không thể lưu tác giả");
-                    return;
-                }
-
-                bootstrap.Modal.getInstance(document.getElementById("authorModal")).hide();
-                await loadAuthors();
-
-            } catch (err) {
-                console.error("Lỗi khi gọi API lưu tác giả:", err);
-                alert("Không thể lưu tác giả");
-            }
-        });
+        // Xử lý sự kiện nút LƯU
+        saveBtn.addEventListener("click", handleSaveAuthor);
     });
 
-    // Lấy danh sách tác giả
+    // 1. Tải danh sách tác giả từ API
     async function loadAuthors() {
         try {
             const res = await fetch("/api/tacgia");
-            console.log("Status GET /api/tacgia:", res.status);
-
+            
             if (!res.ok) {
-                const txt = await res.text();
-                console.error("Body lỗi:", txt);
                 throw new Error("Không thể lấy danh sách tác giả");
             }
 
             const authors = await res.json();
-            allAuthors = authors;
-            renderAuthors(authors);
+            
+            // Lưu dữ liệu vào biến toàn cục và render lần đầu
+            allAuthors = authors; 
+            updateView(); 
 
         } catch (err) {
             console.error("Lỗi khi tải danh sách tác giả:", err);
-            alert("Không thể lấy danh sách tác giả");
+            // alert("Không thể lấy danh sách tác giả"); // Có thể bật lên nếu cần
         }
     }
 
-    // Render ra bảng
+    // --- HÀM MỚI: Điều phối hiển thị (Bảng + Phân trang) ---
+    function updateView() {
+        renderAuthors(allAuthors);
+        renderPagination(allAuthors);
+    }
+
+    // 2. Render bảng (Đã cập nhật phân trang)
     function renderAuthors(list) {
         const tbody = document.getElementById("authorTableBody");
-        if (!tbody) {
-            console.error("Không tìm thấy #authorTableBody");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        // Tính toán vị trí cắt mảng
+        const startIndex = (currentPage - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+        
+        // Lấy dữ liệu cho trang hiện tại
+        const pageItems = list.slice(startIndex, endIndex);
+
+        if (pageItems.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4">Không có dữ liệu</td></tr>`;
             return;
         }
 
-        tbody.innerHTML = "";
-
-        list.forEach(tg => {
+        pageItems.forEach(tg => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td><strong>${tg.MaTG}</strong></td>
@@ -341,7 +332,6 @@
                 <td>${tg.QueQuan || "—"}</td>
                 <td>${tg.NamMat  || "—"}</td>
                 <td class="text-center">
-                
                     <button class="btn btn-sm btn-outline-warning ms-1" onclick="startEditAuthor(${tg.MaTG})">
                         <i class="bi bi-pencil-square"></i> Sửa
                     </button>
@@ -354,32 +344,101 @@
         });
     }
 
-    // Xem nhanh chi tiết (alert)
-    async function viewAuthor(id) {
+    // --- HÀM MỚI: Render thanh phân trang ---
+    function renderPagination(list) {
+        const paginationUl = document.querySelector('.pagination');
+        if (!paginationUl) return;
+        paginationUl.innerHTML = "";
+
+        const totalPages = Math.ceil(list.length / rowsPerPage);
+
+        // Nếu chỉ có 1 trang hoặc không có dữ liệu thì ẩn phân trang
+        if (totalPages <= 1) return;
+
+        // Nút Trang trước
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Trang trước</a>`;
+        paginationUl.appendChild(prevLi);
+
+        // Các nút số trang
+        for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+            paginationUl.appendChild(li);
+        }
+
+        // Nút Trang sau
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+        nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Trang sau</a>`;
+        paginationUl.appendChild(nextLi);
+    }
+
+    // --- HÀM MỚI: Xử lý chuyển trang ---
+    function changePage(page) {
+        const totalPages = Math.ceil(allAuthors.length / rowsPerPage);
+        if (page < 1 || page > totalPages) return;
+        
+        currentPage = page;
+        updateView();
+    }
+
+    // 3. Hàm xử lý lưu (Tách ra để code gọn hơn)
+    async function handleSaveAuthor() {
+        const TenTG   = document.getElementById("authorName").value.trim();
+        const NamSinh = document.getElementById("authorBirth").value || null;
+        const NamMat  = document.getElementById("authorDeath").value || null;
+        const QueQuan = document.getElementById("authorQueQuan").value || null;
+
+        if (!TenTG) {
+            alert("Vui lòng nhập tên tác giả");
+            return;
+        }
+
         try {
-            const res = await fetch(`/api/tacgia/${id}`);
-            if (!res.ok) return;
-            const tg = await res.json();
-            alert(
-                `Tác giả: ${tg.TenTG}\n` +
-                `Năm sinh: ${tg.NamSinh || "—"}\n` +
-                `Quê quán: ${tg.QueQuan || "—"}\n` +
-                `Năm mất: ${tg.NamMat || "—"}`
-            );
+            let url  = "/api/tacgia";
+            let method = "POST";
+
+            if (isEditing && editingId != null) {
+                url    = `/api/tacgia/${editingId}`;
+                method = "PUT";
+            }
+
+            const res = await fetch(url, {
+                method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ TenTG, NamSinh, NamMat, QueQuan })
+            });
+
+            if (!res.ok) {
+                alert("Không thể lưu tác giả");
+                return;
+            }
+
+            // Đóng modal và tải lại dữ liệu
+            bootstrap.Modal.getInstance(document.getElementById("authorModal")).hide();
+            await loadAuthors();
+
         } catch (err) {
-            console.error("Lỗi xem chi tiết tác giả:", err);
+            console.error("Lỗi khi gọi API lưu tác giả:", err);
+            alert("Đã xảy ra lỗi hệ thống");
         }
     }
 
-    // Sửa: lấy dữ liệu + mở modal
+    // 4. Sửa: lấy dữ liệu + mở modal
     async function startEditAuthor(id) {
         try {
-            const res = await fetch(`/api/tacgia/${id}`);
-            if (!res.ok) {
-                alert("Không lấy được thông tin tác giả");
-                return;
+            // Tìm trong mảng local trước để đỡ gọi API (tối ưu hóa)
+            let tg = allAuthors.find(item => item.MaTG == id);
+            
+            // Nếu không tìm thấy trong mảng (hiếm gặp), gọi API
+            if (!tg) {
+                const res = await fetch(`/api/tacgia/${id}`);
+                if (!res.ok) return alert("Không tìm thấy tác giả");
+                tg = await res.json();
             }
-            const tg = await res.json();
 
             isEditing = true;
             editingId = id;
@@ -395,28 +454,27 @@
             modal.show();
 
         } catch (err) {
-            console.error("Lỗi load tác giả để sửa:", err);
+            console.error("Lỗi load tác giả:", err);
         }
     }
 
-    // Xóa tác giả
+    // 5. Xóa tác giả
     async function deleteAuthor(id) {
         if (!confirm("Bạn có chắc muốn xóa tác giả này?")) return;
 
         try {
             const res = await fetch(`/api/tacgia/${id}`, { method: "DELETE" });
             if (!res.ok) {
-                const txt = await res.text();
-                console.error("Lỗi xóa:", txt);
-                alert("Không thể xóa tác giả");
+                alert("Không thể xóa tác giả (có thể đang có sách liên kết)");
                 return;
             }
+            // Load lại dữ liệu sau khi xóa
             await loadAuthors();
         } catch (err) {
             console.error("Lỗi khi xóa tác giả:", err);
         }
     }
-    </script>
+</script>
 
 </body>
 </html>

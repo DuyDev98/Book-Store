@@ -13,8 +13,8 @@ router.post("/login", UserController.loginUser);
 // Private routes (Chỉ Admin)
 router.post(
   "/admin/signup",
-   verifyToken,  // Dùng verifyToken thay cho authMiddleware cũ
-   requireAdmin,
+  verifyToken, // Dùng verifyToken thay cho authMiddleware cũ
+  requireAdmin,
   UserController.createAdmin
 );
 

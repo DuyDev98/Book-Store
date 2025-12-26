@@ -6,7 +6,12 @@ export const getAllOrders = async () => {
 
   return orders.map((order) => ({
     ...order,
-    NgayDat: new Date(order.NgayDat).toLocaleDateString("vi-VN"),
+    // --- SỬA Ở ĐÂY: ---
+    // Không format NgayDat thành chuỗi "dd/mm/yyyy" nữa.
+    // Hãy để nguyên object Date hoặc chuỗi ISO từ Database để Frontend tính toán biểu đồ.
+    NgayDat: order.NgayDat,
+    // ------------------
+
     TongTienFormatted: new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
