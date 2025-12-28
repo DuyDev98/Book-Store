@@ -1,9 +1,10 @@
 import { getPool } from "../config/db.js";
 
+// Tìm hàm getCartItems và sửa query:
 export const getCartItems = async (MaKH) => {
   const pool = await getPool();
   return pool.query(
-    `SELECT c.MaSach, c.SoLuong, s.GiaBan 
+    `SELECT c.MaSach, c.SoLuong, s.GiaBan, s.PhanTramGiamGia  -- <-- THÊM s.PhanTramGiamGia
      FROM chitietgiohang c 
      JOIN sach s ON c.MaSach = s.MaSach
      JOIN giohang g ON g.MaGioHang = c.MaGioHang
@@ -11,7 +12,6 @@ export const getCartItems = async (MaKH) => {
     [MaKH]
   );
 };
-
 export const getStock = async (MaSach) => {
   const pool = await getPool();
   return pool.query("SELECT SoLuong FROM kho WHERE MaSach = ?", [MaSach]);

@@ -103,3 +103,26 @@ export const getTopSellingStats = async () => {
     const [rows] = await pool.query(sachModel.SQL_STATS_TOP_SELLING);
     return rows;
 };
+// ... (các phần trên giữ nguyên)
+
+// SỬA LẠI HÀM NÀY:
+export const getRelatedBooks = async (maLoaiSach, currentId) => {
+  // 1. Phải lấy connection từ getPool()
+  const pool = await getPool(); 
+  
+  // 2. Sửa câu Query: dùng đúng tên cột MaLoaiSach
+  const query = `
+    SELECT * FROM Sach 
+    WHERE MaLoaiSach = ? AND MaSach != ? 
+    LIMIT 4
+  `;
+  
+  try {
+      // 3. Dùng pool.query (thay vì db.execute bị lỗi)
+      const [rows] = await pool.query(query, [maLoaiSach, currentId]);
+      return rows;
+  } catch (error) {
+      console.error("Lỗi SQL Related Books:", error); // Log ra để dễ debug
+      throw error;
+  }
+};

@@ -27,11 +27,18 @@ export const thanhToanService = async (MaKH) => {
       }
     }
 
-    // Tính tổng tiền
-    let tongTien = cartItems.reduce(
-      (sum, item) => sum + item.SoLuong * item.GiaBan,
-      0
-    );
+    // Tính tổng tiền (Đã sửa để tính Sale)
+    let tongTien = cartItems.reduce((sum, item) => {
+      const giaGoc = Number(item.GiaBan);
+      const phanTram = Number(item.PhanTramGiamGia || 0);
+      let giaThucTe = giaGoc;
+      
+      if (phanTram > 0) {
+        giaThucTe = giaGoc * (1 - phanTram / 100);
+      }
+      
+      return sum + (item.SoLuong * giaThucTe);
+    }, 0);
 
     // Tạo hóa đơn
     const MaHoaDon = await createHoaDon(conn, MaKH, tongTien);

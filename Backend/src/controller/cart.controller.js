@@ -21,6 +21,7 @@ export const CartController = {
         ? cart.MaGioHang
         : await CartService.createCart(MaKH);
 
+      // Mặc định số lượng là 1 nếu không truyền lên
       await CartDetailService.addItem(MaGioHang, MaSach, SoLuong || 1);
 
       res.status(200).json({ status: "OK", message: "Đã thêm vào giỏ hàng!" });
@@ -29,7 +30,7 @@ export const CartController = {
     }
   },
 
-  // Cập nhật
+  // Cập nhật số lượng
   async updateItem(req, res) {
     try {
       const MaKH = req.user.MaKH;
@@ -48,7 +49,7 @@ export const CartController = {
     }
   },
 
-  // Xóa
+  // Xóa sản phẩm
   async removeItem(req, res) {
     try {
       const MaKH = req.user.MaKH;
@@ -61,23 +62,26 @@ export const CartController = {
     }
   },
 
-  // Lấy giỏ hàng
+  // Lấy giỏ hàng và tính tổng tiền
   async get(req, res) {
     try {
       const MaKH = req.user.MaKH;
       const cart = await CartService.getCartByCustomer(MaKH);
+      
+      // Nếu không có giỏ hàng, trả về rỗng
       if (!cart)
         return res.status(200).json({ status: "OK", data: [], total: 0 });
 
       const items = await CartDetailService.getItems(cart.MaGioHang);
-      const tongTien = items.reduce((sum, item) => sum + item.ThanhTien, 0);
+      
+      // --- SỬA LỖI NaN TẠI ĐÂY ---
+      // Ép kiểu Number để đảm bảo cộng số học, không cộng chuỗi
+      const tongTien = items.reduce((sum, item) => sum + Number(item.ThanhTien || 0), 0);
+      
       res.status(200).json({ status: "OK", info: cart, data: items, tongTien });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
   },
-
-  async create(req, res) {
-    /* ... giữ nguyên hoặc bỏ qua ... */
-  },
+  
 };

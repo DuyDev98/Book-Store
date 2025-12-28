@@ -73,12 +73,14 @@ export const cancelOrder = async (id) => {
   }
   return true;
 };
+
+
 export const createClientOrder = async (orderData) => {
   const pool = await getPool();
-  const connection = await pool.getConnection(); // Lấy 1 kết nối riêng
+  const connection = await pool.getConnection();
 
   try {
-    await connection.beginTransaction(); // Bắt đầu giao dịch
+    await connection.beginTransaction();
 
     const {
       MaKH,
@@ -98,13 +100,22 @@ export const createClientOrder = async (orderData) => {
       throw new Error("Giỏ hàng trống, không thể thanh toán!");
     }
 
-    // Bước 2: Tính tổng tiền (Server tự tính từ DB)
-    const tongTien = cartItems.reduce(
-      (total, item) => total + Number(item.GiaBan) * item.SoLuong,
-      0
-    );
+    // --- SỬA ĐOẠN TÍNH TỔNG TIỀN NÀY ---
+    // Bước 2: Tính tổng tiền (Server tự tính từ DB có áp dụng Sale)
+    const tongTien = cartItems.reduce((total, item) => {
+      const giaGoc = Number(item.GiaBan);
+      const phanTram = Number(item.PhanTramGiamGia || 0);
+      let giaThucTe = giaGoc;
 
-    // Bước 3: Format ghi chú (Gộp thông tin người nhận)
+      if (phanTram > 0) {
+        giaThucTe = giaGoc * (1 - phanTram / 100);
+      }
+      
+      return total + (giaThucTe * item.SoLuong);
+    }, 0);
+    // -------------------------------------
+
+    // Bước 3: Format ghi chú
     const fullGhiChu = `${GhiChu || ""}`;
 
     // Bước 4: Tạo đơn hàng
@@ -114,22 +125,35 @@ export const createClientOrder = async (orderData) => {
       PhiVanChuyen: 0,
       DiaChiGiaoHang,
       GhiChuGiaoHang: fullGhiChu,
-      TrangThai: "ChoDuyet", // Hoặc 'Chờ xác nhận'
+      TrangThai: "ChoDuyet",
     });
 
-    // Bước 5: Tạo chi tiết đơn hàng
-    const detailValues = cartItems.map((item) => [
-      newOrderId,
-      item.MaSach,
-      item.SoLuong,
-      item.GiaBan,
-    ]);
+    // --- SỬA ĐOẠN INSERT CHI TIẾT NÀY ---
+    // Bước 5: Tạo chi tiết đơn hàng (Lưu giá thực tế đã giảm vào DB)
+    const detailValues = cartItems.map((item) => {
+       const giaGoc = Number(item.GiaBan);
+       const phanTram = Number(item.PhanTramGiamGia || 0);
+       let giaThucTe = giaGoc;
+
+       if (phanTram > 0) {
+         giaThucTe = giaGoc * (1 - phanTram / 100);
+       }
+       
+       return [
+        newOrderId,
+        item.MaSach,
+        item.SoLuong,
+        giaThucTe, // Lưu giá bán thực tế (Sale) thay vì giá gốc
+      ];
+    });
+    
     await OrderModel.insertOrderDetails(connection, detailValues);
+    // -------------------------------------
 
     // Bước 6: Xóa giỏ hàng
     await OrderModel.clearCartAfterCheckout(connection, MaKH);
 
-    await connection.commit(); // Thành công -> Lưu DB
+    await connection.commit();
 
     return {
       success: true,
@@ -138,10 +162,10 @@ export const createClientOrder = async (orderData) => {
       total: tongTien,
     };
   } catch (error) {
-    await connection.rollback(); // Lỗi -> Hoàn tác
+    await connection.rollback();
     throw error;
   } finally {
-    connection.release(); // Trả kết nối về hồ
+    connection.release();
   }
 };
 

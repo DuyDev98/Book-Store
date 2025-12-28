@@ -189,3 +189,18 @@ UPDATE binhluan SET TrangThai = 'approved';
 
 -- 4. Bật lại chế độ an toàn
 SET SQL_SAFE_UPDATES = 1;
+
+ALTER TABLE sach
+ADD COLUMN PhanTramGiamGia INT DEFAULT 0, -- Ví dụ: 10 cho 10%
+ADD COLUMN GiaSale DECIMAL(10,2) DEFAULT NULL, -- Giá sau khi giảm
+ADD COLUMN IsSale BOOLEAN DEFAULT FALSE; -- Gắn nhãn để lọc nhanh
+-- 1. Tắt chế độ an toàn
+SET SQL_SAFE_UPDATES = 0;
+
+-- 2. Chạy lệnh cập nhật của bạn
+UPDATE sach 
+SET GiaSale = GiaBan * (1 - PhanTramGiamGia / 100.0), 
+    IsSale = CASE WHEN PhanTramGiamGia > 0 THEN TRUE ELSE FALSE END;
+
+-- 3. Bật lại chế độ an toàn (nên làm để bảo vệ dữ liệu sau này)
+SET SQL_SAFE_UPDATES = 1;
