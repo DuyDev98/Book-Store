@@ -1,10 +1,16 @@
+// File: src/services/sach.services.js
 import { getPool } from "../config/db.js";
-// LƯU Ý: Kiểm tra lại tên thư mục là 'models' hay 'modules' trong máy bạn
 import * as sachModel from "../modules/sach.model.js"; 
+
+// Hàm bổ trợ tính giá Sale
+const calculateSalePrice = (giaBan, phanTram) => {
+  const price = parseFloat(giaBan) || 0;
+  const percent = parseInt(phanTram) || 0;
+  return percent > 0 ? price * (1 - percent / 100) : null;
+};
 
 export const getAll = async () => {
   const pool = await getPool();
-  // QUAN TRỌNG: Dùng [rows] để bóc tách dữ liệu ra khỏi mảng [rows, fields]
   const [rows] = await pool.query(sachModel.SQL_GET_ALL);
   return rows; 
 };
@@ -17,6 +23,8 @@ export const getById = async (id) => {
 
 export const create = async (data) => {
   const pool = await getPool();
+  const giaSale = calculateSalePrice(data.GiaBan, data.PhanTramGiamGia);
+  
   const params = [
     data.TenSach,
     data.AnhBia || null,
@@ -28,7 +36,9 @@ export const create = async (data) => {
     data.MaTG || null,
     data.MaNXB || null,
     data.MaLoaiSach || null,
-    data.MaDanhMuc || null
+    data.MaDanhMuc || null,
+    data.PhanTramGiamGia || 0,
+    giaSale
   ];
   const [result] = await pool.query(sachModel.SQL_CREATE, params);
   return result;
@@ -36,6 +46,8 @@ export const create = async (data) => {
 
 export const update = async (id, data) => {
   const pool = await getPool();
+  const giaSale = calculateSalePrice(data.GiaBan, data.PhanTramGiamGia);
+
   const params = [
     data.TenSach,
     data.AnhBia || null,
@@ -48,6 +60,8 @@ export const update = async (id, data) => {
     data.MaNXB,
     data.MaLoaiSach,
     data.MaDanhMuc,
+    data.PhanTramGiamGia || 0,
+    giaSale,
     id
   ];
   const [result] = await pool.query(sachModel.SQL_UPDATE, params);
@@ -65,14 +79,18 @@ export const importStock = async (id, soLuongNhap) => {
   const [result] = await pool.query(sachModel.SQL_IMPORT_STOCK, [soLuongNhap, id]);
   return result;
 };
-//Hàm lấy số lượng sách sắp hết
+
 export const getLowStockCount = async () => {
   const pool = await getPool();
   const [rows] = await pool.query(sachModel.SQL_COUNT_LOW_STOCK);
-  // Kết quả trả về dạng: [ { SoLuong: 5 } ]
   return rows[0]; 
 };
 
+export const getLowStockList = async () => {
+  const pool = await getPool();
+  const [rows] = await pool.query(sachModel.SQL_GET_LOW_STOCK_ITEMS); 
+  return rows; 
+};
 
 export const getRevenueStats = async () => {
     const pool = await getPool();
@@ -84,13 +102,4 @@ export const getTopSellingStats = async () => {
     const pool = await getPool();
     const [rows] = await pool.query(sachModel.SQL_STATS_TOP_SELLING);
     return rows;
-};
-
-
-// SỬA: Hàm này để lấy danh sách chi tiết các sách có tồn kho < 10
-export const getLowStockList = async () => {
-  const pool = await getPool();
-  // SQL_GET_LOW_STOCK_ITEMS đã có trong model bạn gửi
-  const [rows] = await pool.query(sachModel.SQL_GET_LOW_STOCK_ITEMS); 
-  return rows; 
 };
