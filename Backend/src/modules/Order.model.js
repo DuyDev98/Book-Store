@@ -118,6 +118,6 @@ const Order = {
     return rows;
   },
   // ----------------------------------------------
-}; // <--- Đóng ngoặc nhọn của const Order = { ... }; tại đây
+}; 
 
 export default Order;

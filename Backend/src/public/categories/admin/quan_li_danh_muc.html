@@ -3,161 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard - Quản lý Danh Mục</title>
+    <title>Admin Dashboard - Quản lý Danh Mục (Không Parent)</title>
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
     <style>
-        body {
-            padding-top: 57px;
-            background-color: #f5f6f8;
-            overflow-x: hidden; /* Ẩn thanh cuộn ngang của toàn trang */
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 56px;
-            bottom: 0;
-            left: 0;
-            z-index: 1000;
-            padding: 20px 0;
-            overflow-x: hidden;
-            overflow-y: auto;
-            background-color: #ffffff;
-            border-right: 1px solid #dee2e6;
-        }
-
-        .sidebar .nav-link {
-            color: #333;
-            padding: 10px 20px;
-            font-weight: 500;
-        }
-
-        .sidebar .nav-link i {
-            margin-right: 8px;
-        }
-
-        .sidebar .nav-link.active {
-            background-color: #0d6efd;
-            color: #fff;
-        }
-
-        .sidebar .nav-link.active i {
-            color: #fff;
-        }
-
-        .main-content {
-            
-            padding: 20px;
-        }
-
-        .card {
-            border-radius: 0.5rem;
-            border: 1px solid #e3e6ea;
-            box-shadow: 0 2px 4px rgba(15, 34, 58, 0.05);
-        }
-
-        .table thead th {
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.04em;
-        }
+      body { padding-top: 57px; background-color: #f5f6f8; overflow-x: hidden; }
+      .sidebar { position: fixed; top: 56px; bottom: 0; left: 0; z-index: 1000; padding: 20px 0; overflow-y: auto; background-color: #fff; border-right: 1px solid #dee2e6; }
+      .sidebar .nav-link { color: #333; padding: 10px 20px; font-weight: 500; }
+      .sidebar .nav-link.active { background-color: #0d6efd; color: #fff; }
+      .main-content { padding: 20px; }
+      .card { border-radius: 0.5rem; border: 1px solid #e3e6ea; box-shadow: 0 2px 4px rgba(15, 34, 58, 0.05); }
+      .table thead th { font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.04em; }
     </style>
     <script src="../../js/admin-guard.js"></script>
   </head>
+
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Admin Bán Sách</a>
-
-            <div class="d-flex ms-auto">
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle"></i> Chào, Admin!
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item text-danger" href="#" onclick="adminLogout()">Đăng xuất</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Admin Bán Sách</a>
+        <div class="d-flex ms-auto">
+          <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                <i class="bi bi-person-circle"></i> Chào, Admin!
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item text-danger" href="#" onclick="adminLogout()">Đăng xuất</a></li>
+              </ul>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
 
     <div class="container-fluid">
       <div class="row">
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar" style="width: 240px;">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="dashboard.html">
-                            <i class="bi bi-house-door"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_sach.html">
-                            <i class="bi bi-book"></i> Quản lý Sách
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_loai_sach.html">
-                            <i class="bi bi-tags"></i> Quản lý Loại sách
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_nxb.html">
-                            <i class="bi bi-building"></i> Quản lý NXB
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_don_hang.html">
-                            <i class="bi bi-cart"></i> Quản lý Đơn hàng
-                        </a>
-                    </li>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_binh_luan.html">
-                            <i class="bi bi-chat-dots"></i> Quản lý Bình luận
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="quan_li_tac_gia.html">
-                            <i class="bi bi-people"></i> Quản lý tác giả
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="quan_li_danh_muc.html">
-                            <i class="bi bi-list-task"></i> Quản lý Danh mục
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+        <nav class="col-md-3 col-lg-2 sidebar" style="width:240px;">
+          <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="bi bi-house-door"></i> Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="quan_li_sach.html"><i class="bi bi-book"></i> Quản lý Sách</a></li>
+            <li class="nav-item"><a class="nav-link" href="quan_li_loai_sach.html"><i class="bi bi-tags"></i> Quản lý Loại sách</a></li>
+            <li class="nav-item"><a class="nav-link" href="quan_li_nxb.html"><i class="bi bi-building"></i> Quản lý NXB</a></li>
+            <li class="nav-item"><a class="nav-link" href="quan_li_don_hang.html"><i class="bi bi-cart"></i> Quản lý Đơn hàng</a></li>
+            <li class="nav-item"><a class="nav-link" href="quan_li_binh_luan.html"><i class="bi bi-chat-dots"></i> Quản lý Bình luận</a></li>
+            <li class="nav-item"><a class="nav-link" href="quan_li_tac_gia.html"><i class="bi bi-people"></i> Quản lý tác giả</a></li>
+            <li class="nav-item"><a class="nav-link active" href="quan_li_danh_muc.html"><i class="bi bi-list-task"></i> Quản lý Danh mục</a></li>
+          </ul>
+        </nav>
+
         <main class="main-content ms-sm-auto col-lg-10 px-md-4">
-          <div
-            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
-          >
+          <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
             <h1 class="h2">Quản lý Danh Mục</h1>
-            <div class="btn-toolbar mb-2 mb-md-0">
-              <button
-                id="btnAddCategory"
-                type="button"
-                class="btn btn-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#categoryModal"
-                onclick="resetForm()"
-              >
-                <i class="bi bi-plus-circle"></i> Thêm Danh Mục
-              </button>
-            </div>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#categoryModal" onclick="resetForm()">
+              <i class="bi bi-plus-circle"></i> Thêm Danh Mục
+            </button>
           </div>
 
           <div class="card shadow-sm border-0">
@@ -166,10 +68,9 @@
                 <table class="table table-hover align-middle mb-0">
                   <thead class="table-light">
                     <tr>
-                      <th scope="col" class="text-center py-3">ID</th>
-                      <th scope="col" class="py-3">Tên Danh Mục</th>
-                      <th scope="col" class="py-3">Danh Mục Cha</th>
-                      <th scope="col" class="text-center py-3">Hành động</th>
+                      <th class="text-center">ID</th>
+                      <th>Tên Danh Mục</th>
+                      <th class="text-center">Hành động</th>
                     </tr>
                   </thead>
                   <tbody id="catTableBody"></tbody>
@@ -194,17 +95,13 @@
       </div>
     </div>
 
-    <div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
+    <!-- Modal -->
+    <div class="modal fade" id="categoryModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="modalTitle">Thông tin Danh Mục</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
 
           <div class="modal-body">
@@ -212,46 +109,15 @@
               <input type="hidden" id="catId" />
 
               <div class="mb-3">
-                <label for="catName" class="form-label">Tên Danh Mục</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="catName"
-                  required
-                  placeholder="Ví dụ: Tiểu thuyết, Kinh tế..."
-                />
-              </div>
-
-              <div class="mb-3">
-                <label for="catParent" class="form-label"
-                  >Danh Mục Cha (Nếu có)</label
-                >
-                <select class="form-select" id="catParent">
-                  <option value="0">-- Là danh mục gốc --</option>
-                </select>
-                <div class="form-text">
-                  Chọn danh mục cha nếu đây là danh mục con.
-                </div>
+                <label class="form-label">Tên Danh Mục</label>
+                <input type="text" class="form-control" id="catName" required placeholder="Ví dụ: Tiểu thuyết, Kinh tế..." />
               </div>
             </form>
           </div>
 
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Đóng
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              id="saveCatButton"
-              onclick="saveCategory()"
-            >
-              Lưu lại
-            </button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            <button class="btn btn-primary" onclick="saveCategory()">Lưu lại</button>
           </div>
         </div>
       </div>
@@ -260,220 +126,86 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-    const API_URL = "http://localhost:5001/api/danhmuc";
-    let categories = []; // Chứa toàn bộ dữ liệu từ Server
-    
-    // CẤU HÌNH PHÂN TRANG
-    let currentPage = 1;
-    const rowsPerPage = 15; // Yêu cầu: 15 mục mỗi trang
+      const API_URL = "http://localhost:5001/api/danhmuc";
+      let categories = [];
 
-    const myModalEl = document.getElementById("categoryModal");
-    let myModal;
-    if (myModalEl) myModal = new bootstrap.Modal(myModalEl);
+      document.addEventListener("DOMContentLoaded", loadCategories);
 
-    document.addEventListener("DOMContentLoaded", () => {
-        loadCategories();
-    });
-
-    // 1. Load Danh Mục
-    async function loadCategories() {
+      async function loadCategories() {
         try {
-            const res = await fetch(API_URL);
-            const responseData = await res.json();
-
-            // Xử lý dữ liệu trả về
-            if (Array.isArray(responseData)) {
-                categories = responseData;
-            } else if (responseData.data && Array.isArray(responseData.data)) {
-                categories = responseData.data;
-            } else {
-                categories = [];
-            }
-
-            // Gọi hàm render lần đầu
-            updateView();
-            
-            // Load select box cha (cái này không cần phân trang)
-            renderParentSelect(categories);
-
+          const res = await fetch(API_URL);
+          const data = await res.json();
+          categories = Array.isArray(data) ? data : data.data || [];
+          renderTable(categories);
         } catch (err) {
             console.error("Lỗi tải dữ liệu:", err);
         }
     }
 
-    // --- HÀM MỚI: Cập nhật hiển thị (Table + Phân trang) ---
-    function updateView() {
-        renderTable(categories);
-        renderPagination(categories);
-    }
-
-    // 2. Render Table (Đã sửa để hỗ trợ phân trang)
-    function renderTable(list) {
+      function renderTable(list) {
         const tbody = document.getElementById("catTableBody");
-        if (!tbody) return;
         tbody.innerHTML = "";
-
-        // TÍNH TOÁN VỊ TRÍ CẮT MẢNG
-        const startIndex = (currentPage - 1) * rowsPerPage;
-        const endIndex = startIndex + rowsPerPage;
-        
-        // Chỉ lấy các phần tử trong trang hiện tại
-        const paginatedItems = list.slice(startIndex, endIndex);
-
-        paginatedItems.forEach((item) => {
-            // Tìm tên danh mục cha (nếu có)
-            // Lưu ý: Tìm trong list gốc 'categories' để đảm bảo tìm thấy dù cha ở trang khác
-            const parent = categories.find((p) => p.MaDanhMuc == item.ParentID);
-            
-            const parentName = parent
-                ? `<span class="badge bg-secondary">${parent.TenDanhMuc}</span>`
-                : '<span class="text-muted">-- Gốc --</span>';
-
-            tbody.innerHTML += `
-                <tr>
-                    <td class="text-center">#${item.MaDanhMuc}</td>
-                    <td class="fw-bold">${item.TenDanhMuc}</td>
-                    <td>${parentName}</td>
-                    <td class="text-center">
-                        <button class="btn btn-sm btn-outline-primary" onclick="prepareEdit(${item.MaDanhMuc})">Sửa</button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(${item.MaDanhMuc})">Xóa</button>
-                    </td>
-                </tr>
-            `;
-        });
-
-        // Nếu không có dữ liệu
-        if (paginatedItems.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4">Không có dữ liệu</td></tr>`;
-        }
-    }
-
-    // --- HÀM MỚI: Vẽ thanh phân trang ---
-    function renderPagination(list) {
-        const paginationUl = document.querySelector('.pagination');
-        if (!paginationUl) return;
-        paginationUl.innerHTML = "";
-
-        const totalPages = Math.ceil(list.length / rowsPerPage);
-
-        // Nếu ít hơn 1 trang thì không cần hiện phân trang
-        if (totalPages <= 1) return;
-
-        // 1. Nút "Trang trước"
-        const prevLi = document.createElement('li');
-        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-        prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Trang trước</a>`;
-        paginationUl.appendChild(prevLi);
-
-        // 2. Các nút số trang
-        for (let i = 1; i <= totalPages; i++) {
-            const li = document.createElement('li');
-            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
-            li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
-            paginationUl.appendChild(li);
-        }
-
-        // 3. Nút "Trang sau"
-        const nextLi = document.createElement('li');
-        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-        nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Trang sau</a>`;
-        paginationUl.appendChild(nextLi);
-    }
-
-    // --- HÀM MỚI: Xử lý khi bấm chuyển trang ---
-    function changePage(page) {
-        const totalPages = Math.ceil(categories.length / rowsPerPage);
-        
-        // Validate trang hợp lệ
-        if (page < 1 || page > totalPages) return;
-
-        currentPage = page;
-        updateView(); // Vẽ lại bảng và nút phân trang
-    }
-
-    // 3. Render Select (Giữ nguyên)
-    function renderParentSelect(list) {
-        const select = document.getElementById("catParent");
-        if (!select) return; 
-
-        select.innerHTML = '<option value="0">-- Là danh mục gốc --</option>';
         list.forEach((item) => {
-            select.innerHTML += `<option value="${item.MaDanhMuc}">${item.TenDanhMuc}</option>`;
+          tbody.innerHTML += `
+            <tr>
+              <td class="text-center">#${item.MaDanhMuc}</td>
+              <td class="fw-bold">${item.TenDanhMuc}</td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-outline-primary" onclick="prepareEdit(${item.MaDanhMuc})">Sửa</button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(${item.MaDanhMuc})">Xóa</button>
+              </td>
+            </tr>`;
         });
-    }
 
-    // 4. Reset Form (Giữ nguyên)
-    function resetForm() {
+      function resetForm() {
         document.getElementById("catId").value = "";
         document.getElementById("catName").value = "";
-        if (document.getElementById("catParent")) {
-            document.getElementById("catParent").value = "0";
-        }
         document.getElementById("modalTitle").innerText = "Thêm Danh Mục Mới";
     }
 
-    // 5. Chuẩn bị Sửa (Giữ nguyên)
-    function prepareEdit(id) {
+      function prepareEdit(id) {
         const item = categories.find((c) => c.MaDanhMuc == id);
         if (item) {
-            document.getElementById("catId").value = item.MaDanhMuc;
-            document.getElementById("catName").value = item.TenDanhMuc;
-            if (document.getElementById("catParent")) {
-                document.getElementById("catParent").value = item.ParentID || 0;
-            }
-            document.getElementById("modalTitle").innerText = "Cập Nhật Danh Mục";
-            if (myModal) myModal.show();
+          document.getElementById("catId").value = item.MaDanhMuc;
+          document.getElementById("catName").value = item.TenDanhMuc;
+          document.getElementById("modalTitle").innerText = "Cập Nhật Danh Mục";
+          new bootstrap.Modal(document.getElementById("categoryModal")).show();
         }
     }
 
-    // 6. Lưu (Thêm/Sửa) (Sửa nhẹ: reload lại thì về trang 1 hoặc giữ nguyên)
-    async function saveCategory() {
+      async function saveCategory() {
         const id = document.getElementById("catId").value;
         const TenDanhMuc = document.getElementById("catName").value.trim();
-        const parentEl = document.getElementById("catParent");
-        const ParentID = parentEl ? parentEl.value : null;
-
-        if (!TenDanhMuc) {
-            alert("Vui lòng nhập tên danh mục!");
-            return;
-        }
+        if (!TenDanhMuc) return alert("Vui lòng nhập tên danh mục!");
 
         const method = id ? "PUT" : "POST";
         const url = id ? `${API_URL}/${id}` : API_URL;
-        const payload = { TenDanhMuc, ParentID };
 
         try {
-            const res = await fetch(url, {
-                method: method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
+          const res = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ TenDanhMuc })
+          });
 
-            const data = await res.json();
-
-            if (res.ok) {
-                alert("Thành công!");
-                if (myModal) myModal.hide();
-                loadCategories(); // Load lại dữ liệu mới
-            } else {
-                alert("Lỗi: " + (data.message || "Không xác định"));
-            }
-        } catch (err) {
-            alert("Lỗi kết nối Server!");
-            console.error(err);
-        }
-    }
-
-    // 7. Xóa (Giữ nguyên)
-    async function deleteCategory(id) {
-        if (!confirm("Xóa danh mục này?")) return;
-        try {
-            await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+          if (res.ok) {
+            alert("Thành công!");
+            bootstrap.Modal.getInstance(document.getElementById("categoryModal")).hide();
             loadCategories();
-        } catch (e) {
-            console.log(e);
+          } else {
+            const data = await res.json();
+            alert("Lỗi: " + (data.message || "Không xác định"));
+          }
+        } catch (err) {
+          alert("Lỗi kết nối Server!");
         }
     }
-</script>
+
+      async function deleteCategory(id) {
+        if (!confirm("Xóa danh mục này?")) return;
+        await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+        loadCategories();
+      }
+    </script>
   </body>
 </html>

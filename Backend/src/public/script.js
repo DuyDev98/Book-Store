@@ -1,4 +1,67 @@
 /* ==========================================================================
+   0. TỰ ĐỘNG NHÚNG TOASTIFY & LÀM ĐẸP THÔNG BÁO (Auto-Inject)
+   ========================================================================== */
+(function setupToastifyUser() {
+    // 1. Tự động chèn CSS Toastify nếu chưa có
+    if (!document.querySelector('link[href*="toastify"]')) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css";
+        document.head.appendChild(link);
+    }
+
+    // 2. Tự động chèn JS Toastify nếu chưa có
+    if (!document.querySelector('script[src*="toastify"]')) {
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/toastify-js";
+        script.onload = () => {
+            overrideUserAlert(); // Kích hoạt ghi đè alert sau khi thư viện tải xong
+        };
+        document.head.appendChild(script);
+    }
+})();
+
+function overrideUserAlert() {
+    // Giữ lại alert gốc (đề phòng)
+    const originalAlert = window.alert;
+
+    // Định nghĩa lại hàm alert
+    window.alert = function (message) {
+        if (!window.Toastify) {
+            // Nếu mạng chậm, thư viện chưa tải xong thì dùng tạm alert cũ
+            originalAlert(message);
+            return;
+        }
+
+        const msgStr = String(message).toLowerCase();
+        // Tự động đoán màu dựa vào nội dung tin nhắn
+        const isError = msgStr.includes("lỗi") || msgStr.includes("error") ||
+            msgStr.includes("thất bại") || msgStr.includes("không thể") ||
+            msgStr.includes("vui lòng");
+
+        const bgColors = isError
+            ? "linear-gradient(to right, #ff5f6d, #ffc371)" // Đỏ cam (Lỗi)
+            : "linear-gradient(to right, #00b09b, #96c93d)"; // Xanh lá (Thành công)
+
+        Toastify({
+            text: message,
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            stopOnFocus: true,
+            style: {
+                background: bgColors,
+                borderRadius: "8px",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                zIndex: 999999 // Đảm bảo nổi lên trên cùng (trên cả Modal)
+            }
+        }).showToast();
+
+        console.log(`[Web Alert]: ${message}`);
+    };
+}
+/* ==========================================================================
    1. CẤU HÌNH & TIỆN ÍCH CHUNG
    ========================================================================== */
 const API_BASE_URL = "/api";
@@ -120,8 +183,6 @@ function renderBooks(container, books) {
 
     const root = getRootPrefix();
     const detailUrl = root + "pages/detail-book.html";
-
-    // Kiểm tra xem container này là Slider hay là Lưới (Grid)
     const isSlider = container.classList.contains("book-slider-container");
 
     let html = "";
@@ -129,14 +190,25 @@ function renderBooks(container, books) {
         let img = (b.AnhBia && b.AnhBia !== 'null') ? b.AnhBia : "https://placehold.co/200x300";
         if (!img.startsWith("http")) img = root + img;
 
-        // Nếu là Slider thì dùng class css riêng, nếu Grid thì dùng col bootstrap
         const wrapperClass = isSlider ? "book-slider-item" : "col-6 col-md-3 mb-4";
+
+        // --- SỬA LOGIC HIỂN THỊ GIÁ TẠI ĐÂY ---
+        const isSale = b.PhanTramGiamGia > 0;
+        const badgeHTML = isSale ? `<span class="badge bg-danger position-absolute top-0 start-0 m-2">-${b.PhanTramGiamGia}%</span>` : '';
+        
+        // Nếu có sale: Hiện GiaSale màu đỏ, GiaBan gạch ngang. Nếu không: Hiện GiaBan bình thường.
+        const priceHTML = isSale ? 
+            `<div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-danger fw-bold">${formatCurrency(b.GiaSale)}</span>
+                <small class="text-decoration-line-through text-muted" style="font-size:11px">${formatCurrency(b.GiaBan)}</small>
+            </div>` : 
+            `<div class="mb-2"><span class="text-danger fw-bold">${formatCurrency(b.GiaBan)}</span></div>`;
 
         html += `
         <div class="${wrapperClass}">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="p-3 text-center position-relative">
-                    ${b.GiaGoc > b.GiaBan ? `<span class="badge bg-danger position-absolute top-0 end-0 m-2">-10%</span>` : ''}
+            <div class="card h-100 shadow-sm border-0 position-relative">
+                ${badgeHTML}
+                <div class="p-3 text-center">
                     <a href="${detailUrl}?id=${b.MaSach}">
                         <img src="${img}" class="card-img-top" style="height:200px; object-fit:contain;">
                     </a>
@@ -146,10 +218,7 @@ function renderBooks(container, books) {
                         <a href="${detailUrl}?id=${b.MaSach}" class="text-dark fw-bold text-decoration-none" title="${b.TenSach}">${b.TenSach}</a>
                     </h6>
                     <div class="mt-auto">
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                            <span class="text-danger fw-bold">${formatCurrency(b.GiaBan)}</span>
-                            ${b.GiaGoc ? `<small class="text-decoration-line-through text-muted" style="font-size:12px">${formatCurrency(b.GiaGoc)}</small>` : ''}
-                        </div>
+                        ${priceHTML}
                         <button class="btn btn-outline-danger w-100 btn-sm" onclick="addToCart(${b.MaSach})">
                             <i class="bi bi-cart-plus"></i> Thêm
                         </button>
@@ -160,7 +229,6 @@ function renderBooks(container, books) {
     });
     container.innerHTML = html;
 }
-
 /* ==========================================================================
    3. GIỎ HÀNG
    ========================================================================== */
@@ -265,33 +333,102 @@ const CATEGORY_MAP = {
 };
 
 async function loadBooksForPage() {
-    const c = document.getElementById("product-list") || document.getElementById("product-list-container");
-    if (!c) return;
-    const slug = c.closest("[data-api-category]")?.getAttribute("data-api-category");
-    if (!slug) return;
+    const containers = document.querySelectorAll("[data-api-category]");
+    if (containers.length === 0) return;
 
     try {
         const res = await fetch(`${API_BASE_URL}/sach`);
         const data = await res.json();
-        const all = Array.isArray(data) ? data : (data.data || []);
-        let list = all;
+        const allBooks = Array.isArray(data) ? data : (data.data || []);
 
-        if (slug === "search") {
-            const k = (new URLSearchParams(window.location.search).get("q") || "").toLowerCase();
-            const keywordEl = document.getElementById("search-keyword");
-            if (keywordEl) keywordEl.innerText = `"${k}"`;
-            list = k ? all.filter(b => b.TenSach.toLowerCase().includes(k)) : [];
-        } else if (CATEGORY_MAP[slug] && CATEGORY_MAP[slug] !== -1) {
-            list = all.filter(b => b.MaLoaiSach == CATEGORY_MAP[slug]);
-        }
-        renderBooks(c, list);
-    } catch (e) { }
+        containers.forEach(container => {
+            const slug = container.getAttribute("data-api-category");
+            let list = [];
+
+            if (slug === "search") {
+                const k = (new URLSearchParams(window.location.search).get("q") || "").toLowerCase();
+                list = k ? allBooks.filter(b => b.TenSach.toLowerCase().includes(k)) : [];
+            } 
+            // LỌC SÁCH GIẢM GIÁ DỰA TRÊN PHẦN TRĂM > 0
+            else if (slug === "flash-sale") {
+                list = allBooks.filter(b => b.PhanTramGiamGia > 0).sort((a, b) => b.PhanTramGiamGia - a.PhanTramGiamGia);
+            } 
+            else if (slug === "hot-sale") { list = allBooks.slice(-10).reverse(); }
+            else if (slug === "recommended") { list = [...allBooks].sort(() => 0.5 - Math.random()).slice(0, 10); }
+            else if (slug === "best-seller") { list = [...allBooks].sort(() => 0.5 - Math.random()).slice(0, 10); }
+            else if (CATEGORY_MAP[slug]) { list = allBooks.filter(b => b.MaLoaiSach == CATEGORY_MAP[slug]); }
+            
+            renderBooks(container, list);
+        });
+    } catch (e) { console.error("Lỗi tải sách:", e); }
 }
 // Hàm xử lý khi bấm nút mũi tên
 function scrollSlider(id, amount) {
     const container = document.getElementById(id);
     if (container) {
         container.scrollLeft += amount;
+    }
+}
+/* ==========================================================================
+   [NEW] HÀM LOAD SẢN PHẨM TƯƠNG TỰ
+   ========================================================================== */
+async function loadSimilarBooks(currentBook) {
+    const container = document.getElementById("similar-books-list");
+    if (!container) return; // Không tìm thấy chỗ chứa thì thoát
+
+    try {
+        // Gọi lại API lấy tất cả sách (hoặc dùng biến toàn cục nếu đã lưu)
+        const res = await fetch(`${API_BASE_URL}/sach`);
+        const data = await res.json();
+        const allBooks = Array.isArray(data) ? data : (data.data || []);
+
+        // LOGIC LỌC:
+        // 1. Cùng mã loại sách (MaLoaiSach)
+        // 2. Không trùng với cuốn đang xem (MaSach)
+        const similarBooks = allBooks.filter(b => 
+            b.MaLoaiSach == currentBook.MaLoaiSach && 
+            b.MaSach != currentBook.MaSach
+        );
+
+        // Lấy ngẫu nhiên 5 cuốn hoặc 5 cuốn đầu tiên
+        const limitList = similarBooks
+                            .sort(() => 0.5 - Math.random()) // Xáo trộn ngẫu nhiên
+                            .slice(0, 5); // Lấy 5 cuốn
+
+        // Render ra HTML
+        if (limitList.length === 0) {
+            container.innerHTML = '<p class="text-center small text-muted">Chưa có sản phẩm tương tự.</p>';
+            return;
+        }
+
+        const root = getRootPrefix(); // Hàm có sẵn trong script.js
+        let html = "";
+
+        const currentPrice = (b.PhanTramGiamGia > 0) ? b.GiaSale : b.GiaBan;
+
+        limitList.forEach(b => {
+            let img = (b.AnhBia && b.AnhBia !== 'null') ? b.AnhBia : "https://placehold.co/100x150";
+            if (!img.startsWith("http")) img = root + img;
+
+            html += `
+            <div class="d-flex mb-3 align-items-center border-bottom pb-2">
+                <a href="detail-book.html?id=${b.MaSach}">
+                    <img src="${img}" class="rounded border me-2" alt="${b.TenSach}" style="width: 50px; height: 70px; object-fit: cover;">
+                </a>
+                <div>
+                    <a href="detail-book.html?id=${b.MaSach}" class="text-decoration-none text-dark small fw-bold d-block text-truncate" style="max-width: 130px;" title="${b.TenSach}">
+                        ${b.TenSach}
+                    </a>
+                    <span class="text-danger fw-bold small">${formatCurrency(currentPrice)}</span>
+                </div>
+            </div>`;
+        });
+
+        container.innerHTML = html;
+
+    } catch (e) {
+        console.error("Lỗi load sách tương tự:", e);
+        container.innerHTML = '<p class="text-center small text-danger">Lỗi tải dữ liệu.</p>';
     }
 }
 /* ==========================================================================
@@ -310,6 +447,9 @@ async function loadBookDetail() {
         if (!res.ok) throw new Error("Không tìm thấy sách");
 
         const book = await res.json();
+         
+        loadSimilarBooks(book);
+
         console.log("📚 Chi tiết sách:", book);
 
         // ========== 1. HIỂN THỊ ẢNH BÌA ==========
@@ -329,8 +469,12 @@ async function loadBookDetail() {
         const breadcrumbEl = document.getElementById("breadcrumb-title");
         if (breadcrumbEl) breadcrumbEl.innerText = book.TenSach || "Sách";
 
-        const priceEl = document.getElementById("price-final");
-        if (priceEl) priceEl.innerText = formatCurrency(book.GiaBan || 0);
+const priceEl = document.getElementById("price-final");
+if (priceEl) {
+    // Nếu có giảm giá thì hiện GiaSale, không thì hiện GiaBan
+    const displayPrice = (book.PhanTramGiamGia > 0) ? book.GiaSale : book.GiaBan;
+    priceEl.innerText = formatCurrency(displayPrice || 0);
+}
 
         // ========== 3. MÃ SÁCH ==========
         const skuEl = document.getElementById("book-sku");
