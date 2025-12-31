@@ -45,8 +45,46 @@ export const SQL_UPDATE = `
 
 export const SQL_DELETE = `DELETE FROM ${TABLE_NAME} WHERE MaSach = ?`;
 
+//  Đếm số lượng sách sắp hết hàng (Ví dụ: Tồn kho < 10)
+export const SQL_COUNT_LOW_STOCK = `
+  SELECT COUNT(*) AS SoLuong 
+  FROM ${TABLE_NAME} 
+  WHERE SoLuongTon < 10
+`;
+
+//  Lấy danh sách chi tiết các sách sắp hết (Để hiển thị nếu cần)
+export const SQL_GET_LOW_STOCK_ITEMS = `
+  SELECT * FROM ${TABLE_NAME} 
+  WHERE SoLuongTon < 10 
+  ORDER BY SoLuongTon ASC
+`;
+
 export const SQL_IMPORT_STOCK = `
   UPDATE ${TABLE_NAME} 
   SET SoLuongTon = IFNULL(SoLuongTon, 0) + ? 
   WHERE MaSach = ?
+`;
+
+
+// 1. Thống kê doanh thu 7 ngày qua (Group by Ngày)
+export const SQL_STATS_REVENUE_7DAYS = `
+    SELECT 
+        FORMAT(NgayDat, 'dd/MM') as Ngay, 
+        SUM(TongTien) as DoanhThu
+    FROM DonHang
+    WHERE NgayDat >= DATEADD(DAY, -7, GETDATE()) 
+    AND TrangThai != N'Đã hủy'
+    GROUP BY FORMAT(NgayDat, 'dd/MM')
+    ORDER BY Ngay ASC
+`;
+
+// 2. Top 5 sách bán chạy nhất (Tính theo số lượng bán)
+export const SQL_STATS_TOP_SELLING = `
+    SELECT TOP 5 s.TenSach, SUM(ct.SoLuong) as DaBan
+    FROM ChiTietDonHang ct
+    JOIN Sach s ON ct.MaSach = s.MaSach
+    JOIN DonHang dh ON ct.MaDH = dh.MaDH
+    WHERE dh.TrangThai != N'Đã hủy'
+    GROUP BY s.TenSach
+    ORDER BY DaBan DESC
 `;

@@ -60,3 +60,36 @@ export const nhapHang = async (req, res) => {
     res.status(200).json({ message: "Nhập hàng thành công" });
   } catch (err) { res.status(500).json({ message: err.message }); }
 };
+//API trả về số liệu thống kê sách sắp hết hàng
+
+
+// SỬA: Trả về cả số lượng đếm VÀ danh sách chi tiết
+export const getLowStockStats = async (req, res) => {
+  try {
+    const countResult = await sachService.getLowStockCount();
+    const listResult = await sachService.getLowStockList(); // Gọi hàm vừa thêm ở service
+    
+    res.status(200).json({ 
+      count: countResult.SoLuong,
+      items: listResult // Trả về mảng sách
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi server: " + err.message });
+  }
+};
+
+export const getDashboardCharts = async (req, res) => {
+    try {
+        const [revenue, topSelling] = await Promise.all([
+            sachService.getRevenueStats(),
+            sachService.getTopSellingStats()
+        ]);
+
+        res.status(200).json({
+            revenue,      // Dữ liệu biểu đồ cột
+            topSelling    // Dữ liệu biểu đồ tròn
+        });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};

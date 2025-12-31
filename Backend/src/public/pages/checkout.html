@@ -1,140 +1,315 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Thanh Toán - BookStore</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="../style.css"> 
-    <link rel="icon" type="image/png" href="../logo/logo.png">
-</head>
-<body class="bg-light"> 
-    
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="icon" type="image/png" href="../logo/logo.png" />
+  </head>
+  <body class="bg-light">
     <nav class="bg-white border-bottom shadow-sm py-3 mb-4">
-        <div class="container d-flex align-items-center position-relative">
-            
-            <a href="../index.html" class="text-decoration-none">
-                <img src="../images/tenweb.png" alt="BookStore Logo" height="50">
-            </a>
-            
-            <span class="fs-3 fw-bold text-uppercase position-absolute start-50 translate-middle-x" 
-                  style="color: #d92127; letter-spacing: 1px;">
-                Thanh Toán
-            </span>
-            
-        </div>
+      <div class="container d-flex align-items-center position-relative">
+        <a href="../index.html" class="text-decoration-none">
+          <img src="../images/tenweb.png" alt="BookStore Logo" height="50" />
+        </a>
+
+        <span
+          class="fs-3 fw-bold text-uppercase position-absolute start-50 translate-middle-x"
+          style="color: #d92127; letter-spacing: 1px"
+        >
+          Thanh Toán
+        </span>
+      </div>
     </nav>
 
     <div class="container my-5">
-        <div class="row">
-            
-            <div class="col-lg-8 mb-4">
-                
-                <div class="bg-white p-4 rounded shadow-sm mb-4">
-                    <h5 class="fw-bold mb-3 text-uppercase text-success">1. Thông tin giao hàng</h5>
-                    <form id="checkout-form">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">Họ và tên <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" placeholder="Nhập họ tên" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">Số điện thoại <span class="text-danger">*</span></label>
-                                <input type="tel" class="form-control" placeholder="Nhập số điện thoại" required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label small fw-bold">Email</label>
-                                <input type="email" class="form-control" placeholder="Nhập email để nhận thông báo">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label small fw-bold">Địa chỉ nhận hàng <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố" required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label small fw-bold">Ghi chú đơn hàng</label>
-                                <textarea class="form-control" rows="2" placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao..."></textarea>
-                            </div>
-                        </div>
-                    </form>
+      <div class="row">
+        <div class="col-lg-8 mb-4">
+          <div class="bg-white p-4 rounded shadow-sm mb-4">
+            <h5 class="fw-bold mb-3 text-uppercase text-success">
+              1. Thông tin giao hàng
+            </h5>
+            <form id="checkout-form">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label small fw-bold"
+                    >Họ và tên <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    id="checkout-name"
+                    class="form-control"
+                    placeholder="Nhập họ tên"
+                    required
+                  />
                 </div>
-
-                <div class="bg-white p-4 rounded shadow-sm">
-                    <h5 class="fw-bold mb-3 text-uppercase" style="color: #4B7900;">2. Phương thức thanh toán</h5>
-                    
-                    <div class="payment-methods">
-                        
-                        <div class="form-check p-3 border rounded mb-3 payment-option">
-                            <input class="form-check-input" type="radio" name="paymentMethod" id="paymentCOD" checked>
-                            <label class="form-check-label d-flex align-items-center cursor-pointer" for="paymentCOD">
-                                <i class="bi bi-cash-stack fs-3 text-success me-3"></i>
-                                <div>
-                                    <span class="fw-bold d-block">Thanh toán khi nhận hàng (COD)</span>
-                                    <span class="small text-muted">Bạn chỉ thanh toán cho shipper khi đã nhận được hàng.</span>
-                                </div>
-                            </label>
-                        </div>
-
-                        <div class="form-check p-3 border rounded payment-option">
-                            <input class="form-check-input" type="radio" name="paymentMethod" id="paymentVNPAY">
-                            <label class="form-check-label d-flex align-items-center cursor-pointer" for="paymentVNPAY">
-                                <img src="https://vnpay.vn/s1/statics.vnpay.vn/2023/6/0oxhzjmxbksr1686814746087_1566974273587-logo-vnpay-qr.png" 
-                                     alt="VNPAY" height="35" class="me-3">
-                                <div>
-                                    <span class="fw-bold d-block">Ví điện tử VNPAY / ATM</span>
-                                    <span class="small text-muted">Thanh toán qua ứng dụng ngân hàng hoặc ví VNPAY.</span>
-                                </div>
-                            </label>
-                        </div>
-
-                    </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-bold"
+                    >Số điện thoại <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="tel"
+                    id="checkout-phone"
+                    class="form-control"
+                    placeholder="Nhập số điện thoại"
+                    required
+                  />
                 </div>
+                <div class="col-12">
+                  <label class="form-label small fw-bold">Email</label>
+                  <input
+                    type="email"
+                    id="checkout-email"
+                    class="form-control"
+                    placeholder="Nhập email"
+                  />
+                </div>
+                <div class="col-12">
+                  <label class="form-label small fw-bold"
+                    >Địa chỉ nhận hàng <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    id="checkout-address"
+                    class="form-control"
+                    placeholder="Số nhà, đường, phường/xã..."
+                    required
+                  />
+                </div>
+                <div class="col-12">
+                  <label class="form-label small fw-bold"
+                    >Ghi chú đơn hàng</label
+                  >
+                  <textarea
+                    id="checkout-note"
+                    class="form-control"
+                    rows="2"
+                    placeholder="Ghi chú cho shipper..."
+                  ></textarea>
+                </div>
+              </div>
+            </form>
+          </div>
 
+          <div class="bg-white p-4 rounded shadow-sm">
+            <h5 class="fw-bold mb-3 text-uppercase" style="color: #4b7900">
+              2. Phương thức thanh toán
+            </h5>
+
+            <div class="payment-methods">
+              <div class="form-check p-3 border rounded mb-3 payment-option">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="paymentMethod"
+                  id="paymentCOD"
+                  checked
+                />
+                <label
+                  class="form-check-label d-flex align-items-center cursor-pointer"
+                  for="paymentCOD"
+                >
+                  <i class="bi bi-cash-stack fs-3 text-success me-3"></i>
+                  <div>
+                    <span class="fw-bold d-block"
+                      >Thanh toán khi nhận hàng (COD)</span
+                    >
+                    <span class="small text-muted"
+                      >Bạn chỉ thanh toán cho shipper khi đã nhận được
+                      hàng.</span
+                    >
+                  </div>
+                </label>
+              </div>
+
+              <div class="form-check p-3 border rounded payment-option">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="paymentMethod"
+                  id="paymentVNPAY"
+                />
+                <label
+                  class="form-check-label d-flex align-items-center cursor-pointer"
+                  for="paymentVNPAY"
+                >
+                  <img
+                    src="https://vnpay.vn/s1/statics.vnpay.vn/2023/6/0oxhzjmxbksr1686814746087_1566974273587-logo-vnpay-qr.png"
+                    alt="VNPAY"
+                    height="35"
+                    class="me-3"
+                  />
+                  <div>
+                    <span class="fw-bold d-block">Ví điện tử VNPAY / ATM</span>
+                    <span class="small text-muted"
+                      >Thanh toán qua ứng dụng ngân hàng hoặc ví VNPAY.</span
+                    >
+                  </div>
+                </label>
+              </div>
             </div>
-
-            <div class="col-lg-4">
-                <div class="bg-white p-4 rounded shadow-sm position-sticky" style="top: 20px;">
-                    <h5 class="fw-bold mb-3 text-uppercase border-bottom pb-2">Đơn hàng của bạn</h5>
-                    
-                    <div id="checkout-items" class="mb-3" style="max-height: 300px; overflow-y: auto;">
-                        <p class="text-center small text-muted py-3">Đang tải đơn hàng...</p>
-                    </div>
-
-                    <div class="border-top pt-3">
-                        <div class="d-flex justify-content-between mb-2 small">
-                            <span class="text-muted">Tạm tính:</span>
-                            <span class="fw-bold" id="checkout-subtotal">0đ</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2 small">
-                            <span class="text-muted">Phí vận chuyển:</span>
-                            <span class="fw-bold text-success">Miễn phí</span>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="fw-bold fs-5">Tổng cộng:</span>
-                            <span class="fw-bold fs-4 text-danger" id="checkout-total">0đ</span>
-                        </div>
-
-                        <button onclick="processCheckout()" class="btn btn-warning-custom w-100 py-2 fw-bold text-uppercase text-white">
-                            ĐẶT HÀNG NGAY
-                        </button>
-                        
-                        <div class="text-center mt-3">
-                            <a href="cart.html" class="small text-decoration-none text-muted">
-                                <i class="bi bi-arrow-left"></i> Quay lại giỏ hàng
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+
+        <div class="col-lg-4">
+          <div
+            class="bg-white p-4 rounded shadow-sm position-sticky"
+            style="top: 20px"
+          >
+            <h5 class="fw-bold mb-3 text-uppercase border-bottom pb-2">
+              Đơn hàng của bạn
+            </h5>
+
+            <div
+              id="checkout-items"
+              class="mb-3"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <p class="text-center small text-muted py-3">
+                Đang tải đơn hàng...
+              </p>
+            </div>
+
+            <div class="border-top pt-3">
+              <div class="d-flex justify-content-between mb-2 small">
+                <span class="text-muted">Tạm tính:</span>
+                <span class="fw-bold" id="checkout-subtotal">0đ</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2 small">
+                <span class="text-muted">Phí vận chuyển:</span>
+                <span class="fw-bold text-success">Miễn phí</span>
+              </div>
+              <hr />
+              <div class="d-flex justify-content-between mb-4">
+                <span class="fw-bold fs-5">Tổng cộng:</span>
+                <span class="fw-bold fs-4 text-danger" id="checkout-total"
+                  >0đ</span
+                >
+              </div>
+
+              <button
+                onclick="processCheckout()"
+                class="btn btn-warning-custom w-100 py-2 fw-bold text-uppercase text-white"
+              >
+                ĐẶT HÀNG NGAY
+              </button>
+
+              <div class="text-center mt-3">
+                <a
+                  href="cart.html"
+                  class="small text-decoration-none text-muted"
+                >
+                  <i class="bi bi-arrow-left"></i> Quay lại giỏ hàng
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div id="footer-component" data-component-file="footer.html" data-prefix="../"></div>
+    <div
+      id="footer-component"
+      data-component-file="footer.html"
+      data-prefix="../"
+    ></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../script.js"></script>
     <script src="../cart-logic.js"></script>
     <script src="../comment.js"></script>
-</body>
+    <script src="../checkout-logic.js"></script>
+    <div
+      class="modal fade"
+      id="paymentModal"
+      tabindex="-1"
+      aria-hidden="true"
+      data-bs-backdrop="static"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title">
+              <i class="bi bi-qr-code-scan"></i> Quét mã để thanh toán
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body text-center">
+            <p class="mb-2">
+              Vui lòng quét mã bên dưới để thanh toán đơn hàng:
+            </p>
+
+            <div
+              class="my-3 position-relative d-flex justify-content-center"
+              style="min-height: 350px"
+            >
+              <div
+                id="qr-loader"
+                class="position-absolute w-100 h-100 d-flex justify-content-center align-items-center bg-white"
+                style="top: 0; left: 0; z-index: 10"
+              >
+                <div
+                  class="spinner-border text-success"
+                  role="status"
+                  style="width: 3rem; height: 3rem"
+                ></div>
+              </div>
+
+              <img
+                id="payment-qr-img"
+                src=""
+                alt="QR Code"
+                class="img-fluid border rounded shadow-sm mx-auto d-block"
+                style="max-height: 350px; display: none; z-index: 5"
+              />
+            </div>
+
+            <div
+              class="alert alert-warning small text-start d-inline-block text-break"
+              style="max-width: 90%"
+            >
+              <strong>Lưu ý:</strong>
+              <ul class="mb-0 ps-3">
+                <li>
+                  Nội dung chuyển khoản:
+                  <b id="qr-content" class="text-danger">...</b>
+                </li>
+                <li>Số tiền: <b id="qr-amount" class="text-danger">...</b></li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <button
+              type="button"
+              class="btn btn-secondary px-4"
+              data-bs-dismiss="modal"
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              class="btn btn-success fw-bold px-4"
+              onclick="confirmPaymentSuccess()"
+            >
+              <i class="bi bi-check-circle"></i> Đã thanh toán xong
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

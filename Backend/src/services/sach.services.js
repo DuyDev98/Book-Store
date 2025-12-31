@@ -65,3 +65,32 @@ export const importStock = async (id, soLuongNhap) => {
   const [result] = await pool.query(sachModel.SQL_IMPORT_STOCK, [soLuongNhap, id]);
   return result;
 };
+//Hàm lấy số lượng sách sắp hết
+export const getLowStockCount = async () => {
+  const pool = await getPool();
+  const [rows] = await pool.query(sachModel.SQL_COUNT_LOW_STOCK);
+  // Kết quả trả về dạng: [ { SoLuong: 5 } ]
+  return rows[0]; 
+};
+
+
+export const getRevenueStats = async () => {
+    const pool = await getPool();
+    const [rows] = await pool.query(sachModel.SQL_STATS_REVENUE_7DAYS);
+    return rows;
+};
+
+export const getTopSellingStats = async () => {
+    const pool = await getPool();
+    const [rows] = await pool.query(sachModel.SQL_STATS_TOP_SELLING);
+    return rows;
+};
+
+
+// SỬA: Hàm này để lấy danh sách chi tiết các sách có tồn kho < 10
+export const getLowStockList = async () => {
+  const pool = await getPool();
+  // SQL_GET_LOW_STOCK_ITEMS đã có trong model bạn gửi
+  const [rows] = await pool.query(sachModel.SQL_GET_LOW_STOCK_ITEMS); 
+  return rows; 
+};

@@ -708,8 +708,8 @@ main.col-md-10 {
 }
 /* --- SLIDER SÁCH (CAROUSEL) --- */
 .book-slider-wrapper {
-    position: relative;
-    padding: 0 20px; /* Chừa chỗ cho nút bấm */
+    position: relative; /* Quan trọng để định vị nút con */
+    padding: 0 40px;    /* Chừa chỗ cho 2 nút bấm */
 }
 
 .book-slider-container {
