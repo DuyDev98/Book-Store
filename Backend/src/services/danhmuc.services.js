@@ -23,16 +23,14 @@ export const getDanhMucById = async (MaDanhMuc) => {
   }
 };
 
-export const addDanhMuc = async (TenDanhMuc, ParentID) => {
+export const addDanhMuc = async (TenDanhMuc) => {
   try {
     const pool = await getPool();
-    // Nếu ParentID là '0', null, undefined hoặc chuỗi rỗng thì lưu là NULL
-    const pid = (ParentID && ParentID != '0' && ParentID !== "") ? ParentID : null;
-    
+   
     // Log để kiểm tra server nhận được gì
-    console.log("Service Add - Ten:", TenDanhMuc, "Parent:", pid);
+    console.log("Service Add - Ten:", TenDanhMuc, "Parent:");
 
-    const [result] = await pool.query(danhmucModel.SQL_CREATE_DANHMUC, [TenDanhMuc, pid]);
+    const [result] = await pool.query(danhmucModel.SQL_CREATE_DANHMUC, [TenDanhMuc]);
     return result;
   } catch (err) {
     console.error("DB Error:", err);
@@ -40,14 +38,12 @@ export const addDanhMuc = async (TenDanhMuc, ParentID) => {
   }
 };
 
-export const updateDanhMuc = async (MaDanhMuc, TenDanhMuc, ParentID) => {
+export const updateDanhMuc = async (MaDanhMuc, TenDanhMuc) => {
   try {
     const pool = await getPool();
-    const pid = (ParentID && ParentID != '0' && ParentID !== "") ? ParentID : null;
-
+    
     const [result] = await pool.query(danhmucModel.SQL_UPDATE_DANHMUC, [
       TenDanhMuc,
-      pid,
       MaDanhMuc,
     ]);
     return result;

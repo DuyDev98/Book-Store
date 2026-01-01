@@ -79,12 +79,14 @@ async function addToCart(id, qty = 1) {
 }
 
 // 2. TẢI TRANG GIỎ HÀNG
+// 2. TẢI TRANG GIỎ HÀNG
+// 2. TẢI TRANG GIỎ HÀNG (ĐÃ SỬA GIÁ KHUYẾN MÃI)
 async function loadCartPage() {
     const tbody = document.getElementById("cart-body");
     const totalEl = document.getElementById("cart-total-price");
     const countEl = document.getElementById("cart-count-item");
     
-    if (!tbody) return; // Không phải trang giỏ hàng thì thoát
+    if (!tbody) return;
 
     if (!localStorage.getItem("token")) {
         tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5">Vui lòng đăng nhập để xem giỏ hàng</td></tr>`;
@@ -92,8 +94,6 @@ async function loadCartPage() {
     }
 
     try {
-        // Lấy ID khách từ storage để gọi API (Hoặc gọi API /cart/me nếu backend hỗ trợ)
-        // Ở đây ta vẫn dùng MaKH nhưng bắt buộc phải có Token kèm theo
         const maKH = localStorage.getItem("MaKH");
         const res = await fetch(`${API_BASE_URL}/cart/${maKH}`, {
             headers: getCartHeaders()
@@ -103,7 +103,6 @@ async function loadCartPage() {
 
         const data = await res.json();
 
-        // Xử lý hiển thị
         if (data.status !== "OK" || !data.data || data.data.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5"><p class="text-muted">Giỏ hàng của bạn đang trống</p></td></tr>`;
             if(totalEl) totalEl.innerText = "0 đ";
@@ -111,18 +110,40 @@ async function loadCartPage() {
             return;
         }
 
-        if(countEl) countEl.innerText = data.data.length;
-        if(totalEl) totalEl.innerText = formatCurrency(data.tongTien || 0);
-
+        // --- CẬP NHẬT TÍNH TOÁN LẠI TỔNG TIỀN ---
+        let grandTotal = 0; // Biến tính tổng tiền mới
         let html = "";
+
         data.data.forEach(item => {
-            // Xử lý ảnh
+            // 1. Tính giá thực tế (Nếu có giảm giá thì tính lại)
+            let realPrice = item.GiaBan;
+            if (item.PhanTramGiamGia > 0) {
+                realPrice = item.GiaBan * (1 - item.PhanTramGiamGia / 100);
+            }
+
+            // 2. Tính thành tiền của dòng này
+            const lineTotal = realPrice * item.SoLuong;
+            grandTotal += lineTotal; // Cộng dồn vào tổng giỏ hàng
+
+            // 3. Xử lý ảnh
             let img = (item.AnhBia && item.AnhBia !== 'null') ? item.AnhBia : "https://placehold.co/100x100?text=No+Img";
             if (!img.startsWith("http")) {
-                // Tính toán prefix ảnh nếu cần (giống script.js)
                 const depth = window.location.pathname.split("/").length;
                 const prefix = depth > 3 ? "../../" : "../"; 
                 img = prefix + img;
+            }
+
+            // 4. Hiển thị giá (Có gạch ngang nếu giảm giá)
+            let priceDisplay = `<span class="fw-bold text-secondary">${formatCurrency(realPrice)}</span>`;
+            let badge = "";
+
+            if (item.PhanTramGiamGia > 0) {
+                // Nếu có giảm giá: Hiện giá gốc gạch ngang + Giá mới màu đỏ
+                priceDisplay = `
+                    <div><small class="text-decoration-line-through text-muted" style="font-size: 11px;">${formatCurrency(item.GiaBan)}</small></div>
+                    <span class="fw-bold text-danger">${formatCurrency(realPrice)}</span>
+                `;
+                badge = `<span class="badge bg-danger ms-2" style="font-size: 0.6rem;">-${item.PhanTramGiamGia}%</span>`;
             }
 
             html += `
@@ -130,10 +151,15 @@ async function loadCartPage() {
                     <td class="text-start ps-4">
                         <div class="d-flex align-items-center">
                             <img src="${img}" style="width: 60px; height: 80px; object-fit: cover;" class="rounded me-3 border">
-                            <div><h6 class="mb-0 text-truncate" style="max-width: 200px;">${item.TenSach}</h6></div>
+                            <div>
+                                <h6 class="mb-0 text-truncate" style="max-width: 200px;">
+                                    ${item.TenSach} 
+                                    ${badge}
+                                </h6>
+                            </div>
                         </div>
                     </td>
-                    <td class="fw-bold text-secondary">${formatCurrency(item.GiaBan)}</td>
+                    <td>${priceDisplay}</td>
                     <td>
                         <div class="input-group input-group-sm mx-auto" style="width: 100px;">
                             <button class="btn btn-outline-secondary" onclick="changeCartQuantity(${item.MaSach}, ${item.SoLuong - 1})">-</button>
@@ -141,7 +167,7 @@ async function loadCartPage() {
                             <button class="btn btn-outline-secondary" onclick="changeCartQuantity(${item.MaSach}, ${item.SoLuong + 1})">+</button>
                         </div>
                     </td>
-                    <td class="fw-bold text-danger">${formatCurrency(item.ThanhTien)}</td>
+                    <td class="fw-bold text-danger">${formatCurrency(lineTotal)}</td>
                     <td>
                         <button class="btn btn-link text-danger p-0" onclick="removeCartItem(${item.MaSach})">
                             <i class="bi bi-trash3-fill fs-5"></i>
@@ -150,7 +176,12 @@ async function loadCartPage() {
                 </tr>
             `;
         });
+
         tbody.innerHTML = html;
+        
+        // Cập nhật các con số tổng
+        if(countEl) countEl.innerText = data.data.length;
+        if(totalEl) totalEl.innerText = formatCurrency(grandTotal);
 
     } catch (err) {
         console.error(err);

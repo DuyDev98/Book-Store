@@ -54,9 +54,10 @@ const Order = {
   },
 
   // 1. Lấy dữ liệu sách từ bảng chi tiết giỏ hàng
-  getCartItemsForCheckout: async (connection, maKH) => {
+getCartItemsForCheckout: async (connection, maKH) => {
+    // THÊM s.PhanTramGiamGia VÀO CÂU SELECT
     const sql = `
-      SELECT c.MaSach, c.SoLuong, s.GiaBan 
+      SELECT c.MaSach, c.SoLuong, s.GiaBan, s.PhanTramGiamGia 
       FROM giohang g
       JOIN chitietgiohang c ON g.MaGioHang = c.MaGioHang
       JOIN sach s ON c.MaSach = s.MaSach

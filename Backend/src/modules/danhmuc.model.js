@@ -10,11 +10,11 @@ export const SQL_GET_DANHMUC_BY_ID = `
 `;
 
 export const SQL_CREATE_DANHMUC = `
-  INSERT INTO danhmuc (TenDanhMuc, ParentID) VALUES (?, ?)
+  INSERT INTO danhmuc (TenDanhMuc) VALUES (?)
 `;
 
 export const SQL_UPDATE_DANHMUC = `
-  UPDATE danhmuc SET TenDanhMuc = ?, ParentID = ? WHERE MaDanhMuc = ?
+  UPDATE danhmuc SET TenDanhMuc = ? WHERE MaDanhMuc = ?
 `;
 
 export const SQL_DELETE_DANHMUC = `

@@ -136,250 +136,142 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <script>
-    // --- CẤU HÌNH ---
-    const API_URL = "http://localhost:5001/api/nxb";
+        const API_URL = "http://localhost:5001/api/nxb"; 
+
+        function showToast(text, type='success') {
+            let bg = type === 'success' ? "linear-gradient(to right, #00b09b, #96c93d)" : "linear-gradient(to right, #ff5f6d, #ffc371)";
+            Toastify({
+                text: text, duration: 3000, close: true, gravity: "top", position: "right", style: { background: bg }
+            }).showToast();
+        }
+
+        // 1. Tải danh sách
+        async function loadPublishers() {
+            try {
+                const res = await fetch(API_URL);
+                const json = await res.json();
+                const list = Array.isArray(json) ? json : json.data || [];
+                const tbody = document.getElementById("publisher-tbody");
+                tbody.innerHTML = "";
+
+                if (list.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center">Chưa có dữ liệu.</td></tr>`;
+                    return;
+                }
+
+                list.forEach((r, idx) => {
+                    const id = r.MaNXB ?? r.id;
+                    const name = r.TenNXB || "";
+                    const address = r.DiaChi || "-";
+                    const year = r.NamThanhLap || "-"; // Lấy năm
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="text-center text-muted">${idx + 1}</td>
+                            <td class="fw-bold">${name}</td>
+                            <td>${address}</td>
+                            <td class="text-center">${year}</td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="openEditModal(${id})">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deletePublisher(${id})">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                document.getElementById("publisher-tbody").innerHTML = `<tr><td colspan="5" class="text-danger text-center">Lỗi kết nối Server!</td></tr>`;
+            }
+        }
+
+        // 2. Mở Modal Thêm
+        function openAddModal() {
+            document.getElementById("publisherForm").reset();
+            document.getElementById("publisherId").value = "";
+            document.getElementById("publisherModalLabel").textContent = "Thêm Nhà xuất bản";
+            new bootstrap.Modal(document.getElementById("publisherModal")).show();
+        }
     
-    let allPublishers = [];       // Chứa toàn bộ dữ liệu gốc
-    let currentPublishers = [];   // Chứa dữ liệu đang hiển thị (đã search/filter)
-    
-    let currentPage = 1;          // Trang hiện tại
-    const rowsPerPage = 10;       // Số dòng mỗi trang
 
-    // Khởi tạo Modal
-    const publisherModal = new bootstrap.Modal(document.getElementById('publisherModal'));
-
-    // --- 1. KHỞI TẠO & LOAD DỮ LIỆU ---
-    document.addEventListener("DOMContentLoaded", () => {
-        loadPublishers();
-        
-        // Gắn sự kiện tìm kiếm
-        document.getElementById("publisherSearch").addEventListener("input", filterPublishers);
-        document.getElementById("btnSearch").addEventListener("click", filterPublishers);
-
-        // Gắn sự kiện nút Lưu
-        document.getElementById("savePublisherButton").addEventListener("click", savePublisher);
-
-        // Gắn sự kiện nút Thêm mới
-        document.getElementById("btnOpenAdd").addEventListener("click", openAddModal);
-    });
-
-    // Helper: Chống lỗi hiển thị ký tự đặc biệt
-    function escapeHtml(str) {
-        if (!str) return "";
-        return String(str)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-
-    async function loadPublishers() {
-        try {
-            const res = await fetch(API_URL);
-            const json = await res.json();
-            
-            // Xử lý dữ liệu trả về (mảng hoặc object chứa mảng)
-            allPublishers = Array.isArray(json) ? json : (json.data || []);
-            
-            // Mặc định hiển thị tất cả
-            currentPublishers = [...allPublishers];
-
-            updateView();
-        } catch (err) {
-            console.error(err);
-            document.getElementById("publisher-tbody").innerHTML = `<tr><td colspan="5" class="text-danger text-center">Lỗi kết nối Server!</td></tr>`;
-        }
-    }
-
-    // --- 2. ĐIỀU PHỐI HIỂN THỊ ---
-    function updateView() {
-        renderTable(currentPublishers);
-        renderPagination(currentPublishers);
-    }
-
-    // --- 3. RENDER BẢNG (CÓ PHÂN TRANG) ---
-    function renderTable(list) {
-        const tbody = document.getElementById("publisher-tbody");
-        tbody.innerHTML = "";
-
-        if (list.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center">Không tìm thấy dữ liệu</td></tr>`;
-            return;
-        }
-
-        // Tính toán cắt mảng
-        const startIndex = (currentPage - 1) * rowsPerPage;
-        const endIndex = startIndex + rowsPerPage;
-        const pageItems = list.slice(startIndex, endIndex);
-
-        pageItems.forEach((r, index) => {
-            const stt = startIndex + index + 1;
-            const id = r.MaNXB ?? r.id;
-            const name = escapeHtml(r.TenNXB);
-            const address = escapeHtml(r.DiaChi);
-            const year = escapeHtml(r.NamThanhLap);
-
-            tbody.innerHTML += `
-                <tr data-id="${id}">
-                    <td class="text-center">${stt}</td>
-                    <td><strong>${name}</strong></td>
-                    <td>${address || "-"}</td>
-                    <td>${year || "-"}</td>
-                    <td class="text-center">
-                        <button class="btn btn-sm btn-outline-primary me-1" onclick="openEditModal(${id})">
-                            <i class="bi bi-pencil-fill"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deletePublisher(${id})">
-                            <i class="bi bi-trash-fill"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-        });
-    }
-
-    // --- 4. RENDER THANH PHÂN TRANG ---
-    function renderPagination(list) {
-        const paginationUl = document.querySelector('.pagination');
-        if (!paginationUl) return;
-        paginationUl.innerHTML = "";
-
-        const totalPages = Math.ceil(list.length / rowsPerPage);
-
-        if (totalPages <= 1) return;
-
-        // Nút Trước
-        const prevLi = document.createElement('li');
-        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-        prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Trang trước</a>`;
-        paginationUl.appendChild(prevLi);
-
-        // Các nút số
-        for (let i = 1; i <= totalPages; i++) {
-            const li = document.createElement('li');
-            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
-            li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
-            paginationUl.appendChild(li);
-        }
-
-        // Nút Sau
-        const nextLi = document.createElement('li');
-        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-        nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Trang sau</a>`;
-        paginationUl.appendChild(nextLi);
-    }
-
-    function changePage(page) {
-        const totalPages = Math.ceil(currentPublishers.length / rowsPerPage);
-        if (page < 1 || page > totalPages) return;
-        currentPage = page;
-        updateView();
-    }
-
-    // --- 5. TÌM KIẾM ---
-    function filterPublishers() {
-        const keyword = document.getElementById("publisherSearch").value.toLowerCase();
-        
-        currentPublishers = allPublishers.filter(item => {
-            const name = (item.TenNXB || "").toLowerCase();
-            const addr = (item.DiaChi || "").toLowerCase();
-            const phone = (item.Phone || "").toLowerCase();
-            
-            return name.includes(keyword) || addr.includes(keyword) || phone.includes(keyword);
-        });
-
-        currentPage = 1; // Reset về trang 1
-        updateView();
-    }
-
-    // --- 6. CÁC HÀM CRUD (THÊM / SỬA / XÓA) ---
-
-    function openAddModal() {
-        document.getElementById("publisherForm").reset();
-        document.getElementById("publisherId").value = "";
-        document.getElementById("publisherModalLabel").textContent = "Thêm Nhà xuất bản";
-        publisherModal.show();
-    }
-
-    async function openEditModal(id) {
-        // Tìm trong dữ liệu local trước
-        let pub = allPublishers.find(p => (p.MaNXB ?? p.id) == id);
-        
-        // Nếu không thấy (trường hợp hiếm), gọi API
-        if (!pub) {
+        // 3. Mở Modal Sửa
+        async function openEditModal(id) {
             try {
                 const res = await fetch(`${API_URL}/${id}`);
-                const json = await res.json();
-                pub = json.data || json;
-            } catch(e) { console.error(e); }
+                const data = await res.json();
+                const nxb = data.data || data;
+
+                document.getElementById("publisherId").value = nxb.MaNXB;
+                document.getElementById("publisherName").value = nxb.TenNXB;
+                document.getElementById("publisherYear").value = nxb.NamThanhLap || ""; // Đổ dữ liệu năm
+                document.getElementById("publisherAddress").value = nxb.DiaChi || "";
+                document.getElementById("publisherDescription").value = nxb.MoTa || "";
+
+                document.getElementById("publisherModalLabel").textContent = "Cập nhật NXB";
+                new bootstrap.Modal(document.getElementById("publisherModal")).show();
+            } catch (e) { showToast("Lỗi tải thông tin", "error"); }
         }
 
-        if (pub) {
-            document.getElementById("publisherId").value = pub.MaNXB ?? pub.id;
-            document.getElementById("publisherName").value = pub.TenNXB || "";
-            document.getElementById("publisherAddress").value = pub.DiaChi || "";
-            document.getElementById("publisherYear").value = pub.NamThanhLap || "";
-            document.getElementById("publisherEmail").value = pub.Email || "";
-            document.getElementById("publisherPhone").value = pub.Phone || "";
-            document.getElementById("publisherDescription").value = pub.Description || pub.MoTa || "";
+        // 4. Lưu
+        async function savePublisher() {
+            const id = document.getElementById("publisherId").value;
+            const name = document.getElementById("publisherName").value.trim();
             
-            document.getElementById("publisherModalLabel").textContent = "Sửa Nhà xuất bản";
-            publisherModal.show();
-        } else {
-            alert("Không tìm thấy thông tin NXB");
+            if (!name) { showToast("Vui lòng nhập tên NXB!", "error"); return; }
+
+            const payload = {
+                TenNXB: name,
+                NamThanhLap: document.getElementById("publisherYear").value, // Gửi năm lên server
+                DiaChi: document.getElementById("publisherAddress").value.trim(),
+                
+            };
+
+            const url = id ? `${API_URL}/${id}` : API_URL;
+            const method = id ? "PUT" : "POST";
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+
+                if (res.ok) {
+                    showToast(id ? "Cập nhật thành công!" : "Thêm mới thành công!");
+                    bootstrap.Modal.getInstance(document.getElementById("publisherModal")).hide();
+                    loadPublishers();
+                } else {
+                    const err = await res.json();
+                    showToast("Lỗi: " + err.message, "error");
+                }
+            } catch (e) { showToast("Lỗi kết nối", "error"); }
         }
-    }
 
-    async function savePublisher() {
-        const id = document.getElementById("publisherId").value;
-        const payload = {
-            TenNXB: document.getElementById("publisherName").value.trim(),
-            DiaChi: document.getElementById("publisherAddress").value.trim(),
-            NamThanhLap: document.getElementById("publisherYear").value ? Number(document.getElementById("publisherYear").value) : null,
-            Email: document.getElementById("publisherEmail").value.trim(),
-            Phone: document.getElementById("publisherPhone").value.trim(),
-            Description: document.getElementById("publisherDescription").value.trim(),
-        };
+        // 5. Xóa
+        async function deletePublisher(id) {
+            if (!confirm("Bạn có chắc chắn muốn xóa NXB này không?")) return;
+            try {
+                const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+                if (res.ok) {
+                    showToast("Đã xóa thành công!");
+                    loadPublishers();
+                } else { showToast("Không thể xóa (có thể đang có sách)", "error"); }
+            } catch (e) { showToast("Lỗi server", "error"); }
+        }
 
-        if (!payload.TenNXB) return alert("Vui lòng nhập tên nhà xuất bản.");
-
-        const method = id ? "PUT" : "POST";
-        const url = id ? `${API_URL}/${id}` : API_URL;
-
-        try {
-            const res = await fetch(url, {
-                method: method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
+        // 6. Tìm kiếm
+        function applySearch() {
+            const q = document.getElementById("publisherSearch").value.toLowerCase();
+            const rows = document.querySelectorAll("#publisher-tbody tr");
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(q) ? "" : "none";
             });
-
-            if (!res.ok) {
-                const err = await res.json();
-                throw new Error(err.message || "Lỗi lưu dữ liệu");
-            }
-
-            alert(id ? "Cập nhật thành công!" : "Thêm mới thành công!");
-            publisherModal.hide();
-            loadPublishers(); // Tải lại bảng
-
-        } catch (err) {
-            alert("Lỗi: " + err.message);
         }
-    }
 
-    async function deletePublisher(id) {
-        if (!confirm("Bạn có chắc muốn xoá Nhà xuất bản này không?")) return;
-        try {
-            const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-            if (!res.ok) throw new Error("Không thể xóa (có thể đang có sách liên kết)");
-            
-            alert("Xóa thành công!");
-            loadPublishers();
-        } catch (err) {
-            alert("Lỗi: " + err.message);
-        }
-    }
-</script>
-  </body>
+        document.addEventListener("DOMContentLoaded", loadPublishers);
+    </script>
+</body>
 </html>
