@@ -403,19 +403,50 @@
       });
 
       // 2. Lấy danh sách đơn hàng
-      async function fetchOrders() {
-        try {
-          const res = await fetch(API_URL);
-          const orders = await res.json();
-          renderOrderTable(orders);
-        } catch (error) {
-          console.error("Lỗi tải danh sách:", error);
-          document.getElementById(
-            "orderTableBody"
-          ).innerHTML = `<tr><td colspan="6" class="text-center text-danger">Lỗi kết nối Server! Hãy kiểm tra Backend.</td></tr>`;
-        }
-      }
+// Biến để lưu trữ toàn bộ dữ liệu đơn hàng phục vụ việc lọc
+let allOrdersData = []; 
 
+async function fetchOrders() {
+    try {
+        const res = await fetch(API_URL);
+        // Lưu dữ liệu vào biến toàn cục thay vì chỉ render ngay
+        allOrdersData = await res.json(); 
+        
+        renderOrderTable(allOrdersData);
+        // Khởi tạo bộ lắng nghe sự kiện lọc sau khi đã có dữ liệu
+        setupFilterListeners(); 
+    } catch (error) {
+        console.error("Lỗi tải danh sách:", error);
+        document.getElementById("orderTableBody").innerHTML = 
+            `<tr><td colspan="6" class="text-center text-danger">Lỗi kết nối Server!</td></tr>`;
+    }
+}
+function setupFilterListeners() {
+    const filterButtons = document.querySelectorAll('#pills-tab .nav-link');
+
+    filterButtons.forEach(btn => {
+        btn.onclick = function () {
+            // 1. Cập nhật trạng thái hiển thị của các Tab
+            filterButtons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            // 2. Lấy tên trạng thái cần lọc (Tất cả, Chờ xác nhận, v.v.)
+            const statusToFilter = this.innerText.trim();
+
+            // 3. Tiến hành lọc
+            if (statusToFilter === "Tất cả") {
+                renderOrderTable(allOrdersData);
+            } else {
+                const filtered = allOrdersData.filter(order => {
+                    // Kiểm tra cả hai biến thể có dấu/không dấu từ API của bạn
+                    const currentStatus = order.TrangThai || order.TrạngThai;
+                    return currentStatus === statusToFilter;
+                });
+                renderOrderTable(filtered);
+            }
+        };
+    });
+}
       // 3. Hiển thị bảng
       function renderOrderTable(orders) {
         const tableBody = document.getElementById("orderTableBody");
@@ -604,6 +635,7 @@
           alert("Lỗi kết nối server");
         }
       }
+      
     </script>
   </body>
 </html>
