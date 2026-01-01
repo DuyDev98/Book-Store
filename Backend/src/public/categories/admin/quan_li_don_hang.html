@@ -243,22 +243,9 @@
                 </table>
               </div>
 
-              <nav
-                aria-label="Phân trang"
-                class="d-flex justify-content-center mt-3"
-              >
-                <ul class="pagination">
-                  <li class="page-item disabled">
-                    <a class="page-link" href="#">Trang trước</a>
-                  </li>
-                  <li class="page-item active">
-                    <a class="page-link" href="#">1</a>
-                  </li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">Trang sau</a>
-                  </li>
-                </ul>
+              <nav aria-label="Phân trang" class="d-flex justify-content-center mt-3">
+                  <ul class="pagination" id="pagination">
+                      </ul>
               </nav>
             </div>
           </div>
@@ -361,281 +348,268 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-      // CẤU HÌNH API URL (Đảm bảo backend chạy port này)
-      const API_URL = "http://localhost:5001/api/orders";
-
-      // === CÁC HÀM TIỆN ÍCH (HELPER) ===
-      const formatMoney = (amount) => {
-        return new Intl.NumberFormat("vi-VN", {
-          style: "currency",
-          currency: "VND",
-        }).format(amount);
-      };
-
-      const formatDate = (dateString) => {
-        if (!dateString) return "";
-        const date = new Date(dateString);
-        return date.toLocaleDateString("vi-VN");
-      };
-
-      const getStatusBadge = (status) => {
-        switch (status) {
-          case "Chờ xác nhận":
-            return '<span class="badge bg-warning text-dark">Chờ xác nhận</span>';
-          case "Đang xử lý":
-            return '<span class="badge bg-info">Đang xử lý</span>';
-          case "Đang giao":
-            return '<span class="badge bg-primary">Đang giao</span>';
-          case "Đã giao":
-            return '<span class="badge bg-success">Đã giao</span>';
-          case "Đã hủy":
-            return '<span class="badge bg-danger">Đã hủy</span>';
-          default:
-            return `<span class="badge bg-secondary">${status}</span>`;
-        }
-      };
-
-      // === LOGIC CHÍNH ===
-
-      // 1. Chạy khi trang tải xong
-      document.addEventListener("DOMContentLoaded", () => {
-        fetchOrders();
-      });
-
-      // 2. Lấy danh sách đơn hàng
-// Biến để lưu trữ toàn bộ dữ liệu đơn hàng phục vụ việc lọc
-let allOrdersData = []; 
-
-async function fetchOrders() {
-    try {
-        const res = await fetch(API_URL);
-        // Lưu dữ liệu vào biến toàn cục thay vì chỉ render ngay
-        allOrdersData = await res.json(); 
+        // --- CẤU HÌNH ---
+        const API_URL = "http://localhost:5001/api/orders";
         
-        renderOrderTable(allOrdersData);
-        // Khởi tạo bộ lắng nghe sự kiện lọc sau khi đã có dữ liệu
-        setupFilterListeners(); 
-    } catch (error) {
-        console.error("Lỗi tải danh sách:", error);
-        document.getElementById("orderTableBody").innerHTML = 
-            `<tr><td colspan="6" class="text-center text-danger">Lỗi kết nối Server!</td></tr>`;
-    }
-}
-function setupFilterListeners() {
-    const filterButtons = document.querySelectorAll('#pills-tab .nav-link');
+        // BIẾN TOÀN CỤC QUẢN LÝ DỮ LIỆU
+        let allOrdersData = [];       // Dữ liệu gốc (Tất cả đơn hàng)
+        let currentFilteredList = []; // Dữ liệu đang hiển thị (Đã lọc theo Tab)
 
-    filterButtons.forEach(btn => {
-        btn.onclick = function () {
-            // 1. Cập nhật trạng thái hiển thị của các Tab
-            filterButtons.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
+        // CẤU HÌNH PHÂN TRANG
+        let currentPage = 1;
+        const rowsPerPage = 10;       // Số đơn hàng mỗi trang
 
-            // 2. Lấy tên trạng thái cần lọc (Tất cả, Chờ xác nhận, v.v.)
-            const statusToFilter = this.innerText.trim();
-
-            // 3. Tiến hành lọc
-            if (statusToFilter === "Tất cả") {
-                renderOrderTable(allOrdersData);
-            } else {
-                const filtered = allOrdersData.filter(order => {
-                    // Kiểm tra cả hai biến thể có dấu/không dấu từ API của bạn
-                    const currentStatus = order.TrangThai || order.TrạngThai;
-                    return currentStatus === statusToFilter;
-                });
-                renderOrderTable(filtered);
-            }
+        // --- CÁC HÀM HELPER (Định dạng tiền, ngày, badge) ---
+        const formatMoney = (amount) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
+        
+        const formatDate = (dateString) => {
+            if (!dateString) return "";
+            return new Date(dateString).toLocaleDateString("vi-VN");
         };
-    });
-}
-      // 3. Hiển thị bảng
-      function renderOrderTable(orders) {
-        const tableBody = document.getElementById("orderTableBody");
-        tableBody.innerHTML = ""; // Xóa nội dung cũ
 
-        if (orders.length === 0) {
-          tableBody.innerHTML = `<tr><td colspan="6" class="text-center">Chưa có đơn hàng nào.</td></tr>`;
-          return;
+        const getStatusBadge = (status) => {
+            const map = {
+                "Chờ xác nhận": "bg-warning text-dark",
+                "Đang xử lý": "bg-info text-dark",
+                "Đang giao": "bg-primary",
+                "Đã giao": "bg-success",
+                "Đã hủy": "bg-danger"
+            };
+            const colorClass = map[status] || "bg-secondary";
+            return `<span class="badge ${colorClass}">${status}</span>`;
+        };
+
+        // --- 1. KHỞI TẠO ---
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchOrders();
+            setupFilterListeners();
+        });
+
+        // --- 2. TẢI DỮ LIỆU ---
+        async function fetchOrders() {
+            try {
+                const res = await fetch(API_URL);
+                if (!res.ok) throw new Error("Lỗi kết nối");
+                
+                allOrdersData = await res.json();
+                
+                // Mặc định ban đầu hiển thị "Tất cả"
+                currentFilteredList = [...allOrdersData]; 
+                
+                // Reset về trang 1 và vẽ giao diện
+                currentPage = 1;
+                updateView();
+            } catch (error) {
+                console.error("Lỗi tải danh sách:", error);
+                document.getElementById("orderTableBody").innerHTML = 
+                    `<tr><td colspan="6" class="text-center text-danger">Lỗi kết nối Server!</td></tr>`;
+            }
         }
 
-        orders.forEach((order) => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
+        // --- 3. ĐIỀU PHỐI HIỂN THỊ (CẮT TRANG) ---
+        function updateView() {
+            // Tính toán vị trí cắt mảng dựa trên trang hiện tại
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            
+            // Cắt dữ liệu từ danh sách ĐÃ LỌC (currentFilteredList)
+            const displayList = currentFilteredList.slice(startIndex, endIndex);
+
+            renderOrderTable(displayList);
+            renderPagination();
+        }
+
+        // --- 4. RENDER BẢNG ---
+        function renderOrderTable(orders) {
+            const tableBody = document.getElementById("orderTableBody");
+            tableBody.innerHTML = ""; 
+
+            if (orders.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Không tìm thấy đơn hàng nào.</td></tr>`;
+                return;
+            }
+
+            orders.forEach((order) => {
+                const status = order.TrạngThai || order.TrangThai; // Xử lý trường hợp backend trả về tên field khác nhau
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
                     <td><strong>#${order.MaDH}</strong></td>
-                    <td>${order.HoTen}</td>
-                    <td>${order.NgayDat}</td>
-                    <td>${
-                      order.TongTienFormatted || formatMoney(order.TongTien)
-                    }</td> 
-                    <td class="text-center">${getStatusBadge(
-                      order.TrạngThai || order.TrangThai
-                    )}</td>
+                    <td>
+                        <div class="fw-bold">${order.HoTen}</div>
+                        <small class="text-muted">${order.SDienThoai || ''}</small>
+                    </td>
+                    <td>${formatDate(order.NgayDat)}</td>
+                    <td class="fw-bold text-danger">
+                        ${order.TongTienFormatted || formatMoney(order.TongTien)}
+                    </td> 
+                    <td class="text-center">${getStatusBadge(status)}</td>
                     <td class="text-center">
-                        <button onclick="viewOrderDetails(${
-                          order.MaDH
-                        })" class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                        <button onclick="viewOrderDetails(${order.MaDH})" class="btn btn-sm btn-outline-info">
                             <i class="bi bi-eye-fill"></i> Xem
                         </button>
                         <div class="btn-group btn-group-sm ms-1">
                             <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                Đổi trạng thái
+                                Xử lý
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${
-                                  order.MaDH
-                                }, 'Đang xử lý')">Đang xử lý</a></li>
-                                <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${
-                                  order.MaDH
-                                }, 'Đang giao')">Đang giao</a></li>
-                                <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${
-                                  order.MaDH
-                                }, 'Đã giao')">Đã giao</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${order.MaDH}, 'Đang xử lý')">Đang xử lý</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${order.MaDH}, 'Đang giao')">Đang giao</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(${order.MaDH}, 'Đã giao')">Đã giao</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="#" onclick="cancelOrder(${
-                                  order.MaDH
-                                })">Hủy đơn hàng</a></li>
+                                <li><a class="dropdown-item text-danger" href="#" onclick="cancelOrder(${order.MaDH})">Hủy đơn hàng</a></li>
                             </ul>
                         </div>
                     </td>
                 `;
-          tableBody.appendChild(tr);
-        });
-      }
+                tableBody.appendChild(tr);
+            });
+        }
 
-      // 4. Xem chi tiết (Modal)
-      async function viewOrderDetails(id) {
-        try {
-          const res = await fetch(`${API_URL}/${id}`);
-          if (!res.ok) throw new Error("Lỗi khi tải chi tiết");
+        // --- 5. RENDER PHÂN TRANG ---
+        function renderPagination() {
+            const paginationUl = document.getElementById("pagination");
+            paginationUl.innerHTML = "";
 
-          const data = await res.json();
-          const info = data.info; // Thông tin chung
-          const items = data.items; // Danh sách sách
+            const totalPages = Math.ceil(currentFilteredList.length / rowsPerPage);
 
-          // Điền thông tin vào Modal HTML
-          document.getElementById(
-            "orderModalLabel"
-          ).innerText = `Chi tiết Đơn hàng: #${info.MaDH}`;
-          document.getElementById("modal-kh-name").innerText = info.HoTen;
-          document.getElementById("modal-kh-email").innerText = info.Email;
-          document.getElementById("modal-kh-phone").innerText = info.SDienThoai;
-          document.getElementById("modal-address").innerText =
-            info.DiaChiGiaoHang || "Không có địa chỉ";
-          document.getElementById("modal-note").innerText =
-            info.GhiChuGiaoHang || "Không có";
-          document.getElementById("modal-status").innerHTML = getStatusBadge(
-            info.TrangThai
-          );
+            // Nếu chỉ có 1 trang hoặc không có dữ liệu -> ẩn phân trang
+            if (totalPages <= 1) return;
 
-          // Nếu backend chưa format tiền thì format ở đây
-          const total = info.TongTienFormatted
-            ? info.TongTienFormatted
-            : formatMoney(info.TongTien);
-          document.getElementById("modal-total-price").innerText = total;
+            // Nút Trước
+            const prevClass = currentPage === 1 ? "disabled" : "";
+            paginationUl.innerHTML += `
+                <li class="page-item ${prevClass}">
+                    <a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;">Trang trước</a>
+                </li>`;
 
-          // Điền danh sách sản phẩm
-          const listContainer = document.getElementById("modal-product-list");
-          listContainer.innerHTML = ""; // Reset list
+            // Các nút số
+            for (let i = 1; i <= totalPages; i++) {
+                const activeClass = i === currentPage ? "active" : "";
+                paginationUl.innerHTML += `
+                    <li class="page-item ${activeClass}">
+                        <a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>
+                    </li>`;
+            }
 
-          items.forEach((item) => {
-            const li = document.createElement("li");
-            li.className =
-              "list-group-item d-flex justify-content-between align-items-center";
-            li.innerHTML = `
+            // Nút Sau
+            const nextClass = currentPage === totalPages ? "disabled" : "";
+            paginationUl.innerHTML += `
+                <li class="page-item ${nextClass}">
+                    <a class="page-link" href="#" onclick="changePage(${currentPage + 1}); return false;">Trang sau</a>
+                </li>`;
+        }
+
+        function changePage(page) {
+            const totalPages = Math.ceil(currentFilteredList.length / rowsPerPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            updateView();
+        }
+
+        // --- 6. XỬ LÝ LỌC (TABS) ---
+        function setupFilterListeners() {
+            const filterButtons = document.querySelectorAll('#pills-tab .nav-link');
+            filterButtons.forEach(btn => {
+                btn.onclick = function () {
+                    // UI: Đổi màu tab active
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // LOGIC: Lọc dữ liệu
+                    const statusToFilter = this.innerText.trim();
+                    
+                    if (statusToFilter === "Tất cả") {
+                        currentFilteredList = [...allOrdersData];
+                    } else {
+                        currentFilteredList = allOrdersData.filter(order => {
+                            const s = order.TrangThai || order.TrạngThai; // Fix lỗi chính tả backend nếu có
+                            return s === statusToFilter;
+                        });
+                    }
+
+                    // QUAN TRỌNG: Khi lọc xong phải reset về trang 1
+                    currentPage = 1;
+                    updateView();
+                };
+            });
+        }
+
+        // --- 7. CÁC HÀM XỬ LÝ MODAL & API (Giữ nguyên logic cũ nhưng thêm reload) ---
+
+        async function viewOrderDetails(id) {
+            try {
+                const res = await fetch(`${API_URL}/${id}`);
+                if (!res.ok) throw new Error("Lỗi tải chi tiết");
+                const data = await res.json();
+                const info = data.info;
+                const items = data.items;
+
+                document.getElementById("orderModalLabel").innerText = `Đơn hàng #${info.MaDH}`;
+                document.getElementById("modal-kh-name").innerText = info.HoTen;
+                document.getElementById("modal-kh-email").innerText = info.Email;
+                document.getElementById("modal-kh-phone").innerText = info.SDienThoai;
+                document.getElementById("modal-address").innerText = info.DiaChiGiaoHang || "N/A";
+                document.getElementById("modal-note").innerText = info.GhiChuGiaoHang || "Không";
+                document.getElementById("modal-status").innerHTML = getStatusBadge(info.TrangThai);
+                document.getElementById("modal-total-price").innerText = info.TongTienFormatted || formatMoney(info.TongTien);
+
+                const listContainer = document.getElementById("modal-product-list");
+                listContainer.innerHTML = items.map(item => `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="my-0">${item.TenSach}</h6>
-                            <small class="text-muted">Đơn giá: ${formatMoney(
-                              item.DonGia
-                            )}</small>
+                            <small class="text-muted">${formatMoney(item.DonGia)}</small>
                         </div>
-                        <span class="text-muted">SL: ${item.SoLuong}</span>
-                    `;
-            listContainer.appendChild(li);
-          });
+                        <span class="badge bg-secondary rounded-pill">x${item.SoLuong}</span>
+                    </li>
+                `).join('');
 
-          // Gán sự kiện cho nút Hủy & Xác nhận trong Modal
-          const btnCancel = document.getElementById("btn-cancel-order");
-          btnCancel.onclick = () => cancelOrder(info.MaDH);
+                // Gán sự kiện nút bấm trong modal
+                document.getElementById("btn-cancel-order").onclick = () => cancelOrder(info.MaDH);
+                document.getElementById("btn-confirm-order").onclick = () => updateOrderStatus(info.MaDH, 'Đang giao');
 
-          const btnConfirm = document.getElementById("btn-confirm-order");
-          // Logic: Nếu đang chờ thì chuyển sang Đang xử lý, nếu đang xử lý thì chuyển sang Đang giao...
-          // Ở đây demo chuyển thẳng sang "Đang giao"
-          btnConfirm.onclick = () => updateOrderStatus(info.MaDH, "Đang giao");
-
-          // Mở Modal bằng Bootstrap API
-          const myModal = new bootstrap.Modal(
-            document.getElementById("orderModal")
-          );
-          myModal.show();
-        } catch (error) {
-          alert("Không thể tải chi tiết đơn hàng!");
-          console.error(error);
+                new bootstrap.Modal(document.getElementById("orderModal")).show();
+            } catch (error) {
+                console.error(error);
+                alert("Lỗi tải chi tiết đơn hàng");
+            }
         }
-      }
 
-      // 5. Cập nhật trạng thái
-      async function updateOrderStatus(id, newStatus) {
-        // Xác nhận trước khi làm
-        if (
-          !confirm(`Bạn muốn chuyển đơn #${id} sang trạng thái "${newStatus}"?`)
-        )
-          return;
-
-        try {
-          const res = await fetch(`${API_URL}/${id}/status`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: newStatus }),
-          });
-
-          if (res.ok) {
-            alert("Cập nhật thành công!");
-            fetchOrders(); // Tải lại bảng để thấy thay đổi
-
-            // Ẩn modal nếu đang mở
-            const modalEl = document.getElementById("orderModal");
-            const modalInstance = bootstrap.Modal.getInstance(modalEl);
-            if (modalInstance) modalInstance.hide();
-          } else {
-            const err = await res.json();
-            alert("Lỗi: " + (err.message || "Không thể cập nhật"));
-          }
-        } catch (error) {
-          console.error(error);
-          alert("Lỗi kết nối server");
+        async function updateOrderStatus(id, newStatus) {
+            if (!confirm(`Cập nhật đơn #${id} sang "${newStatus}"?`)) return;
+            try {
+                const res = await fetch(`${API_URL}/${id}/status`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ status: newStatus }),
+                });
+                if (res.ok) {
+                    alert("Cập nhật thành công!");
+                    // Ẩn modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById("orderModal"));
+                    if (modal) modal.hide();
+                    // Tải lại dữ liệu để cập nhật danh sách
+                    fetchOrders(); 
+                } else {
+                    alert("Lỗi cập nhật trạng thái");
+                }
+            } catch (err) { alert("Lỗi server"); }
         }
-      }
 
-      // 6. Hủy đơn
-      async function cancelOrder(id) {
-        if (
-          !confirm(
-            `Bạn chắc chắn muốn hủy đơn hàng #${id}? Hành động này không thể hoàn tác.`
-          )
-        )
-          return;
-
-        try {
-          const res = await fetch(`${API_URL}/${id}/cancel`, {
-            method: "PUT",
-          });
-
-          if (res.ok) {
-            alert("Đã hủy đơn hàng!");
-            fetchOrders();
-
-            const modalEl = document.getElementById("orderModal");
-            const modalInstance = bootstrap.Modal.getInstance(modalEl);
-            if (modalInstance) modalInstance.hide();
-          } else {
-            const err = await res.json();
-            alert("Lỗi: " + (err.message || "Không thể hủy"));
-          }
-        } catch (error) {
-          console.error(error);
-          alert("Lỗi kết nối server");
+        async function cancelOrder(id) {
+            if (!confirm(`Hủy đơn hàng #${id}? Hành động này không thể hoàn tác.`)) return;
+            try {
+                const res = await fetch(`${API_URL}/${id}/cancel`, { method: "PUT" });
+                if (res.ok) {
+                    alert("Đã hủy đơn hàng!");
+                    const modal = bootstrap.Modal.getInstance(document.getElementById("orderModal"));
+                    if (modal) modal.hide();
+                    fetchOrders();
+                } else {
+                    alert("Không thể hủy đơn hàng này");
+                }
+            } catch (err) { alert("Lỗi server"); }
         }
-      }
-      
     </script>
   </body>
 </html>

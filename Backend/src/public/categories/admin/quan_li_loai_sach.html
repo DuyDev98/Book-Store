@@ -18,15 +18,16 @@
 
         .sidebar {
             position: fixed;
-            top: 56px;
+            top: 0;            /* Thay đổi từ 56px thành 0 để sidebar chạy từ đỉnh màn hình */
             bottom: 0;
             left: 0;
-            z-index: 1000;
-            padding: 20px 0;
+            z-index: 100;      /* Đặt thấp hơn Navbar (Navbar mặc định Bootstrap là 1030) */
+            padding: 70px 0 20px 0; /* Tăng padding-top lên (khoảng 60-70px) để nội dung không bị Header che mất */
             overflow-x: hidden;
             overflow-y: auto;
             background-color: #ffffff;
-            border-right: 1px solid #dee2e6;
+            border-right: 1px solid #dee2e6;    
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05); /* Thêm bóng nhẹ để tách biệt với nội dung chính */
         }
 
         .sidebar .nav-link {

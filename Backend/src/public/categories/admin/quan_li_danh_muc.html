@@ -79,18 +79,9 @@
             </div>
           </div>
           <nav aria-label="Phân trang danh sách" class="d-flex justify-content-center mt-3">
-                <ul class="pagination">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Trang trước</a>
-                    </li>
-                    <li class="page-item active" aria-current="page">
-                        <a class="page-link" href="#">1</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Trang sau</a>
-                    </li>
-                </ul>
-            </nav>
+              <ul class="pagination" id="pagination">
+                  </ul>
+          </nav>
         </main>
       </div>
     </div>
@@ -126,86 +117,184 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+      // --- CẤU HÌNH ---
       const API_URL = "http://localhost:5001/api/danhmuc";
-      let categories = [];
+      let categories = [];      // Chứa TẤT CẢ dữ liệu tải từ Server
+      
+      // Cấu hình phân trang
+      let currentPage = 1;      // Trang hiện tại
+      const rowsPerPage = 5;    // Số dòng hiển thị mỗi trang (bạn có thể đổi thành 10)
 
+      // --- KHỞI TẠO ---
       document.addEventListener("DOMContentLoaded", loadCategories);
 
+      // 1. Tải dữ liệu từ API
       async function loadCategories() {
-        try {
-          const res = await fetch(API_URL);
-          const data = await res.json();
-          categories = Array.isArray(data) ? data : data.data || [];
-          renderTable(categories);
-        } catch (err) {
-            console.error("Lỗi tải dữ liệu:", err);
-        }
-    }
+          try {
+              const res = await fetch(API_URL);
+              const data = await res.json();
+              
+              // Đảm bảo dữ liệu luôn là mảng
+              categories = Array.isArray(data) ? data : data.data || [];
+              
+              // Reset về trang 1 và cập nhật giao diện
+              currentPage = 1;
+              updateView();
+          } catch (err) {
+              console.error("Lỗi tải dữ liệu:", err);
+              alert("Không tải được danh sách danh mục.");
+          }
+      }
 
-      function renderTable(list) {
-        const tbody = document.getElementById("catTableBody");
-        tbody.innerHTML = "";
-        list.forEach((item) => {
-          tbody.innerHTML += `
-            <tr>
-              <td class="text-center">#${item.MaDanhMuc}</td>
-              <td class="fw-bold">${item.TenDanhMuc}</td>
-              <td class="text-center">
-                <button class="btn btn-sm btn-outline-primary" onclick="prepareEdit(${item.MaDanhMuc})">Sửa</button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(${item.MaDanhMuc})">Xóa</button>
-              </td>
-            </tr>`;
-        });
-    }
+      // 2. Hàm điều phối hiển thị (Cắt dữ liệu -> Vẽ bảng -> Vẽ phân trang)
+      function updateView() {
+          // Tính vị trí cắt mảng
+          const startIndex = (currentPage - 1) * rowsPerPage;
+          const endIndex = startIndex + rowsPerPage;
+          
+          // Lấy danh sách con để hiển thị
+          const displayList = categories.slice(startIndex, endIndex);
+
+          renderTable(displayList, startIndex); // Truyền startIndex để tính STT
+          renderPagination();
+      }
+
+      // 3. Vẽ bảng dữ liệu
+      function renderTable(list, startIndex) {
+          const tbody = document.getElementById("catTableBody");
+          tbody.innerHTML = "";
+
+          if (list.length === 0) {
+              tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">Không có dữ liệu</td></tr>`;
+              return;
+          }
+
+          list.forEach((item, index) => {
+              // STT = vị trí bắt đầu + index + 1
+              const stt = startIndex + index + 1; 
+
+              tbody.innerHTML += `
+              <tr>
+                <td class="text-center">#${item.MaDanhMuc}</td>
+                <td class="fw-bold">${item.TenDanhMuc}</td>
+                <td class="text-center">
+                  <button class="btn btn-sm btn-outline-primary me-1" onclick="prepareEdit(${item.MaDanhMuc})">
+                      <i class="bi bi-pencil"></i> Sửa
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(${item.MaDanhMuc})">
+                      <i class="bi bi-trash"></i> Xóa
+                  </button>
+                </td>
+              </tr>`;
+          });
+      }
+
+      // 4. Vẽ thanh phân trang (Logic chính)
+      function renderPagination() {
+          const paginationUl = document.getElementById("pagination");
+          paginationUl.innerHTML = "";
+
+          const totalPages = Math.ceil(categories.length / rowsPerPage);
+
+          // Nếu ít hơn 2 trang thì không cần hiện thanh phân trang
+          if (totalPages <= 1) return;
+
+          // --- Nút Previous ---
+          const prevClass = currentPage === 1 ? "disabled" : "";
+          paginationUl.innerHTML += `
+              <li class="page-item ${prevClass}">
+                  <a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;">Trang trước</a>
+              </li>`;
+
+          // --- Các nút số trang ---
+          for (let i = 1; i <= totalPages; i++) {
+              const activeClass = i === currentPage ? "active" : "";
+              paginationUl.innerHTML += `
+                  <li class="page-item ${activeClass}">
+                      <a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>
+                  </li>`;
+          }
+
+          // --- Nút Next ---
+          const nextClass = currentPage === totalPages ? "disabled" : "";
+          paginationUl.innerHTML += `
+              <li class="page-item ${nextClass}">
+                  <a class="page-link" href="#" onclick="changePage(${currentPage + 1}); return false;">Trang sau</a>
+              </li>`;
+      }
+
+      // 5. Xử lý chuyển trang
+      function changePage(page) {
+          const totalPages = Math.ceil(categories.length / rowsPerPage);
+          
+          // Kiểm tra hợp lệ
+          if (page < 1 || page > totalPages) return;
+
+          currentPage = page;
+          updateView(); // Vẽ lại giao diện
+      }
+
+      // --- CÁC HÀM CRUD (Giữ nguyên logic cũ, chỉ cập nhật load lại) ---
+
       function resetForm() {
-        document.getElementById("catId").value = "";
-        document.getElementById("catName").value = "";
-        document.getElementById("modalTitle").innerText = "Thêm Danh Mục Mới";
-    }
+          document.getElementById("catId").value = "";
+          document.getElementById("catName").value = "";
+          document.getElementById("modalTitle").innerText = "Thêm Danh Mục Mới";
+      }
 
       function prepareEdit(id) {
-        const item = categories.find((c) => c.MaDanhMuc == id);
-        if (item) {
-          document.getElementById("catId").value = item.MaDanhMuc;
-          document.getElementById("catName").value = item.TenDanhMuc;
-          document.getElementById("modalTitle").innerText = "Cập Nhật Danh Mục";
-          new bootstrap.Modal(document.getElementById("categoryModal")).show();
-        }
-    }
+          // Tìm trong mảng gốc 'categories' vì item có thể không nằm ở trang hiện tại
+          const item = categories.find((c) => c.MaDanhMuc == id);
+          if (item) {
+              document.getElementById("catId").value = item.MaDanhMuc;
+              document.getElementById("catName").value = item.TenDanhMuc;
+              document.getElementById("modalTitle").innerText = "Cập Nhật Danh Mục";
+              new bootstrap.Modal(document.getElementById("categoryModal")).show();
+          }
+      }
 
       async function saveCategory() {
-        const id = document.getElementById("catId").value;
-        const TenDanhMuc = document.getElementById("catName").value.trim();
-        if (!TenDanhMuc) return alert("Vui lòng nhập tên danh mục!");
+          const id = document.getElementById("catId").value;
+          const TenDanhMuc = document.getElementById("catName").value.trim();
+          if (!TenDanhMuc) return alert("Vui lòng nhập tên danh mục!");
 
-        const method = id ? "PUT" : "POST";
-        const url = id ? `${API_URL}/${id}` : API_URL;
+          const method = id ? "PUT" : "POST";
+          const url = id ? `${API_URL}/${id}` : API_URL;
 
-        try {
-          const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ TenDanhMuc })
-          });
+          try {
+              const res = await fetch(url, {
+                  method,
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ TenDanhMuc })
+              });
 
-          if (res.ok) {
-            alert("Thành công!");
-            bootstrap.Modal.getInstance(document.getElementById("categoryModal")).hide();
-            loadCategories();
-          } else {
-            const data = await res.json();
-            alert("Lỗi: " + (data.message || "Không xác định"));
+              if (res.ok) {
+                  alert("Thành công!");
+                  bootstrap.Modal.getInstance(document.getElementById("categoryModal")).hide();
+                  await loadCategories(); // Tải lại dữ liệu mới nhất
+              } else {
+                  const data = await res.json();
+                  alert("Lỗi: " + (data.message || "Không xác định"));
+              }
+          } catch (err) {
+              alert("Lỗi kết nối Server!");
           }
-        } catch (err) {
-          alert("Lỗi kết nối Server!");
-        }
-    }
+      }
 
       async function deleteCategory(id) {
-        if (!confirm("Xóa danh mục này?")) return;
-        await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-        loadCategories();
+          if (!confirm("Bạn có chắc muốn xóa danh mục này?")) return;
+          try {
+              const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+              if (res.ok) {
+                  alert("Đã xóa thành công!");
+                  loadCategories(); // Tải lại để cập nhật phân trang
+              } else {
+                  alert("Không thể xóa (có thể danh mục đã có sách).");
+              }
+          } catch(err) {
+              console.error(err);
+          }
       }
-    </script>
+  </script>
   </body>
 </html>
