@@ -36,9 +36,10 @@ router.get("/:id", sachController.getById);
 // QUAN TRỌNG: Thêm upload.single('AnhBia') vào đây
 router.post("/", upload.single("AnhBia"), sachController.create);
 router.put("/:id", upload.single("AnhBia"), sachController.update);
-
+router.get("/related/:id", sachController.getRelated);
 router.delete("/:id", sachController.remove);
 router.put("/:id/nhap-hang", sachController.nhapHang);
 router.get("/thong-ke/sap-het-hang", sachController.getLowStockStats);
 router.get("/thong-ke/bieu-do", sachController.getDashboardCharts);
+
 export default router;

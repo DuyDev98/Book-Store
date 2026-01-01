@@ -76,3 +76,26 @@ export const getDashboardCharts = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+
+// ... (các hàm khác)
+
+// HÀM NÀY PHẢI CÓ VÀ PHẢI CÓ CHỮ 'export'
+export const getRelated = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Gọi service lấy sách
+    // Lưu ý: Kiểm tra xem database dùng cột 'MaLoai' hay 'MaLoaiSach'
+    // Bước 1: Lấy sách hiện tại
+    const currentBook = await sachService.getById(id);
+    if (!currentBook) return res.status(404).json({ message: "Not found" });
+
+    // Bước 2: Lấy sách cùng loại
+    const relatedBooks = await sachService.getRelatedBooks(currentBook.MaLoaiSach, id); // Hoặc currentBook.MaLoai
+    
+    res.status(200).json(relatedBooks);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

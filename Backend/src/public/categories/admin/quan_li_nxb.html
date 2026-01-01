@@ -194,7 +194,7 @@
             document.getElementById("publisherModalLabel").textContent = "Thêm Nhà xuất bản";
             new bootstrap.Modal(document.getElementById("publisherModal")).show();
         }
-    }
+    
 
         // 3. Mở Modal Sửa
         async function openEditModal(id) {
@@ -225,7 +225,7 @@
                 TenNXB: name,
                 NamThanhLap: document.getElementById("publisherYear").value, // Gửi năm lên server
                 DiaChi: document.getElementById("publisherAddress").value.trim(),
-                MoTa: document.getElementById("publisherDescription").value.trim()
+                
             };
 
             const url = id ? `${API_URL}/${id}` : API_URL;

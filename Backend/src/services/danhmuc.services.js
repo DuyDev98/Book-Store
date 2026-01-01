@@ -38,13 +38,12 @@ export const addDanhMuc = async (TenDanhMuc) => {
   }
 };
 
-export const updateDanhMuc = async (MaDanhMuc, TenDanhMuc, ParentID) => {
+export const updateDanhMuc = async (MaDanhMuc, TenDanhMuc) => {
   try {
     const pool = await getPool();
     
     const [result] = await pool.query(danhmucModel.SQL_UPDATE_DANHMUC, [
       TenDanhMuc,
-      pid,
       MaDanhMuc,
     ]);
     return result;

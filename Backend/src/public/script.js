@@ -404,12 +404,12 @@ async function loadSimilarBooks(currentBook) {
         const root = getRootPrefix(); // Hàm có sẵn trong script.js
         let html = "";
 
-        const currentPrice = (b.PhanTramGiamGia > 0) ? b.GiaSale : b.GiaBan;
+       
 
         limitList.forEach(b => {
             let img = (b.AnhBia && b.AnhBia !== 'null') ? b.AnhBia : "https://placehold.co/100x150";
             if (!img.startsWith("http")) img = root + img;
-
+              const currentPrice = (b.PhanTramGiamGia > 0) ? b.GiaSale : b.GiaBan;
             html += `
             <div class="d-flex mb-3 align-items-center border-bottom pb-2">
                 <a href="detail-book.html?id=${b.MaSach}">

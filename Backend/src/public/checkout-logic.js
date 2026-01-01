@@ -68,20 +68,41 @@ async function loadCheckoutCart() {
 
     if (data.status !== "OK" || !data.data || data.data.length === 0) {
       container.innerHTML = `<p class="text-center text-danger">Giỏ hàng trống!</p>`;
-      window.location.href = "cart.html"; // Quay về giỏ nếu rỗng
+      // window.location.href = "cart.html"; // (Tạm comment để debug nếu cần)
       return;
     }
 
     let html = "";
-    currentCartTotal = data.tongTien || 0;
+    currentCartTotal = 0; // Reset về 0 trước khi tính lại
 
     data.data.forEach((item) => {
-      // Xử lý ảnh (Copy logic từ script.js)
-      let img =
-        item.AnhBia && item.AnhBia !== "null"
-          ? item.AnhBia
-          : "https://placehold.co/100";
-      if (!img.startsWith("http")) img = "../" + img.replace(/^\//, ""); // Chỉnh đường dẫn ảnh tương đối
+      // --- LOGIC TÍNH GIÁ SALE ---
+      const giaGoc = Number(item.GiaBan);
+      const phanTram = Number(item.PhanTramGiamGia || 0);
+      let giaThucTe = giaGoc;
+
+      if (phanTram > 0) {
+        giaThucTe = giaGoc * (1 - phanTram / 100);
+      }
+
+      const thanhTienItem = giaThucTe * item.SoLuong;
+      currentCartTotal += thanhTienItem; // Cộng dồn giá đã giảm
+      // ---------------------------
+
+      // Xử lý ảnh
+      let img = item.AnhBia && item.AnhBia !== "null" ? item.AnhBia : "https://placehold.co/100";
+      if (!img.startsWith("http")) img = "../" + img.replace(/^\//, "");
+
+      // Hiển thị giá (Nếu có giảm thì gạch giá cũ)
+      let priceDisplay = `<small class="text-muted">${formatCurrency(giaGoc)}</small>`;
+      if (phanTram > 0) {
+        priceDisplay = `
+          <div class="d-flex flex-column">
+             <small class="text-decoration-line-through text-muted" style="font-size: 11px">${formatCurrency(giaGoc)}</small>
+             <small class="text-danger fw-bold">${formatCurrency(giaThucTe)}</small>
+          </div>
+        `;
+      }
 
       html += `
             <div class="d-flex align-items-center mb-3">
@@ -92,15 +113,11 @@ async function loadCheckoutCart() {
                     </span>
                 </div>
                 <div class="flex-grow-1">
-                    <h6 class="mb-0 text-truncate" style="max-width: 180px;">${
-                      item.TenSach
-                    }</h6>
-                    <small class="text-muted">${formatCurrency(
-                      item.GiaBan
-                    )}</small>
+                    <h6 class="mb-0 text-truncate" style="max-width: 180px;">${item.TenSach}</h6>
+                    ${priceDisplay}
                 </div>
                 <div class="text-end fw-bold text-dark">
-                    ${formatCurrency(item.ThanhTien)}
+                    ${formatCurrency(thanhTienItem)}
                 </div>
             </div>`;
     });
@@ -108,12 +125,17 @@ async function loadCheckoutCart() {
     container.innerHTML = html;
     if (subTotalEl) subTotalEl.innerText = formatCurrency(currentCartTotal);
     if (totalEl) totalEl.innerText = formatCurrency(currentCartTotal);
+    
+    // Cập nhật lại biến global pendingOrderData nếu nó đã được khởi tạo
+    if(typeof pendingOrderData !== 'undefined' && pendingOrderData) {
+        pendingOrderData.TongTien = currentCartTotal;
+    }
+
   } catch (err) {
     console.error(err);
     container.innerHTML = `<p class="text-danger">Lỗi tải đơn hàng</p>`;
   }
 }
-
 // 4. Xử lý nút ĐẶT HÀNG
 /* ==========================================================================
    CẤU HÌNH TÀI KHOẢN NHẬN TIỀN (SỬ DỤNG VIETQR)
