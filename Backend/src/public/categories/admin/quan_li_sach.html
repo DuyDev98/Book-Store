@@ -155,6 +155,12 @@
                                     <select class="form-select" id="MaNXB"></select>
                                 </div>
                                 <div class="col-6">
+                                    <label class="form-label">Năm Xuất Bản</label>
+                                    <input type="number" class="form-control" id="NamXuatBan">
+                                </div>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
                                     <label class="form-label">Loại sách</label>
                                     <select class="form-select" id="MaLoaiSach"></select>
                                 </div>
@@ -352,18 +358,46 @@
         importModal.show();
     }
 
-    async function confirmImport() {
-        const id = document.getElementById('importBookId').value;
-        const qty = document.getElementById('importQty').value;
-        await fetch(`${API_URL}/sach/${id}/nhap-hang`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ soLuong: parseInt(qty) })
-        });
-        importModal.hide();
-        loadBooks();
+   // Trong thẻ <script> của quan_li_sach.html
+
+async function confirmImport() {
+    const id = document.getElementById('importBookId').value;
+    const qtyInput = document.getElementById('importQty');
+    const qty = parseInt(qtyInput.value);
+
+    // 1. Validate dữ liệu trước khi gửi
+    if (!qty || qty <= 0) {
+        alert("Vui lòng nhập số lượng lớn hơn 0!");
+        qtyInput.focus();
+        return;
     }
 
+    try {
+        // 2. Gửi request
+        const res = await fetch(`${API_URL}/sach/${id}/nhap-hang`, {
+            method: "PUT",
+            headers: { 
+                "Content-Type": "application/json" 
+            },
+            body: JSON.stringify({ soLuong: qty })
+        });
+
+        const data = await res.json();
+
+        // 3. Kiểm tra kết quả từ server
+        if (res.ok) {
+            alert("Nhập hàng thành công!");
+            importModal.hide();
+            document.getElementById('importQty').value = ""; // Reset ô nhập
+            loadBooks(); // Tải lại danh sách để thấy số lượng mới
+        } else {
+            alert("Lỗi: " + data.message);
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Lỗi kết nối đến server!");
+    }
+}
     async function loadDropdown(endpoint, idElem, nameField) {
         const res = await fetch(`${API_URL}/${endpoint}`);
         const data = await res.json();

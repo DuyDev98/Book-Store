@@ -45,13 +45,29 @@ export const remove = async (req, res) => {
   } catch (err) { res.status(500).json({ message: err.message }); }
 };
 
+// Trong file src/controller/sach.controller.js
+
 export const nhapHang = async (req, res) => {
   try {
-    await sachService.importStock(req.params.id, req.body.soLuong);
-    res.status(200).json({ message: "Nhập hàng thành công" });
-  } catch (err) { res.status(500).json({ message: err.message }); }
-};
+    // 1. Kiểm tra xem có nhận được số lượng không
+    const soLuong = req.body.soLuong;
+    
+    // Nếu không có số lượng hoặc không phải số -> Báo lỗi ngay
+    if (soLuong === undefined || soLuong === null || isNaN(soLuong)) {
+      return res.status(400).json({ 
+        message: "Dữ liệu không hợp lệ! Vui lòng kiểm tra lại số lượng." 
+      });
+    }
 
+    // 2. Gọi service cập nhật
+    await sachService.importStock(req.params.id, parseInt(soLuong));
+    
+    res.status(200).json({ message: "Nhập hàng thành công" });
+  } catch (err) { 
+    console.error("Lỗi nhập hàng:", err); // Log lỗi ra terminal để dễ sửa
+    res.status(500).json({ message: err.message }); 
+  }
+};
 export const getLowStockStats = async (req, res) => {
   try {
     const countResult = await sachService.getLowStockCount();

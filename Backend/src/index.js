@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 // Initialize express app
 const app = express();
 app.use(express.json()); // Middleware to parse JSON bodies
-
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, "public")));
