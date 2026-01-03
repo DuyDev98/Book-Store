@@ -1,15 +1,9 @@
-import { v2 as cloudinary } from 'cloudinary'
-const cloudinary = require('cloudinary');
+import { v2 as cloudinary } from 'cloudinary';
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.API_KEY,
-    api_secret: process.env.API_SECRET
-
-});
-cloudinary.url("sample.jpg", {width: 100, height: 150, crop: "fill", fetch_format: "auto"}) ;
-cloudinary.v2.uploader.upload("/home/my_image.jpg", {upload_preset: "my_preset"}, (error, result)=>{
-  console.log(result, error);
+    cloud_name: 'df6ldpzpg',
+    api_key: '588462826351327',
+    api_secret: 'tx7DQe-mmCQZzhUZL4B8elws_K4'
 });
 
 export default cloudinary;

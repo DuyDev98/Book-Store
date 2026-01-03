@@ -10,11 +10,11 @@ dotenv.config();
 
 const router = express.Router();
 
-// 2. CẤU HÌNH CLOUDINARY (Lấy từ .env)
+// CẤU HÌNH CLOUDINARY (Điền trực tiếp để đảm bảo chạy 100%)
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Tên cloud của bạn
-  api_key: process.env.API_KEY, // Sửa thành Y cho khớp file .env
-  api_secret: process.env.API_SECRET, // Sửa thành API_SECRET cho khớp file .env
+  cloud_name: 'df6ldpzpg',
+  api_key: '588462826351327',
+  api_secret: 'tx7DQe-mmCQZzhUZL4B8elws_K4'
 });
 
 // 3. Cấu hình Storage
