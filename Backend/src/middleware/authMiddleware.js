@@ -14,7 +14,7 @@ export const verifyToken = (req, res, next) => {
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET || "access_token", (err, decoded) => {
     if (err) return res.status(403).json({ status: "ERR", message: "Token hết hạn hoặc không hợp lệ" });
 
-    // Lưu thông tin user (có MaKH) vào request
+        //   Lưu thông tin user (có MaKH) vào request
     req.user = decoded; 
     req.userRole = decoded.isAdmin ? "ADMIN" : "USER";
     next();

@@ -251,27 +251,15 @@
           </div>
         </main>
 
-        <div
-          class="modal fade"
-          id="orderModal"
-          tabindex="-1"
-          aria-labelledby="orderModalLabel"
-          aria-hidden="true"
-        >
+        <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel"  aria-hidden="true">
           <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title" id="orderModalLabel">
                   Chi tiết Đơn hàng
                 </h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
+                <button type="button"class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-
               <div class="modal-body">
                 <div class="row">
                   <div class="col-md-6">
@@ -305,9 +293,7 @@
                     <h5>Sản phẩm trong đơn hàng</h5>
                     <ul class="list-group mb-3" id="modal-product-list"></ul>
                     <ul class="list-group">
-                      <li
-                        class="list-group-item d-flex justify-content-between list-group-item-secondary"
-                      >
+                      <li class="list-group-item d-flex justify-content-between list-group-item-secondary">
                         <h5 class="my-0">Tổng cộng</h5>
                         <h5 class="my-0" id="modal-total-price">0đ</h5>
                       </li>
@@ -317,25 +303,10 @@
               </div>
 
               <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Đóng </button>
                 <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Đóng
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-danger"
-                  id="btn-cancel-order"
-                >
-                  Hủy Đơn hàng
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  id="btn-confirm-order"
-                >
+                  type="button" class="btn btn-danger" id="btn-cancel-order"> Hủy Đơn hàng </button>
+                <button type="button" class="btn btn-primary" id="btn-confirm-order">
                   Xác nhận / Giao hàng
                 </button>
               </div>
