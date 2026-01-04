@@ -323,13 +323,39 @@ window.removeItem = async function (id) {
    4. LOAD SÁCH THEO DANH MỤC
    ========================================================================== */
 const CATEGORY_MAP = {
-    "hot-sale": -1, "ngoai-thuong": 1, "marketing-ban-hang": 2, "tai-chinh-tien-te": 3,
-    "quan-tri-lanh-dao": 4, "khoa-hoc-xa-hoi": 5, "am-nhac-my-thuat": 6, "truyen-tranh": 7,
-    "phe-binh-van-hoc": 8, "phong-su-ky-su": 9, "tho-ca": 10, "tieu-thuyet": 11,
-    "bi-quyet-lam-dep": 12, "gia-dinh-hanh-phuc": 13, "tt-doi-song": 13, "nha-o-vat-nuoi": 14,
-    "hoc-lam-nguoi": 15, "danh-nhan": 16, "tam-ly-ky-nang-song": 17, "pt-ban-than": 17,
-    "sach-giao-khoa": 18, "giao-trinh-dai-hoc": 19, "sgk-giao-trinh": 19,
-    "sach-ngoai-ngu": 20, "tu-dien": 21, "tin-hoc": 22, "thieu-nhi": 23
+    // --- Các loại cũ (1-22) ---
+    "hot-sale": -1,             // Giả định -1 là lấy sách đang Sale
+    "ngoai-thuong": 3,
+    "marketing-ban-hang": 4,
+    "tai-chinh-tien-te": 5,
+    "quan-tri-lanh-dao": 6,
+    "khoa-hoc-xa-hoi": 7,
+    "am-nhac-my-thuat": 8,
+    "truyen-tranh": 9,
+    "phe-binh-van-hoc": 10,
+    "phong-su-ky-su": 11,
+    "tho-ca": 12,
+    "tieu-thuyet": 13,
+    "bi-quyet-lam-dep": 14,
+    "gia-dinh-hanh-phuc": 15,   
+           // Gom nhóm
+    "nha-o-vat-nuoi": 16,    
+    
+    "hoc-lam-nguoi": 17,      
+    
+    "danh-nhan": 18,            
+    
+    "tam-ly-ky-nang-song": 19,   
+    "pt-ban-than": 19,           
+    
+    "sach-giao-khoa": 20,     
+    
+    "giao-trinh-dai-hoc": 21,    
+    "sgk-giao-trinh": 21,        
+    
+    "sach-ngoai-ngu": 22,                    
+
+    "tin-hoc": 24       
 };
 
 async function loadBooksForPage() {
